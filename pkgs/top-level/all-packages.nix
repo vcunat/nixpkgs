@@ -2000,6 +2000,8 @@ let
 
   urweb = callPackage ../development/compilers/urweb { };
 
+  urwebHG = callPackage ../development/compilers/urweb { hg = true; };
+
   vala = callPackage ../development/compilers/vala { };
 
   visualcpp = callPackage ../development/compilers/visual-c++ { };
