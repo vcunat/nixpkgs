@@ -2623,7 +2623,10 @@ let
 
   axis = callPackage ../development/libraries/axis { };
 
-  babl = callPackage ../development/libraries/babl { };
+  babl = callPackage ../development/libraries/babl {
+    inherit (gtkLibs) glib;
+  };
+  bablGit = babl.override { version = "git"; };
 
   beecrypt = callPackage ../development/libraries/beecrypt { };
 
@@ -2837,6 +2840,7 @@ let
     #  avocodec avformat librsvg
     inherit (gtkLibs) pango glib gtk;
   };
+  geglGit = gegl.override { version = "git"; };
 
   geoip = builderDefsPackage ../development/libraries/geoip {
     inherit zlib;
@@ -5716,12 +5720,14 @@ let
   };
 
   gimp = callPackage ../applications/graphics/gimp {
-    inherit (gnome) gtk libart_lgpl;
+    inherit pkgs;
   };
+  gimpSnapshot = gimp.override { version = "2.7.0"; };
+  gimpGit = gimp.override { version = "git"; };
 
-  gimpPlugins = recurseIntoAttrs (import ../applications/graphics/gimp/plugins {
+  gimpPlugins = makeOverridable (import ../applications/graphics/gimp/plugins) {
     inherit pkgs gimp;
-  });
+  };
 
   gitAndTools = recurseIntoAttrs (import ../applications/version-management/git-and-tools {
     inherit pkgs;
