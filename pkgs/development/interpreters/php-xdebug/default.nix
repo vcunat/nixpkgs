@@ -1,11 +1,11 @@
 { stdenv, fetchurl, php, autoconf, automake }:
 
 stdenv.mkDerivation {
-  name = "php-xdebug-2.0.5";
+  name = "php-xdebug-2.1.0";
 
   src = fetchurl {
-    url = "http://xdebug.org/files/xdebug-2.0.5.tgz";
-    sha256 = "1cmq7c36gj8n41mfq1wba5rij8j77yqhydpcsbcysk1zchg68f26";
+    url = "http://www.xdebug.org/files/xdebug-2.1.0.tgz";
+    sha256 = "17833mzci7a1jgcjlbzx0cl8gjag85xdpap12mj9a1kj0m6xc3bk";
   };
 
   buildInputs = [ php autoconf automake ];
