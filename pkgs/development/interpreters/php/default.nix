@@ -2,13 +2,21 @@ args: with args;
 
 let
 
+  # note: this derivation contains a small hack: It contains several PHP
+  # versions
+  # If the differences get too large this shoud be split into several files
+  # At the moment this works fine for me.
+
   inherit (args.composableDerivation) composableDerivation edf wwf;
+
+  # supported versions see src name below
+  versionX = args.stdenv.lib.maybeAttr "version" "5.2.14" args;
 
 in
 
 composableDerivation {} ( fixed : let inherit (fixed.fixed) version; in {
 
-  version = "5.2.14";
+  version = versionX;
 
   name = "php_configurable-${version}";
 
@@ -149,11 +157,15 @@ composableDerivation {} ( fixed : let inherit (fixed.fixed) version; in {
     } $iniFile
   '';
 
-  src = args.fetchurl {
-    url = "http://nl.php.net/get/php-${version}.tar.bz2/from/this/mirror";
-    sha256 = "1l9b7iv0f6ds9x2ayclcfgjh62xbabbv11ixp5cqsyaq2ba5ynsi";
-    name = "php-${version}.tar.bz2";
-  };
+   src = args.fetchurl {
+     url = "http://nl.php.net/get/php-${version}.tar.bz2/from/this/mirror";
+     md5 = if version == "5.3.3" then "21ceeeb232813c10283a5ca1b4c87b48"
+          # 5.2.11 does no longer build with current openssl. See http://marc.info/?l=openssl-users&m=124720601103894&w=2
+          # else if version == "5.2.11" then "286bf34630f5643c25ebcedfec5e0a09"
+          else if version == "5.2.14" then "bfdfc0e62fe437020cc04078269d1414"
+          else throw "set md5 sum of php source file" ;
+     name = "php-${version}.tar.bz2";
+   };
 
   meta = {
     description = "The PHP language runtime engine";
