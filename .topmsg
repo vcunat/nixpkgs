@@ -1,0 +1,9 @@
+From: Marc Weber <marco-oweber@gmx.de>
+Subject: [PATCH] nix2/php
+
+multiple php versions in one derivation because that's easier to review and
+maintain unless build inputs change significantly.
+
+Also update xdebug
+
+Signed-off-by: Marc Weber <marco-oweber@gmx.de>
