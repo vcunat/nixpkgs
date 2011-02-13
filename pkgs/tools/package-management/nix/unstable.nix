@@ -1,4 +1,6 @@
 { stdenv, fetchurl, perl, curl, bzip2, openssl ? null
+, flex, bison
+, pkgconfig, boehmgc
 , storeDir ? "/nix/store"
 , stateDir ? "/nix/var"
 }:
@@ -11,8 +13,10 @@ stdenv.mkDerivation rec {
     sha256 = "0rz9radz4452bp3sy9yzcawn9yz5z4nyng43a0zrsa5v72cv695f";
   };
 
-  buildNativeInputs = [ perl ];
-  buildInputs = [ curl openssl ];
+  buildNativeInputs = [ perl pkgconfig ];
+  buildInputs = [ curl openssl boehmgc
+    flex bison /* only required because of arbitrary-strings-as-names patch */
+  ];
 
   configureFlags =
     ''
@@ -34,6 +38,8 @@ stdenv.mkDerivation rec {
   };
 
   doCheck = true;
+
+  patches = [ ./allow-strings-in-names2.patch ];
 
   meta = {
     description = "The Nix Deployment System";
