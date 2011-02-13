@@ -1,0 +1,9 @@
+From: Marc Weber <marco-oweber@gmx.de>
+Subject: [PATCH] nix2/ruby-next
+
+ruby related updates
+- ruby 1.9
+- enable curl
+- drop rubyLibs in favour of overlay (which contains all rubygem packages now -
+  however only some have been tested)
+  ->  http://gitorious.org/nixpkgs-ruby-overlay
