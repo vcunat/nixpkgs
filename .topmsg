@@ -1,0 +1,41 @@
+From: Marc Weber <marco-oweber@gmx.de>
+Subject: [PATCH] nix2/package-updates
+
+various package updates.
+Yes - maybe I should have used different topic branches for each.
+This is faster for me
+
+this branch contains package updates for various reasons
+    
+wireshark: old source vanished
+buildenv.pl: fix some cases viric discovered
+chrome: pass libXdamage
+linuxtv_dvb_apps: new package
+nvi: new source (version bump) (old 404)
+mercurial:
+  - vesrion update ( now supports revsets and maybe more)
+  - plugin support. Supporting / enabling
+      svn (by convert and extension)
+      mq, pbranch, translate, ..
+poppler update (keep old version to build inkscape)
+umtsmon: added
+fix wvdial (wvstreams patch)
+python: adding pip tool
+
+adding tinyproxy, ziproxy
+
+ghc: enable parallel building
+
+adding apvlv (pdf viewer with vi like keybindings)
+
+updating upstart completion
+
+texLive's man is broken (second line is a dir not an executable) and
+very annoying: it shadowns man (linux help) - removing it
+
+add mergeShellCode function and option merge function used by the nixos
+patch introducing support for multiple shells
+
+adding path-selector script which is essential (probably to me only)
+
+Signed-off-by: Marc Weber <marco-oweber@gmx.de>
