@@ -39,4 +39,14 @@ stdenv.mkDerivation {
     platforms = stdenv.lib.platforms.all;
     maintainers = [ stdenv.lib.maintainers.simons ];
   };
+
+  patches = [
+    # http://www.scons.org/doc/HTML/scons-user/x1741.html
+    # Some packages already override env the way shown in docs:
+    #    env = Environment(ENV = {'PATH' : os.environ['PATH']})
+    # or env = Environment(ENV = os.environ)
+    # for those who don't yet (eg v8) is this patch.
+    # The default PATH is not useful on NixOS anyway.
+    ./path-from-env.patch
+  ];
 }

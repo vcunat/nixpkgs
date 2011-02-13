@@ -1987,6 +1987,8 @@ let
 
   scala = callPackage ../development/compilers/scala { };
 
+  smlnj = callPackage_i686 ../development/compilers/smlnj { };
+
   stalin = callPackage ../development/compilers/stalin { };
 
   strategoPackages = strategoPackages018;
@@ -6142,9 +6144,7 @@ let
     stdenv = stdenv2;
   };
 
-  opera = callPackage ../applications/networking/browsers/opera {
-    qt = qt3;
-  };
+  opera = callPackage ../applications/networking/browsers/opera { };
 
   pan = callPackage ../applications/networking/newsreaders/pan {
     gmime = gmime_2_2;
