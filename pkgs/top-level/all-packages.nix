@@ -1980,6 +1980,8 @@ let
 
   scala = callPackage ../development/compilers/scala { };
 
+  smlnj = callPackage_i686 ../development/compilers/smlnj { };
+
   stalin = callPackage ../development/compilers/stalin { };
 
   strategoPackages = strategoPackages018;
