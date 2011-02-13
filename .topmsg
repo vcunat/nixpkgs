@@ -1,0 +1,10 @@
+From: Marc Weber <marco-oweber@gmx.de>
+Subject: [PATCH] nix2/nix-arbitrary-string-as-key-patch
+
+applies my Nix patch allowing:
+    
+{
+  "a-2.8"= "value";
+}
+
+Signed-off-by: Marc Weber <marco-oweber@gmx.de>
