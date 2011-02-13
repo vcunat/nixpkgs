@@ -52,6 +52,7 @@ rec {
           opt
           // optionalAttrs (decl.type ? merge) { inherit (decl.type) merge; }
           // optionalAttrs (decl.type ? check) { inherit (decl.type) check; }
+          // optionalAttrs (decl.type ? apply) { inherit (decl.type) apply; }
         else
           opt;
 
@@ -217,6 +218,37 @@ rec {
     else if tail list != [] then throw "Multiple definitions. Only one is allowed for this option."
     else head list;
 
+  isShellCodeItem = supportedShells: recurse: a: 
+   builtins.isString a
+   || (recurse && builtins.isList a && all (isShellCodeItem supportedShells false) a)
+   || (builtins.isAttrs a 
+       && all (n: hasAttr n a) supportedShells);
+
+
+  /* Example:
+     mergeShellCode ["bash" "zsh"] [
+     " # added to bash and zsh script"
+     { bash = "# bash only"; zsh = "# zsh only" }
+     " # added to both shells
+     ]
+     returns { bash: code; zsh: code; }
+  */
+  mergeShellCode = shells: list:
+    let codeForShell = name: l:
+          foldl (o: x:
+              let s = if builtins.isString x then x
+                      else if isList x then codeForShell name x
+                      else getAttr name x;
+              in if o == "" then s else "${o}\n${s}"
+          ) "" l;
+       # prefixing suffixing \n so that you don't have to think about it
+    in (builtins.listToAttrs ((map (n: nameValuePair n (throw "${n} support not enabled but something accessed a code.zsh attr") ) ) 
+                              [ "bash" "sh" "zsh" "fish" "fcsh" "dash" "csh" ]))
+    // builtins.listToAttrs (map (n: nameValuePair n "\n${codeForShell n list}\n") shells);
+
+  # if this merge function fails due to isShellCodeItem you probably missed a definition for supportedShells
+  # in attrs
+  mergeShellCodeOption = mergeTypedOption "shell code item" (isShellCodeItem supportedShells true) concatLists;
 
   fixableMergeFun = merge: f: config:
     merge (

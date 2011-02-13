@@ -22,6 +22,8 @@ stdenv.mkDerivation rec {
       }
     else throw "cannot bootstrap GHC on this platform"; 
 
+  enableParallelBuilding = true;
+
   buildInputs = [perl];
 
   postUnpack =

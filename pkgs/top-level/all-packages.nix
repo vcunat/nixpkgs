@@ -924,6 +924,10 @@ let
 
   netselect = callPackage ../tools/networking/netselect { };
 
+  networkmanager = callPackage ../tools/networking/network-manager { };
+
+  networkmanagerApplet = callPackage ../tools/networking/network-manager/applet.nix {};
+
   nilfs_utils = callPackage ../tools/filesystems/nilfs-utils {};
 
   nmap = callPackage ../tools/security/nmap {
@@ -3722,6 +3726,7 @@ let
   poppler = callPackage ../development/libraries/poppler {
     qt4Support = false;
   };
+  poppler14 = poppler.override { version = "0.14.5"; };
 
   popplerQt4 = poppler.override {
     inherit qt4;
@@ -4316,6 +4321,8 @@ let
   });
   squid = squids.squid3Beta; # has ipv6 support
 
+  tinyproxy = callPackage ../servers/tinyproxy { };
+
   tomcat5 = callPackage ../servers/http/tomcat/5.0.nix { };
 
   tomcat6 = callPackage ../servers/http/tomcat/6.0.nix { };
@@ -4355,6 +4362,7 @@ let
     inherit fetchurl stdenv pkgconfig postgresql curl openssl zlib;
   });
 
+  ziproxy = callPackage ../servers/ziproxy { };
 
   ### OS-SPECIFIC
 
@@ -5283,6 +5291,8 @@ let
     libstdcpp = gcc33.gcc;
   };
 
+  apvlv = callPackage ../applications/misc/apvlv { };
+
   ardour = callPackage ../applications/audio/ardour {
     inherit (gtkLibs) glib pango gtk glibmm gtkmm;
     inherit (gnome) libgnomecanvas;
@@ -5400,6 +5410,7 @@ let
   chrome = callPackage ../applications/networking/browsers/chromium {
     inherit (gtkLibs) gtk glib pango atk;
     inherit (gnome) GConf;
+    inherit (xorg) libXdamage;
     patchelf = patchelf06;
     libjpeg = libjpeg62;
   };
@@ -5874,6 +5885,7 @@ let
   inkscape = callPackage ../applications/graphics/inkscape {
     inherit (pythonPackages) lxml;
     inherit (gtkLibs) gtk glib glibmm gtkmm;
+    poppler = poppler14;
   };
 
   ion3 = callPackage ../applications/window-managers/ion-3 {
@@ -5990,12 +6002,15 @@ let
   };
 
   mercurial = callPackage ../applications/version-management/mercurial {
-    guiSupport = getConfig ["mercurial" "guiSupport"] false; # for hgk (gitk gui for hg)
+    # guiSupport = getConfig [...] see cfg in derivation
     python = # allow cloning sources from https servers.
       if getConfig ["mercurial" "httpsSupport"] true
       then pythonFull
       else pythonBase;
+    inherit mercurialExtensions;
   };
+
+  mercurialExtensions = recurseIntoAttrs (import ./mercurial-extensions.nix { inherit pkgs; });
 
   merkaartor = callPackage ../applications/misc/merkaartor {
     qt = qt4;
@@ -6347,6 +6362,8 @@ let
 
   unison = callPackage ../applications/networking/sync/unison { };
 
+  umtsmon = callPackage ../applications/misc/umtsmon { };
+
   uucp = callPackage ../tools/misc/uucp { };
 
   uzbl = builderDefsPackage (import ../applications/networking/browsers/uzbl) {
@@ -6508,6 +6525,9 @@ let
 
   libxpdf = callPackage ../applications/misc/xpdf/libxpdf.nix {
   };
+
+
+  linuxtv_dvb_apps = callPackage ../applications/video/linuxtv-dvb-apps { };
 
   xpra = callPackage ../tools/X11/xpra {
     pyrex = pyrex095;

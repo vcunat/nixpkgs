@@ -1,11 +1,11 @@
 { fetchurl, stdenv, ncurses }:
 
 stdenv.mkDerivation rec {
-  name = "nvi-1.79";
+  name = "nvi-1.81.6";
 
   src = fetchurl {
-    url = "https://sites.google.com/a/bostic.com/external/files/nvi-1.79.tar.gz?attredirects=0";
-    sha256 = "0cvf56rbylz7ksny6g2256sjg8yrsxrmbpk82r64rhi53sm8fnvm";
+    url = "http://www.kotnet.org/~skimo/nvi/devel/nvi-1.81.6.tar.bz2";
+    sha256 = "0nbbs1inyrqds0ywn3ln5slv54v5zraq7lszkg8nsavv4kivhh9l";
   };
 
   buildInputs = [ ncurses ];

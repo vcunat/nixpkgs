@@ -72,6 +72,8 @@ rec {
     PATH="$PATH:$out/bin" fmtutil-sys --all || true
 
     PATH=$PATH:$out/bin mktexlsr $out/texmf*
+
+    rm $out/bin/man # broken anyway and maybe shadows the man help command
  '') ["minInit" "defEnsureDir" "doUnpack" "doMakeInstall"];
 
   buildInputs = [

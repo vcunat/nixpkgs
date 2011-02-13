@@ -8,6 +8,8 @@ stdenv.mkDerivation {
     md5 = "a394bf14e94c3bca5507d568fcc03375";
   };
   
+  enableParallelBuilding = true;
+
   buildInputs = [perl ghc m4];
   
   propagatedBuildInputs = [readline ncurses gmp];

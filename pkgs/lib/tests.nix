@@ -108,5 +108,21 @@ runTests {
         ];
     expected = true;
   };
+
+  testMergeShellCode =
+  let shells = [ "bash" "zsh" ];
+      code = [
+        "a"
+        { bash= "b"; zsh = "z"; }
+        [ 
+          { bash= "B"; zsh = "Z"; }
+          "c"
+        ]
+        "d"
+      ];
+  in {
+    expr = mergeShellCode shells code;
+    expected = { bash = "\na\nb\nB\nc\nd\n"; zsh = "\na\nz\nZ\nc\nd\n"; };
+  };
   
 }

@@ -171,6 +171,18 @@ rec {
     };
   });
 
+  docutils = buildPythonPackage (rec {
+    name = "docutils-0.7";
+    doCheck = false;
+    src = fetchurl {
+      url = http://pypi.python.org/packages/source/d/docutils/docutils-0.7.tar.gz;
+      md5 = "9aec716baf15d06b5aa57cf8d5591c15";
+    };
+    meta = {
+      license = "BSD-stile"; # pypi lists it as BSD, GPL, Python Software foundation License
+    };
+  });
+
   flup = buildPythonPackage (rec {
     name = "flup-1.0.2";
 
@@ -518,6 +530,26 @@ rec {
       description = "Scientific tools for Python";
       homepage = "http://numpy.scipy.org/";
     };
+  });
+
+  pip = buildPythonPackage ( rec {
+    name = "pip-0.8.2";
+
+    doCheck = false;
+
+    src = fetchurl {
+      url = http://pypi.python.org/packages/source/p/pip/pip-0.8.2.tar.gz;
+      md5 = "df1eca0abe7643d92b5222240bed15f6";
+    };
+
+    meta = {
+      description = "python package installer";
+      homepage = http://pypi.python.org/pypi/pip;
+      license = "MIT";
+      maintainers = [stdenv.lib.maintainers.marcweber];
+      platforms = stdenv.lib.platforms.linux;
+    };
+
   });
 
   ply = buildPythonPackage (rec {

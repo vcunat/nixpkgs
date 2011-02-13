@@ -1,6 +1,6 @@
 { pkgs, stdenv } :
 
-let inherit (pkgs) stdenv runCommand perl lib;
+let inherit (pkgs) stdenv perl lib sourceFromHead fetchurl runCommand;
 
 in
 
@@ -132,4 +132,28 @@ in
     '';
 
   });
+
+  pathSelector =  stdenv.mkDerivation {
+    name = "path-selector-script";
+
+    src = fetchurl {
+      url = https://github.com/MarcWeber/path-selector/raw/master/path-selector.sh;
+      sha256 = "10gh02yy543rc9c52chgpc1r0gfkndgv0kgwkjvh5kz2lrahcqzl";
+    };
+
+    phases = "unpackPhase";
+    unpackPhase = ''
+      ensureDir $out/bin
+      cp $src $out/bin/path-selector
+      chmod +x $out/bin/*
+    '';
+
+    meta = {
+      description = "DSL like file path finder. Eg C /hy cds into /home/you";
+      homepage = https://github.com/MarcWeber/path-selector;
+      license = "GPLv2";
+      maintainers = [stdenv.lib.maintainers.marcweber];
+      platforms = stdenv.lib.platforms.linux;
+    };
+  };
 }

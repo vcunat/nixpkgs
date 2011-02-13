@@ -6,6 +6,7 @@
 , glib
 , libXrender
 , libXScrnSaver
+, libXdamage
 , gtk
 , nspr
 , nss
@@ -64,8 +65,7 @@ stdenv.mkDerivation rec {
 
     cp -R * $out/chrome
     ln -s $out/chrome/chrome $out/bin/chrome
-    ${patchelf}/bin/patchelf --interpreter "$(cat $NIX_GCC/nix-support/dynamic-linker)" --set-rpath ${libPath}:$out/lib:${stdenv.gcc.gcc}/lib64:${stdenv.gcc.gcc}/lib $out/chrome/chrome 
-        
+    ${patchelf}/bin/patchelf --interpreter "$(cat $NIX_GCC/nix-support/dynamic-linker)" --set-rpath ${libPath}:$out/lib:${stdenv.gcc.gcc}/lib64:${stdenv.gcc.gcc}/lib:${libXdamage}/lib $out/chrome/chrome
 
     ln -s ${nss}/lib/libsmime3.so $out/lib/libsmime3.so.1d
     ln -s ${nss}/lib/libnssutil3.so $out/lib/libnssutil3.so.1d

@@ -132,12 +132,17 @@ my $nrLinks = 0;
 foreach my $relName (sort keys %symlinks) {
     my $target = $symlinks{$relName};
     my $abs = "$out/$relName";
-    next unless isInPathsToLink $relName;
+    # eq "": always create $out/ else the build may fail
+    next unless isInPathsToLink $relName or $relName eq "";
     if ($target eq "") {
         #print "creating directory $relName\n";
         mkpath $abs or die "cannot create directory `$abs': $!";
     } else {
         #print "creating symlink $relName to $target\n";
+
+        # always try create path because pathsToLink could be "/foo/bar" only.
+        # Then /foo has to be created
+        mkpath (dirname $abs) unless -d $abs;
         symlink $target, $abs ||
             die "error creating link `$abs': $!";
         $nrLinks++;
