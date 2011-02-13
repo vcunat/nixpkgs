@@ -50,4 +50,10 @@ opera:
 
     merged update provided by Kevin Quick on the mailinglist
 
+scons:
+  use PATH always from env because the default /bin:/usr/bin:.. doesn't make
+  sense for NixOS. It seems that Peter Simons doesn't like it for whatever reason
+  I don't understand
+
+
 Signed-off-by: Marc Weber <marco-oweber@gmx.de>
