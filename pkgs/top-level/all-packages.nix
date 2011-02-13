@@ -116,7 +116,14 @@ let
   # The package compositions.  Yes, this isn't properly indented.
   pkgsFun = pkgs: __overrides:
     with helperFunctions;
-    let defaultScope = pkgs // pkgs.xorg; in
+    let defaultScope = pkgs // pkgs.xorg;
+
+        # provide deepOverride function which overrides everything by
+        # pkgsDeepOverride before overridding with overrider.
+        # See webkit example - updated implementation of
+        # http://wiki.nixos.org/w/index.php?title=Escape_from_dependency_hell
+        deepOverride = deepOverrides: pkgsFun pkgs (deepOverrides // __overrides);
+    in
     helperFunctions // rec {
 
   # `__overrides' is a magic attribute that causes the attributes in
@@ -3928,19 +3935,21 @@ let
 
   vxl = callPackage ../development/libraries/vxl { };
 
-  webkit = ((builderDefsPackage ../development/libraries/webkit {
-    inherit (gnome28) gtkdoc libsoup;
-    inherit (gtkLibs) gtk atk pango glib;
-    inherit freetype fontconfig gettext gperf curl
+  webkit =
+  let p = deepOverride {libsoup = gnome28.libsoup_2_31;};
+  in builderDefsPackage ../development/libraries/webkit {
+    inherit (p.gnome28) gtkdoc libsoup;
+    inherit (p.gtkLibs) gtk atk pango glib;
+    inherit (p) freetype fontconfig gettext gperf curl
       libjpeg libtiff libpng libxml2 libxslt sqlite
       icu cairo perl intltool automake libtool
       pkgconfig autoconf bison libproxy enchant
       python ruby which;
-    inherit (gst_all) gstreamer gstPluginsBase gstFfmpeg
+    inherit (p.gst_all) gstreamer gstPluginsBase gstFfmpeg
       gstPluginsGood;
-    flex = flex2535;
-    inherit (xlibs) libXt renderproto libXrender;
-  }).deepOverride {libsoup = gnome28.libsoup_2_31;});
+    flex = p.flex2535;
+    inherit (p.xlibs) libXt renderproto libXrender;
+  };
 
   wvstreams = callPackage ../development/libraries/wvstreams { };
 

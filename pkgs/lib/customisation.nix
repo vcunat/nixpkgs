@@ -34,7 +34,7 @@ rec {
   overrideDerivation = drv: f:
     let
       # Filter out special attributes.
-      drop = ["meta" "passthru" "outPath" "drvPath" "hostDrv" "buildDrv" "type" "override" "deepOverride" "origArgs"]
+      drop = ["meta" "passthru" "outPath" "drvPath" "hostDrv" "buildDrv" "type" "override" "origArgs"]
               # also drop functions such as .merge .override etc
              ++ lib.filter (n: isFunction (getAttr n drv)) (attrNames drv);
       attrs = removeAttrs drv drop;
@@ -56,38 +56,10 @@ rec {
       if builtins.isAttrs ff then (ff //
         { override = newArgs:
             makeOverridable f (origArgs // (if builtins.isFunction newArgs then newArgs origArgs else newArgs));
-          deepOverride = newArgs:
-            makeOverridable f (lib.overrideExisting (lib.mapAttrs (deepOverrider newArgs) origArgs) newArgs);
+          origArgs = origArgs;
         })
       else ff;
 
-  deepOverrider = newArgs: name: x: if builtins.isAttrs x then (
-    if x ? deepOverride then (x.deepOverride newArgs) else
-    if x ? override then (x.override newArgs) else
-    x) else x;
-
-
-  /* Call the package function in the file `fn' with the required
-    arguments automatically.  The function is called with the
-    arguments `args', but any missing arguments are obtained from
-    `autoArgs'.  This function is intended to be partially
-    parameterised, e.g.,
-
-      callPackage = callPackageWith pkgs;
-      pkgs = {
-        libfoo = callPackage ./foo.nix { };
-        libbar = callPackage ./bar.nix { };
-      };
-
-    If the `libbar' function expects an argument named `libfoo', it is
-    automatically passed as an argument.  Overrides or missing
-    arguments can be supplied in `args', e.g.
-
-      libbar = callPackage ./bar.nix {
-        libfoo = null;
-        enableX11 = true;
-      };
-  */
   callPackageWith = autoArgs: fn: args:
     let f = import fn; in
     makeOverridable f ((builtins.intersectAttrs (builtins.functionArgs f) autoArgs) // args);
