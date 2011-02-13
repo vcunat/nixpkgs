@@ -1,0 +1,13 @@
+diff --git a/engine/SCons/Platform/posix.py b/engine/SCons/Platform/posix.py
+index 87de9df..8b8633f 100644
+--- a/engine/SCons/Platform/posix.py
++++ b/engine/SCons/Platform/posix.py
+@@ -230,7 +230,7 @@ def generate(env):
+ 
+     if 'ENV' not in env:
+         env['ENV']        = {}
+-    env['ENV']['PATH']    = '/usr/local/bin:/opt/bin:/bin:/usr/bin'
++    env['ENV']['PATH']    = os.environ['PATH']
+     env['OBJPREFIX']      = ''
+     env['OBJSUFFIX']      = '.o'
+     env['SHOBJPREFIX']    = '$OBJPREFIX'
