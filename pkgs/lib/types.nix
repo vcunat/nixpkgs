@@ -37,10 +37,11 @@ rec {
     # If the type can contains option sets.
     , hasOptions ? false
     , delayOnGlobalEval ? false
+    , apply ? lib.id
     }:
 
     { _type = "option-type";
-      inherit name check merge iter fold docPath hasOptions delayOnGlobalEval;
+      inherit name apply check merge iter fold docPath hasOptions delayOnGlobalEval;
     };
 
     
@@ -142,6 +143,13 @@ rec {
       check = x: isAttrs x || builtins.isFunction x;
       hasOptions = true;
       delayOnGlobalEval = true;
+    };
+
+    shellCode = supportedShells: mkOptionType {
+      name = "option shellcode";
+      merge = list: lib.concatLists (map (x: if builtins.isList x then x else [x]) list);
+      check = lib.isShellCodeItem supportedShells true;
+      apply = mergeShellCode supportedShells;
     };
 
   };

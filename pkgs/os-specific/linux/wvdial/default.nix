@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, wvstreams, pkgconfig }:
+{ stdenv, fetchurl, wvstreams, pkgconfig, gnused, ppp }:
 
 stdenv.mkDerivation rec {
   name = "wvdial-1.61";
@@ -9,6 +9,10 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ wvstreams pkgconfig ];
+
+  patchPhase = ''
+    sed 's@/usr/sbin/pppd@${ppp}/sbin/pppd@g' -i wvdialer.cc
+  '';
 
   preConfigure = ''
     find -type f | xargs sed -i 's@/bin/bash@bash@g'

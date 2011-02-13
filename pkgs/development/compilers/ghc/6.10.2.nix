@@ -12,6 +12,8 @@ stdenv.mkDerivation rec {
     sha256 = "0q3wgp8svfl54kpyp55a1kh63cni5vzz811hqjsps84jdg0lg56m";
   };
 
+  enableParallelBuilding = true;
+
   buildInputs = [ghc libedit perl gmp];
 
   configureFlags=[

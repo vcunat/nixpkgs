@@ -1,20 +1,22 @@
-{ stdenv, fetchurl, db4, glibc, openssl, cyrus_sasl
+{ stdenv, fetchurl, db4, glibc, openssl, cyrus_sasl, perl
 , coreutils, findutils, gnused, gnugrep
 }:
 
 assert stdenv.isLinux;
 
 stdenv.mkDerivation {
-  name = "postfix-2.2.11";
+  name = "postfix-2.8.0";
   
   src = fetchurl {
-    url = ftp://ftp.cs.uu.nl/mirror/postfix/postfix-release/official/postfix-2.2.11.tar.gz;
-    sha256 = "04hxpyd3h1f48fnppjwqqxbil13bcwidzpfkra2pgm7h42d9blq7";
+    url = http://de.postfix.org/ftpmirror/official/postfix-2.8.0.tar.gz;
+    sha256 = "1v9pma99lgmikh46bv70kaphrqq4pqzw9nixhsq93m9f3rh48v2b";
   };
 
   installTargets = ["non-interactive-package"];
   
   installFlags = [" install_root=$out "];
+
+  enableParallelBuilding = true;
   
   preInstall = ''
     sed -e '/^PATH=/d' -i postfix-install
@@ -46,7 +48,7 @@ stdenv.mkDerivation {
     make makefiles CCARGS='-DUSE_TLS -DUSE_SASL_AUTH -DUSE_CYRUS_SASL -DHAS_DB -I${cyrus_sasl}/include/sasl' AUXLIBS='-lssl -lcrypto -lsasl2 -ldb'
   '';
 
-  buildInputs = [db4 openssl cyrus_sasl];
+  buildInputs = [db4 openssl cyrus_sasl perl];
   
   patches = [./postfix-2.2.9-db.patch ./postfix-2.2.9-lib.patch];
   

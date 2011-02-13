@@ -1,0 +1,37 @@
+diff --git a/crypto/wvx509.cc b/crypto/wvx509.cc
+index 93dae06..aa8af22 100644
+--- a/crypto/wvx509.cc
++++ b/crypto/wvx509.cc
+@@ -1157,7 +1157,7 @@ WvString WvX509::get_extension(int nid) const
+         
+         if (ext)
+         {
+-            X509V3_EXT_METHOD *method = X509V3_EXT_get(ext);
++            const X509V3_EXT_METHOD *method = X509V3_EXT_get(ext);
+             if (!method)
+             {
+                 WvDynBuf buf;
+diff --git a/ipstreams/wvunixdgsocket.cc b/ipstreams/wvunixdgsocket.cc
+index 41d2911..a9b294b 100644
+--- a/ipstreams/wvunixdgsocket.cc
++++ b/ipstreams/wvunixdgsocket.cc
+@@ -3,6 +3,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #endif
++#include <sys/stat.h>
+ 
+ WvUnixDGSocket::WvUnixDGSocket(WvStringParm filename, bool _server, int perms)
+     : socketfile(filename)
+diff --git a/streams/wvatomicfile.cc b/streams/wvatomicfile.cc
+index 65ae202..be69ed7 100644
+--- a/streams/wvatomicfile.cc
++++ b/streams/wvatomicfile.cc
+@@ -14,6 +14,7 @@
+ #ifdef MACOS
+ #include <sys/stat.h>
+ #endif
++#include <sys/stat.h>
+ 
+ WvAtomicFile::WvAtomicFile(WvStringParm filename, int flags, mode_t create_mode)
+     : tmp_file(WvString::null)
