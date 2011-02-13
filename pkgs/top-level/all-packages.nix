@@ -6127,9 +6127,7 @@ let
     stdenv = stdenv2;
   };
 
-  opera = callPackage ../applications/networking/browsers/opera {
-    qt = qt3;
-  };
+  opera = callPackage ../applications/networking/browsers/opera { };
 
   pan = callPackage ../applications/networking/newsreaders/pan {
     gmime = gmime_2_2;

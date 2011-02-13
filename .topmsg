@@ -38,4 +38,16 @@ patch introducing support for multiple shells
 
 adding path-selector script which is essential (probably to me only)
 
+opera:
+    Opera update
+
+    Major change: Opera is based on X now optionally using GTK, QT, KDE
+    toolkits for GUI.
+
+    GTK seems to work. QT starts (the open dialog does not
+    show icons). KDE does not start.
+    See comments to learn about how to choose one of those toolkits.
+
+    merged update provided by Kevin Quick on the mailinglist
+
 Signed-off-by: Marc Weber <marco-oweber@gmx.de>
