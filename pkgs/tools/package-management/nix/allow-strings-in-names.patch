@@ -1,0 +1,130 @@
+commit 4de57f71a6c0d79d6dcbd41aafc7221672b4b19b
+Author: Marc Weber <marco-oweber@gmx.de>
+Date:   Wed Sep 22 22:35:16 2010 +0200
+
+    t/allow-arbitrary-strinsg-in-names
+    
+    allow strings as names in attribute sets:
+    
+    Example:
+    
+    let
+    
+        sourcesByVersion = {
+          "git-1.8" : fetchurl ..
+          "git-2.0" : fetchurl ..
+        }
+    
+        useCase1 =  sourcesByVersion."git-1.8"
+        useCase2 =  lib.maybeAttr "git-1.8" (throw "nou source available") sourcesByVersion;
+        useCase3 =  sourcesByVersion ? "git-1.8"
+    
+    This isn't something new. This undocumented feature was available for a long
+    time using listToAttrs which accepted arbitrary strings as name.
+    
+    Signed-off-by: Marc Weber <marco-oweber@gmx.de>
+
+diff --git a/src/libexpr/parser.y b/src/libexpr/parser.y
+index 7236bab..ae4110f 100644
+--- a/src/libexpr/parser.y
++++ b/src/libexpr/parser.y
+@@ -251,6 +251,7 @@ void yyerror(YYLTYPE * loc, yyscan_t scanner, ParseData * data, const char * err
+ %type <formal> formal
+ %type <ids> ids attrpath
+ %type <string_parts> string_parts ind_string_parts
++%type <id> id_like
+ %token <id> ID ATTRPATH
+ %token <e> STR IND_STR
+ %token <n> INT
+@@ -276,6 +277,19 @@ void yyerror(YYLTYPE * loc, yyscan_t scanner, ParseData * data, const char * err
+ 
+ start: expr { data->result = $1; };
+ 
++id_like
++  : ID
++  | '"' STR '"' {
++    Expr * x = $2;
++    if(ExprString* str = dynamic_cast<ExprString*>(x))
++      $$ = strdup(str->s.c_str());
++    else
++      // should never be reached - you never know.
++      // should static_cast be used instead? Or should I add a new type passed
++      // from lexer?
++      throw ParseError(format("ExprString expected"));
++  }
++  
+ expr: expr_function;
+ 
+ expr_function
+@@ -309,7 +323,7 @@ expr_op
+   | expr_op OR expr_op { $$ = new ExprOpOr($1, $3); }
+   | expr_op IMPL expr_op { $$ = new ExprOpImpl($1, $3); }
+   | expr_op UPDATE expr_op { $$ = new ExprOpUpdate($1, $3); }
+-  | expr_op '?' ID { $$ = new ExprOpHasAttr($1, data->symbols.create($3)); }
++  | expr_op '?' id_like { $$ = new ExprOpHasAttr($1, data->symbols.create($3)); }
+   | expr_op '+' expr_op
+     { vector<Expr *> * l = new vector<Expr *>;
+       l->push_back($1);
+@@ -327,7 +341,7 @@ expr_app
+   ;
+ 
+ expr_select
+-  : expr_select '.' ID
++  : expr_select '.' id_like
+     { $$ = new ExprSelect($1, data->symbols.create($3)); }
+   | expr_simple { $$ = $1; }
+   ;
+@@ -396,13 +410,13 @@ binds
+   ;
+ 
+ ids
+-  : ids ID { $$ = $1; $1->push_back(data->symbols.create($2)); /* !!! dangerous */ }
++  : ids id_like { $$ = $1; $1->push_back(data->symbols.create($2)); /* !!! dangerous */ }
+   | { $$ = new vector<Symbol>; }
+   ;
+ 
+ attrpath
+-  : attrpath '.' ID { $$ = $1; $1->push_back(data->symbols.create($3)); }
+-  | ID { $$ = new vector<Symbol>; $$->push_back(data->symbols.create($1)); }
++  : attrpath '.' id_like { $$ = $1; $1->push_back(data->symbols.create($3)); }
++  | id_like { $$ = new vector<Symbol>; $$->push_back(data->symbols.create($1)); }
+   ;
+ 
+ expr_list
+@@ -425,7 +439,7 @@ formal
+   : ID { $$ = new Formal(data->symbols.create($1), 0); }
+   | ID '?' expr { $$ = new Formal(data->symbols.create($1), $3); }
+   ;
+-  
++
+ %%
+ 
+ 
+diff --git a/tests/lang/eval-okay-attrs-strings-as-names.exp b/tests/lang/eval-okay-attrs-strings-as-names.exp
+new file mode 100644
+index 0000000..27ba77d
+--- /dev/null
++++ b/tests/lang/eval-okay-attrs-strings-as-names.exp
+@@ -0,0 +1 @@
++true
+diff --git a/tests/lang/eval-okay-attrs-strings-as-names.nix b/tests/lang/eval-okay-attrs-strings-as-names.nix
+new file mode 100644
+index 0000000..eaa0aff
+--- /dev/null
++++ b/tests/lang/eval-okay-attrs-strings-as-names.nix
+@@ -0,0 +1,15 @@
++let
++  attr = {
++    "key 1" = "test";
++    "key 2" = "caseok";
++  };
++
++  t1 = builtins.getAttr "key 1" attr;
++  t2 = attr."key 2";
++  t3 = attr ? "key 1";
++  t4 = builtins.attrNames { inherit (attr) "key 1"; };
++
++in t1 == "test"
++   && t2 == "caseok"
++   && t3 == true
++   && t4 == ["key 1"]
