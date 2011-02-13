@@ -1,0 +1,12 @@
+From: Marc Weber <marco-oweber@gmx.de>
+Subject: [PATCH] nix2/overlays
+
+allow finding overlays by name in same directory where nixpkgs is. This is nice for experimenting
+Example: nixpkgs-haskell-overlay, nixpkgs-ruby-overlay (they do already work)
+nixpkgs-python-overlay is planned
+
+The reason for "overlays" is to keep nixpkgs modular. Some subuniverses such as python, scala, haskell, perl, ..
+should be kept separate to reduce noise on the main repo - and because the
+dumps of package sources (hackage, rubygems, pypi, ...) are quite large.
+
+Signed-off-by: Marc Weber <marco-oweber@gmx.de>
