@@ -1,0 +1,10 @@
+From: Marc Weber <marco-oweber@gmx.de>
+Subject: [PATCH] nix2/deepfun-cleanup
+
+removing deepOverride. The replacement pkgsFunDeepOverride doesn't suffer from
+- maybe overriding args which are named the same way by accident
+- because it forced adding , ...) to some packages
+  which "weakens the precision of the function interface definitios"
+  (quoting Eelco Dolsta)
+
+Signed-off-by: Marc Weber <marco-oweber@gmx.de>
