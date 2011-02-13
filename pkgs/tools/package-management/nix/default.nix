@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, perl, curl, bzip2, openssl ? null
+{ stdenv, fetchurl, perl, curl, bzip2, openssl ? null, flex, bison, docbook2x
 , storeDir ? "/nix/store"
 , stateDir ? "/nix/var"
 }:
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   };
 
   buildNativeInputs = [ perl ];
-  buildInputs = [ curl openssl ];
+  buildInputs = [ curl openssl flex bison ];
 
   configureFlags =
     ''
@@ -34,6 +34,13 @@ stdenv.mkDerivation rec {
   };
 
   doCheck = true;
+
+  # force recreation of parser because of allow-strings-in-names.patch
+  preConfigure = ''
+    find . -type f -iname "parser-tab.*" | xargs rm
+  '';
+
+  patches = [ ./allow-strings-in-names.patch ];
 
   meta = {
     description = "The Nix Deployment System";

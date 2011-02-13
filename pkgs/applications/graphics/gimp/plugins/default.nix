@@ -75,7 +75,7 @@ rec {
        Filters/Generic/FFT Inverse
     */
     name = "fourier-0.3.3";
-    buildInputs = [ gimp pkgs.fftwSinglePrec  pkgconfig glib] ++ gimp.buildNativeInputs;
+    buildInputs = [ gimp pkgs.fftwSinglePrec  pkgconfig gimp.gtkLibs.glib] ++ gimp.buildNativeInputs;
     postInstall = "fail";
     installPhase = "installPlugins fourier";
     src = fetchurl {
