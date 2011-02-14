@@ -10,7 +10,19 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ pam ];
 
-  patches = [ ./no-sanitize-env.patch ./su-name.patch ./keep-path.patch ];
+  patches = [ ./no-sanitize-env.patch ./su-name.patch ./keep-path.patch
+    /* nixos managed /etc[/skel] files are symlinks pointing to /etc/static[/skel]
+    * thus useradd will create symlinks ~/.bashrc. This patch fixes it: If a file
+    * should be copied to user's home directory and it points to /etc/static
+    * the target of the symbolic link is copied instead.
+    * This is only one way to fix it. The alternative would be making nixos
+    * create files in /etc/skel and keep some state around so that it knows
+    * which files it put there so that it can remove them itself. This more
+    * complicated approach would pay off if multiple apps woulb be using
+    * /etc/skel
+    */
+    ./etc-copy-etc-satic-target.patch
+  ];
 
   preBuild =
     ''
