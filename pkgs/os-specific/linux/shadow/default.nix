@@ -8,6 +8,8 @@ stdenv.mkDerivation rec {
     sha256 = "1449ny7pdnwkavg92wvibapnkgdq5pas38nvl1m5xa37g5m7z64p";
   };
 
+  enableParallelBuilding = true;
+
   buildInputs = [ pam ];
 
   patches = [ ./no-sanitize-env.patch ./su-name.patch ./keep-path.patch
