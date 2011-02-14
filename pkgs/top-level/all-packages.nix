@@ -36,7 +36,11 @@
 }:
 
 
-let config_ = config; in # rename the function argument
+let
+
+  mainArgs = { inherit system stdenvType bootStdenv noSysDirs gccWithCC
+    gccWithProfiling config crossSystem platform; };
+  config_ = config; platform_ = platform; in # rename the function arguments
 
 let
 
@@ -169,6 +173,9 @@ let
   inherit lib config getConfig stdenvAdapters;
 
   inherit (lib) lowPrio hiPrio appendToName makeOverridable;
+
+  # tip: merge overlays into pkgs using packageOverrides in your config
+  overlay = name: import (../../.. + "/nixpkgs-${name}-overlay") mainArgs;
 
   # Applying this to an attribute set will cause nix-env to look
   # inside the set for derivations.
@@ -1975,6 +1982,7 @@ let
   };
 
   scala = callPackage ../development/compilers/scala { };
+  scalaRC = lowPrio ( scala.override { version = "2.8.0.RC5"; } );
 
   stalin = callPackage ../development/compilers/stalin { };
 
