@@ -2211,12 +2211,9 @@ let
   racket = callPackage ../development/interpreters/racket { };
 
   ruby18 = callPackage ../development/interpreters/ruby { };
-  #ruby19 = import ../development/interpreters/ruby/ruby-19.nix { inherit ruby18 fetchurl; };
+  ruby19 = callPackage ../development/interpreters/ruby/ruby-19.nix { };
   ruby = ruby18;
-
-  rubyLibs = recurseIntoAttrs (import ../development/interpreters/ruby/libs.nix {
-    inherit pkgs stdenv;
-  });
+  rubyLibs = throw "use ruby overlay instead";
 
   rake = callPackage ../development/ruby-modules/rake { };
 
