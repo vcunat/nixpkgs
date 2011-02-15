@@ -4161,10 +4161,10 @@ let
       icu cairo perl intltool automake libtool
       pkgconfig autoconf bison libproxy enchant
       python ruby which flex geoclue;
-    inherit (gst_all) gstreamer gstPluginsBase gstFfmpeg
+    inherit (p.gst_all) gstreamer gstPluginsBase gstFfmpeg
       gstPluginsGood;
-    inherit (xlibs) libXt renderproto libXrender;
-  }).deepOverride {libsoup = gnome28.libsoup_2_31;});
+    inherit (p.xlibs) libXt renderproto libXrender;
+  };
 
   wvstreams = callPackage ../development/libraries/wvstreams { };
 
