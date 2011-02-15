@@ -1,31 +1,41 @@
-{ stdenv, fetchurl, lib, patchelf, cdrkit, kernel
+{ stdenv, fetchurl, lib, patchelf, cdrkit, kernel, which, makeWrapper
 , libX11, libXt, libXext, libXmu, libXcomposite, libXfixes, libXrandr, libXcursor}:
 
 stdenv.mkDerivation {
-  name = "VirtualBox-GuestAdditions-3.2.8";
+  name = "VirtualBox-GuestAdditions-4.0.2";
   src = fetchurl {
-    url = http://download.virtualbox.org/virtualbox/3.2.8/VBoxGuestAdditions_3.2.8.iso;
-    sha256 = "1pyfgrcdmw6zf3yxgzcd8c5qzqqn62bz4085ka453gfmi9d65lys";
+    url = http://download.virtualbox.org/virtualbox/4.0.2/VBoxGuestAdditions_4.0.2.iso;
+    sha256 = "4c8726f70d4202747d35e1ad715ca9dcd29be1fe74720492097d7fb83cae7988";
   };
   KERN_DIR = "${kernel}/lib/modules/*/build";
-  buildInputs = [ patchelf cdrkit ];
+  buildInputs = [ patchelf cdrkit makeWrapper ];
+
+  installPhase = ''
+    ensureDir $out
+    cp -r install/* $out
+
+  '';
+  
   buildCommand = ''
-    ${if stdenv.system == "i686-linux" then ''
-        isoinfo -J -i $src -x /VBoxLinuxAdditions-x86.run > ./VBoxLinuxAdditions-x86.run
-        chmod 755 ./VBoxLinuxAdditions-x86.run
-        ./VBoxLinuxAdditions-x86.run --noexec --keep
-      ''
-      else if stdenv.system == "x86_64-linux" then ''
-        isoinfo -J -i $src -x /VBoxLinuxAdditions-amd64.run > ./VBoxLinuxAdditions-amd64.run
-        chmod 755 ./VBoxLinuxAdditions-amd64.run
-	./VBoxLinuxAdditions-amd64.run --noexec --keep
+    ${if stdenv.system == "i686-linux" || stdenv.system == "x86_64-linux" then ''
+        isoinfo -J -i $src -x /VBoxLinuxAdditions.run > ./VBoxLinuxAdditions.run
+        chmod 755 ./VBoxLinuxAdditions.run
+	./VBoxLinuxAdditions.run --noexec --keep
       ''
       else throw ("Architecture: "+stdenv.system+" not supported for VirtualBox guest additions")
     }
     
     # Unpack files
     cd install
-    tar xfvj VBoxGuestAdditions.tar.bz2
+    ${if stdenv.system == "i686-linux" then ''
+        tar xfvj VBoxGuestAdditions-x86.tar.bz2
+      ''
+      else if stdenv.system == "x86_64-linux" then ''
+        tar xfvj VBoxGuestAdditions-amd64.tar.bz2
+      ''
+      else throw ("Architecture: "+stdenv.system+" not supported for VirtualBox guest additions")
+    }
+
     
     # Build kernel modules    
     cd src        
@@ -34,9 +44,11 @@ stdenv.mkDerivation {
     do
 	cd $i
 	sed -i -e "s/depmod/echo/g" Makefile
+	sed -i -e "s/depmod/echo/g" */Makefile
 	make
 	cd ..
     done
+
     cd ..
     
     # Change the interpreter for various binaries
@@ -72,6 +84,9 @@ stdenv.mkDerivation {
     install -m 755 bin/VBoxClient $out/bin
     install -m 755 bin/VBoxControl $out/bin
     install -m 755 bin/VBoxClient-all $out/bin
+
+    wrapProgram $out/bin/VBoxClient-all \
+            --prefix PATH : "${which}/bin"
 
     # Install OpenGL libraries
     ensureDir $out/lib

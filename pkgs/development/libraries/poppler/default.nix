@@ -39,20 +39,14 @@ stdenv.mkDerivation ({
     pixman curl libpthreadstubs libXau libXdmcp openjpeg libxml2 stdenv.gcc.libc]
     ++ (if qt4Support then [qt4] else []);
 
-  configureFlags =
-    ''
-      --enable-exceptions --enable-cairo --enable-splash
-      --enable-poppler-glib --enable-zlib --enable-xpdf-headers
-    ''
-    + (if qt4Support then "--enable-qt-poppler" else "--disable-qt-poppler");
+  buildInputs = [ pkgconfig cmake ];
 
-  patches = [ ./GDir-const.patch ];
-
-  preConfigure = "sed -e '/jpeg_incdirs/s@/usr@${libjpeg}@' -i configure";
+  cmakeFlags = "-DENABLE_XPDF_HEADERS=ON -DENABLE_LIBCURL=ON -DENABLE_ZLIB=ON";
 
   # XXX: The Poppler/Qt4 test suite refers to non-existent PDF files
   # such as `../../../test/unittestcases/UseNone.pdf'.
-  doCheck = !qt4Support;
+#doCheck = !qt4Support;
+  checkTarget = "test";
 
   meta = {
     inherit homepage;
@@ -61,6 +55,10 @@ stdenv.mkDerivation ({
     longDescription = ''
       Poppler is a PDF rendering library based on the xpdf-3.0 code base.
     '';
+
+    platforms = if qt4Support
+      then qt4.meta.platforms
+      else stdenv.lib.platforms.all;
 
     license = "GPLv2";
   };

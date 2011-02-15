@@ -491,6 +491,19 @@ rec {
     };
   });
 
+  nose = buildPythonPackage {
+    name = "nose-0.11.3";
+
+    src = fetchurl {
+      url = http://python-nose.googlecode.com/files/nose-0.11.3.tar.gz;
+      sha256 = "1hl3lbwdfl2a64q3dxc73kbiks4iwx5cixlbavyryd8xdr7iziww";
+    };
+
+    meta = {
+      description = "A unittest-based testing framework for python that makes writing and running tests easier";
+    };
+  };
+
   notify = pkgs.stdenv.mkDerivation (rec {
     name = "python-notify-0.1.1";
 
@@ -718,6 +731,34 @@ rec {
     };
   });
 
+  pymacs = pkgs.stdenv.mkDerivation rec {
+    version = "v0.24-beta2";
+    name = "Pymacs-${version}";
+
+    src = fetchurl {
+      url = "https://github.com/pinard/Pymacs/tarball/${version}";
+      name = "${name}.tar.gz";
+      sha256 = "0nzb3wrxwy0cmmj087pszkwgj2v22x0y5m4vxb6axz94zfl02r8j";
+    };
+
+    buildInputs = [ python ];
+
+    configurePhase = ''
+      python p4 -C p4config.py *.in Pymacs contrib tests
+    '';
+
+    installPhase = ''
+      python setup.py install --prefix=$out
+    '';
+
+    meta = with stdenv.lib; {
+      description = "Emacs Lisp to Python interface";
+      homepage = http://pymacs.progiciels-bpi.ca;
+      license = licenses.gpl2;
+      maintainers = [ maintainers.goibhniu ];
+    };
+  };
+
   pyopengl =
     let version = "3.0.0b5";
     in
@@ -872,6 +913,52 @@ rec {
     };
   });
 
+  rope = pkgs.stdenv.mkDerivation rec {
+    version = "0.9.3";
+    name = "rope-${version}";
+
+    src = fetchurl {
+      url = "http://pypi.python.org/packages/source/r/rope/${name}.tar.gz";
+      sha256 = "1092rlsfna7rm1jkdanilsmw7rr3hlkgyji02xfd02wfcm8xa2i7";
+    };
+
+    buildInputs = [ python ];
+
+    installPhase = ''
+      python setup.py install --prefix=$out
+    '';
+
+    meta = with stdenv.lib; {
+      description = "python refactoring library";
+      homepage = http://rope.sf.net;
+      maintainers = [ maintainers.goibhniu ];
+      license = licenses.gpl2;
+    };
+  };
+
+  ropemacs = pkgs.stdenv.mkDerivation rec {
+    version = "0.6";
+    name = "ropemacs-${version}";
+
+    src = fetchurl {
+      url = "mirror://sourceforge/rope/${name}.tar.gz";
+      sha256 = "1afqybmjn7fqkwx8y8kx1kfx181ix73cbq3a0d5n7ryjm7k1r0s4";
+    };
+
+    buildInputs = [ python ];
+
+    installPhase = ''
+      python setup.py install --prefix=$out
+    '';
+
+     meta = with stdenv.lib; {
+       description = "a plugin for performing python refactorings in emacs";
+       homepage = http://rope.sf.net/ropemacs.html;
+       maintainers = [ maintainers.goibhniu ];
+       license = licenses.gpl2;
+     };
+  };
+
   pysvn = pkgs.stdenv.mkDerivation {
     name = "pysvn-1.7.2";
 
@@ -918,26 +1005,41 @@ rec {
     };
   };
 
-  magic = buildPythonPackage rec {
-    name = "magic-0.3.1";
+  magic = pkgs.stdenv.mkDerivation rec {
+    name = "python-${pkgs.file.name}";
 
-    src = fetchurl {
-      url = "http://pypi.python.org/packages/source/p/python-magic/python-${name}.tar.gz";
-      md5 = "397cff81d2502e81fd3830a61ca2ad2c";
-    };
+    src = pkgs.file.src;
 
-    preConfigure =
-      ''
-        # Ensure that the module can find libmagic by hard-coding the
-        # path to libmagic.so.  Maybe there is a nicer way.
-        substituteInPlace magic.py --replace \
-          "ctypes.util.find_library('magic')" \
-          "'${pkgs.file}/lib/libmagic.so'"
-      '';
+    buildInputs = [ python pkgs.file ];
+
+    configurePhase = "cd python";
+
+    buildPhase = "python setup.py build";
+
+    installPhase = "python setup.py install --prefix=$out";
 
     meta = {
       description = "A Python wrapper around libmagic";
-      homepage = https://github.com/ahupp/python-magic;
+      homepage = http://www.darwinsys.com/file/;
+    };
+  };
+
+  MySQL_python = buildPythonPackage {
+    name = "MySQL-python-1.2.3";
+
+    doCheck = false;
+
+    src = fetchurl {
+      url = mirror://sourceforge/mysql-python/MySQL-python-1.2.3.tar.gz;
+      sha256 = "0vkyg9dmj29hzk7fy77f42p7bfj28skyzsjsjry4wqr3z6xnzrkx";
+    };
+
+    propagatedBuildInputs = [ pkgs.mysql pkgs.zlib nose ];
+
+    meta = {
+      description = "MySQL database binding for Python";
+
+      homepage = http://sourceforge.net/projects/mysql-python;
     };
   };
 

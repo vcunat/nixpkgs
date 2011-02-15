@@ -1,16 +1,21 @@
-{ stdenv, fetchurl, ncurses}:
+{ stdenv, fetchurl, ncurses, groff }:
 
 stdenv.mkDerivation rec {
-  name = "libedit-20090923-3.0";
+  name = "libedit-20100424-3.0";
 
   src = fetchurl {
     url = "http://www.thrysoee.dk/editline/${name}.tar.gz";
-    sha256 = "02j66qbd1c9wfghpjb8dzshkcj4i0n9xanxy81552j3is9ilxjka";
+    sha256 = "11hxaq58gym7kqccjhxywjxdibffzg545z1aj997y1dn0rckhav0";
   };
 
+  # Have `configure' avoid `/usr/bin/nroff' in non-chroot builds.
+  NROFF = "${groff}/bin/nroff";
+
   postInstall = ''
-    sed -i s/-lcurses/-lncurses/g $out/lib/pkgconfig/libedit.pc
+    sed -i s/-lncurses/-lncursesw/g $out/lib/pkgconfig/libedit.pc
   '';
+
+  configureFlags = "--enable-widec";
 
   propagatedBuildInputs = [ ncurses ];
 
