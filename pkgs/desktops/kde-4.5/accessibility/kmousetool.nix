@@ -9,9 +9,7 @@ kde.package {
       name = "kmousetool";
       module = "kdeaccessibility";
       version = "1.12";
-      release = "4.5.2";
       versionFile = "kmousetool/kmousetool/version.h";
     };
   };
 }
-

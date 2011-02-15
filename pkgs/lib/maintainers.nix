@@ -8,11 +8,14 @@
   andres = "Andres Loeh <andres@cs.uu.nl>";
   astsmtl = "Alexander Tsamutali <astsmtl@yandex.ru>";
   bjg = "Brian Gough <bjg@gnu.org>";
+  chaoflow = "Florian Friesdorf <flo@chaoflow.net>";
   eelco = "Eelco Dolstra <e.dolstra@tudelft.nl>";
+  goibhniu = "Cillian de Róiste <cillian.deroiste@gmail.com>";
   guibert = "David Guibert <david.guibert@gmail.com>";
   kkallio = "Karn Kallio <tierpluspluslists@gmail.com>";
   ludo = "Ludovic Courtès <ludo@gnu.org>";
   marcweber = "Marc Weber <marco-oweber@gmx.de>";
+  neznalek = "Vladimír Čunát <vcunat@gmail.com>";
   phreedom = "Evgeny Egorochkin <phreedom.stdin@gmail.com>";
   pierron = "Nicolas B. Pierron <nixos@nbp.name>";
   raskin = "Michael Raskin <7c6f434c@mail.ru>";

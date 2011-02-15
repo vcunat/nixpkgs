@@ -1,7 +1,7 @@
 {stdenv, fetchurl, zlib, openssl, tcl}:
 
 let
-  version = "20101117133825";
+  version = "20110113000127907";
 in
 
 stdenv.mkDerivation {
@@ -9,24 +9,25 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "http://www.fossil-scm.org/download/fossil-src-${version}.tar.gz";
-    sha256 = "0h4g7qsbz5vyd3zxywcc2pf6vf3gavxqznpx8gn47j8y6mjp4byn";
+    sha256 = "112jwz02mj44qg2xd2b45i0ff6v106649g681p34k20ngi9qqghm";
   };
 
-  buildInputs = [ zlib openssl tcl ];
-  buildNativeInputs = [ zlib openssl ];
+  buildInputs = [ zlib openssl ];
+  buildNativeInputs = [ tcl ];
 
   doCheck = true;
 
   checkTarget = "test";
 
-  crossAttrs = {
-    doCheck = false;
-  };
-
   installPhase = ''
     ensureDir $out/bin
     INSTALLDIR=$out/bin make install
   '';
+
+  crossAttrs = {
+    doCheck = false;
+    makeFlagsArray = [ "TCC=${stdenv.cross.config}-gcc" ];
+  };
 
   meta = {
     description = "Simple, high-reliability, distributed software configuration management.";
