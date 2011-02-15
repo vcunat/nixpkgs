@@ -1,18 +1,33 @@
-{ stdenv, fetchurl, file, openssl, mlton, mysql, postgresql, sqlite }:
+{ stdenv, fetchurl, file, libmhash, mlton, mysql, postgresql, sqlite, openssl, pkgconfig
+, hg ? false, sourceFromHead }:
+
+
+let source = name: if hg then {
+  # REGION AUTO UPDATE: { name="urweb"; type="hg"; url="http://hg.impredicative.com/urweb"; }
+  src = sourceFromHead "urweb-74d35d9a5d16.tar.gz"
+               (fetchurl { url = "http://mawercer.de/~nix/repos/urweb-74d35d9a5d16.tar.gz"; sha256 = "a5bc9445ab9ab4758eb6605ab4a40fd566e3ea390539dfc7806fd9c594899d2f"; });
+  # END
+  }.src
+  else
+  fetchurl {
+    url = "http://www.impredicative.com/ur/${name}.tgz";
+    sha256 = "00k3ghv115fn8xm99dbc6jygl0g3j6fwc84mgcg76nnim3rvgb8r";
+
+  };
+in
 
 stdenv.mkDerivation rec {
   pname = "urweb";
   version = "20110123";
   name = "${pname}-${version}";
 
-  src = fetchurl {
-    url = "http://www.impredicative.com/ur/${name}.tgz";
-    sha256 = "00k3ghv115fn8xm99dbc6jygl0g3j6fwc84mgcg76nnim3rvgb8r";
-  };
+  src = source name;
 
-  buildInputs = [ stdenv.gcc file openssl mlton mysql postgresql sqlite ];
+  buildInputs = [ stdenv.gcc file libmhash mlton mysql postgresql sqlite pkgconfig ];
 
   patches = [ ./remove-header-include-directory-prefix.patch ];
+  
+  configureFlags = [ "--with-mhash-dir=${libmhash}" "--with-openssl=${openssl}" ];
 
   postPatch = ''
     sed -e 's@/usr/bin/file@${file}/bin/file@g' -i configure
