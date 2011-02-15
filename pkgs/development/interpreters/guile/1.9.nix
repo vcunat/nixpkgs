@@ -7,11 +7,11 @@
  else stdenv.mkDerivation)
 
 rec {
-  name = "guile-1.9.13";  # This is a beta release!
+  name = "guile-1.9.15";  # This is a beta release!
 
   src = fetchurl {
     url = "ftp://alpha.gnu.org/gnu/guile/${name}.tar.gz";
-    sha256 = "1idrp39lnqyiw68k1mmbfrd46zqdn19crwqbg3b064p6hljypdl4";
+    sha256 = "0b6sd2a9s2ccdcr84d16ryk08sqqxgcw8bxisdz9z5b53dvpmh0p";
   };
 
   buildInputs =
@@ -47,7 +47,7 @@ rec {
   setupHook = ./setup-hook.sh;
 
   meta = {
-    description = "GNU Guile 1.9 (alpha), an embeddable Scheme implementation";
+    description = "GNU Guile 1.9 (beta), an embeddable Scheme implementation";
 
     longDescription = ''
       GNU Guile is an implementation of the Scheme programming language, with

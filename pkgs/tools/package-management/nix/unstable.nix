@@ -6,23 +6,28 @@
 }:
 
 stdenv.mkDerivation rec {
-  name = "nix-1.0pre24122";
+  name = "nix-1.0pre25886";
 
   src = fetchurl {
-    url = "http://hydra.nixos.org/build/667798/download/4/${name}.tar.bz2";
-    sha256 = "0rz9radz4452bp3sy9yzcawn9yz5z4nyng43a0zrsa5v72cv695f";
+    url = "http://hydra.nixos.org/build/894162/download/4/${name}.tar.bz2";
+    sha256 = "4513a6a42f485bed692ba2d34214383496f59064b9eb5d5ecec739dda703ddb3";
   };
 
   buildNativeInputs = [ perl pkgconfig ];
+<<<<<<< HEAD
   buildInputs = [ curl openssl boehmgc
     flex bison /* only required because of arbitrary-strings-as-names patch */
   ];
+=======
+  buildInputs = [ curl openssl boehmgc ];
+>>>>>>> nix2/deepfun-cleanup
 
   configureFlags =
     ''
       --with-store-dir=${storeDir} --localstatedir=${stateDir}
-      --with-bzip2=${bzip2}
+      --with-bzip2=${bzip2} --with-sqlite=${sqlite}
       --disable-init-state
+      --enable-gc
       CFLAGS=-O3 CXXFLAGS=-O3
     '';
 
@@ -30,7 +35,7 @@ stdenv.mkDerivation rec {
     configureFlags =
       ''
         --with-store-dir=${storeDir} --localstatedir=${stateDir}
-        --with-bzip2=${bzip2.hostDrv}
+        --with-bzip2=${bzip2.hostDrv} --with-sqlite=${sqlite.hostDrv}
         --disable-init-state
         CFLAGS=-O3 CXXFLAGS=-O3
       '';
