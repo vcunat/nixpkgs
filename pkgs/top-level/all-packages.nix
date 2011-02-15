@@ -4167,12 +4167,11 @@ let
       libjpeg libtiff libpng libxml2 libxslt sqlite
       icu cairo perl intltool automake libtool
       pkgconfig autoconf bison libproxy enchant
-      python ruby which;
-    inherit (p.gst_all) gstreamer gstPluginsBase gstFfmpeg
+      python ruby which flex geoclue;
+    inherit (gst_all) gstreamer gstPluginsBase gstFfmpeg
       gstPluginsGood;
-    flex = p.flex2535;
-    inherit (p.xlibs) libXt renderproto libXrender;
-  };
+    inherit (xlibs) libXt renderproto libXrender;
+  }).deepOverride {libsoup = gnome28.libsoup_2_31;});
 
   wvstreams = callPackage ../development/libraries/wvstreams { };
 
