@@ -12,6 +12,12 @@ stdenv.mkDerivation {
     sha256 = "14qzccgf286hkrpy5y9xskjcvzb5r1p0kmmb7ycibhr6499xd8qy";
   };
 
+  # hacky: force reading /etc/fish/config.fish so that nixos can set path.
+  # using --synconfdir=/etc does not work because fish wants to put files there
+  preBuild = ''
+    sed -i 's@SYSCONFDIR@"/etc"@g' fish.c
+  '';
+
   buildInputs = [
     ncurses
     # bc
