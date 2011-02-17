@@ -221,8 +221,10 @@ rec {
   isShellCodeItem = supportedShells: recurse: a: 
    builtins.isString a
    || (recurse && builtins.isList a && all (isShellCodeItem supportedShells false) a)
-   || (builtins.isAttrs a 
-       && all (n: hasAttr n a) supportedShells);
+   || (builtins.isAttrs a); # it doesn't make sense to check that all items are
+                           # present. Code is very likely to break for other shells because
+                           # authors only provide a bash implementation
+                           # this may change in the future
 
 
   /* Example:
@@ -238,7 +240,7 @@ rec {
           foldl (o: x:
               let s = if builtins.isString x then x
                       else if isList x then codeForShell name x
-                      else getAttr name x;
+                      else maybeAttr name "" x;
               in if o == "" then s else "${o}\n${s}"
           ) "" l;
        # prefixing suffixing \n so that you don't have to think about it
