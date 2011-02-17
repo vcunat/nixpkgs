@@ -121,7 +121,7 @@ runTests {
         "d"
       ];
   in {
-    expr = mergeShellCode shells code;
+    expr = { inherit (mergeShellCode shells code ) bash zsh; };
     expected = { bash = "\na\nb\nB\nc\nd\n"; zsh = "\na\nz\nZ\nc\nd\n"; };
   };
 
@@ -129,7 +129,7 @@ runTests {
     expr = all (eqStrict [1 2 3]) (map (sort builtins.lessThan)
       [
       [ 1 2 3 ]
-      [ 1 2 3 ]
+      [ 1 3 2 ]
       [ 2 3 1 ]
       [ 2 1 3 ]
       [ 3 2 1 ]
