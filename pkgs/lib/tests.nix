@@ -124,5 +124,18 @@ runTests {
     expr = mergeShellCode shells code;
     expected = { bash = "\na\nb\nB\nc\nd\n"; zsh = "\na\nz\nZ\nc\nd\n"; };
   };
+
+  testListSort = {
+    expr = all (eqStrict [1 2 3]) (map (sort builtins.lessThan)
+      [
+      [ 1 2 3 ]
+      [ 1 2 3 ]
+      [ 2 3 1 ]
+      [ 2 1 3 ]
+      [ 3 2 1 ]
+      [ 3 1 2 ]
+      ]);
+    expected = true;
+  };
   
 }
