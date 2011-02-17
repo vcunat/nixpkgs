@@ -157,7 +157,7 @@ rec {
         else let
           part = partition (strictLess (head l)) (tail l);
         in
-          qs part.wrong ([(head l)] ++ qs part.right []);
+          (qs part.wrong ([(head l)] ++ qs part.right [])) ++ concat;
     in
       qs list [];
 
