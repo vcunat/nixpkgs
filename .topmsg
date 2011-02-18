@@ -61,4 +61,6 @@ adding fish shell
 
 shadow: useradd: dereference /etc/skel/* symlinks so that files are put into home directories Also enable parallel building
 
+builderdefs: enable parallel building and add verbose script
+
 Signed-off-by: Marc Weber <marco-oweber@gmx.de>
