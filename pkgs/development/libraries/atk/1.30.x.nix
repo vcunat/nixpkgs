@@ -7,6 +7,8 @@ stdenv.mkDerivation rec {
     url = "mirror://gnome/sources/atk/1.30/${name}.tar.bz2";
     sha256 = "92b9b1213cafc68fe9c3806273b968c26423237d7b1f631dd83dc5270b8c268c";
   };
+  
+  enableParallelBuilding = true;
 
   buildInputs = [ pkgconfig perl ];
   propagatedBuildInputs = [ glib ];

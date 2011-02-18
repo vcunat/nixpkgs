@@ -4,6 +4,8 @@ stdenv.mkDerivation rec {
   name = "${pname}-${version}";
   version = "1.6.0";
   pname = "enchant";
+
+  enableParallelBuilding = true;
   
   src = fetchurl {
     url = "http://www.abisource.com/downloads/${pname}/${version}/${name}.tar.gz";
