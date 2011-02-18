@@ -6182,6 +6182,8 @@ let
 
   pidginsipe = callPackage ../applications/networking/instant-messengers/pidgin-plugins/sipe { };
 
+  pidginPlugins = callPackage ../applications/networking/instant-messengers/pidgin-plugins { };
+
   pinfo = callPackage ../applications/misc/pinfo { };
 
   pinta = callPackage ../applications/graphics/pinta {

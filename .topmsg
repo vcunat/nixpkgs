@@ -65,4 +65,8 @@ builderdefs: enable parallel building and add verbose script
 
 sourceAndTags: ruby support
 
+pidigin:
+     new attr: pidgin plugins (TODO move all plugins there)
+     + plugin pidgin-bot-sentry-1.3.0
+
 Signed-off-by: Marc Weber <marco-oweber@gmx.de>
