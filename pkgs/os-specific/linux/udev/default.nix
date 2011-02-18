@@ -11,6 +11,8 @@ stdenv.mkDerivation rec {
     sha256 = "0wx43bxiff8i80k7w3j2iszksdzw1hz6sanx8cjsiypgppi4fr12";
   };
 
+  enableParallelBuilding = true;
+
   buildInputs = [ gperf pkgconfig glib acl libusb usbutils ];
 
   configureFlags =
