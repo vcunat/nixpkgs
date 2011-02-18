@@ -63,4 +63,6 @@ shadow: useradd: dereference /etc/skel/* symlinks so that files are put into hom
 
 builderdefs: enable parallel building and add verbose script
 
+sourceAndTags: ruby support
+
 Signed-off-by: Marc Weber <marco-oweber@gmx.de>
