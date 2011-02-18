@@ -61,4 +61,13 @@ adding fish shell
 
 shadow: useradd: dereference /etc/skel/* symlinks so that files are put into home directories Also enable parallel building
 
+builderdefs: enable parallel building and add verbose script
+
+sourceAndTags: ruby support
+adding networkmanager
+
+pidigin:
+     new attr: pidgin plugins (TODO move all plugins there)
+     + plugin pidgin-bot-sentry-1.3.0
+
 Signed-off-by: Marc Weber <marco-oweber@gmx.de>

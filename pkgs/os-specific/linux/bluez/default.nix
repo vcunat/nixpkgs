@@ -4,6 +4,8 @@ assert stdenv.isLinux;
    
 stdenv.mkDerivation rec {
   name = "bluez-4.69";
+
+  enableParallelBuilding = true;
    
   src = fetchurl {
     url = "mirror://kernel/linux/bluetooth/${name}.tar.gz";
