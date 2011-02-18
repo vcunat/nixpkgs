@@ -8,6 +8,8 @@ stdenv.mkDerivation rec {
     url = http://www.freedesktop.org/software/ConsoleKit/dist/ConsoleKit-0.4.1.tar.bz2;
     sha256 = "0gj0airrgyi14a06w3d4407g62bs5a1cam2h64s50x3d2k3ascph";
   };
+
+  enableParallelBuilding = true;
   
   buildInputs = [ pkgconfig dbus_glib zlib pam glib libX11 polkit expat ];
   patches = [ ./0001-Don-t-daemonize-when-activated.patch

@@ -7,6 +7,8 @@
 stdenv.mkDerivation rec {
   name = "gst-plugins-good-0.10.25";
 
+  enableParallelBuilding = false;
+
   src = fetchurl {
     urls = [
       "${meta.homepage}/src/gst-plugins-good/${name}.tar.bz2"
