@@ -2,6 +2,8 @@
 
 stdenv.mkDerivation {
   name = "gnome-keyring-2.28.0";
+
+  enableParallelBuilding = true;
   
   src = fetchurl {
     url = mirror://gnome/sources/gnome-keyring/2.28/gnome-keyring-2.28.0.tar.bz2;
