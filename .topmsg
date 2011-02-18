@@ -64,6 +64,7 @@ shadow: useradd: dereference /etc/skel/* symlinks so that files are put into hom
 builderdefs: enable parallel building and add verbose script
 
 sourceAndTags: ruby support
+adding networkmanager
 
 pidigin:
      new attr: pidgin plugins (TODO move all plugins there)
