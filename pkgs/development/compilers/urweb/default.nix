@@ -36,10 +36,8 @@ stdenv.mkDerivation rec {
 
   preConfigure =
     ''
-      export GCCARGS="-I${mysql}/include/mysql -I${postgresql}/include -I${sqlite}/include -L${mysql}/lib/mysql -L${postgresql}/lib -L${sqlite}/lib"
+      export GCCARGS="-I${mysql}/include/mysql -I${postgresql}/include -I${sqlite}/include -L${libmhash}/lib/mysql -L${mysql}/lib/mysql -L${postgresql}/lib -L${sqlite}/lib"
     '';
-
-  configureFlags = "--with-openssl=${openssl}"; 
 
   dontDisableStatic = true;
 
