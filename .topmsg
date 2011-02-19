@@ -70,4 +70,6 @@ pidigin:
      new attr: pidgin plugins (TODO move all plugins there)
      + plugin pidgin-bot-sentry-1.3.0
 
+postfix: update
+
 Signed-off-by: Marc Weber <marco-oweber@gmx.de>

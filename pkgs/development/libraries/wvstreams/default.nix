@@ -10,6 +10,8 @@ stdenv.mkDerivation {
     sha256 = "0cvnq3mvh886gmxh0km858aqhx30hpyrfpg1dh6ara9sz3xza0w4";
   };
 
+  enableParallelBuilding = false; # fails to build
+
   preConfigure = ''
     find -type f | xargs sed -i 's@/bin/bash@bash@g'
   '';
