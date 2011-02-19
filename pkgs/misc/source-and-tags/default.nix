@@ -10,9 +10,9 @@ args: with args; {
 
   # createTagFiles =  [ { name  = "my_tag_name_without_suffix", tagCmd = "ctags -R . -o \$TAG_FILE"; } ]
   # tag command must create file named $TAG_FILE
-  sourceWithTagsDerivation = {name, src, srcDir ? ".", tagSuffix ? "_tags", createTagFiles ? []} :  
+  sourceWithTagsDerivation = {name, src ? null, srcDir ? ".", tagSuffix ? "_tags", createTagFiles ? [], doUnpack ? true} :  
     stdenv.mkDerivation {
-    phases = "unpackPhase buildPhase";
+    phases = (lib.optionalString doUnpack "unpackPhase ") + "buildPhase";
     inherit src srcDir tagSuffix;
     name = "${name}-source-with-tags";
     buildInputs = [ unzip ];
@@ -67,7 +67,7 @@ args: with args; {
 
 
   addCTaggingInfo = deriv :
-    deriv // { 
+    deriv // {
       passthru = {
         sourceWithTags = {
          inherit (deriv) src;
@@ -77,7 +77,23 @@ args: with args; {
                  tagCmd = "${toString ctags}/bin/ctags --sort=yes -o \$TAG_FILE -R ."; }
           ];
         };
-  }; };
+      }; 
+    };
+
+  addRubyTagingInfo = deriv: deriv // {
+    passthru = {
+      sourceWithTags = {
+         doUnpack = false; # ruby always has source in $out. So we can use the original store paths
+         name = "${deriv.name}-source-ctags";
+         createTagFiles = [
+               { inherit  (deriv) name;
+                 tagCmd = "${toString ctags}/bin/ctags --sort=yes -o \$TAG_FILE -R ${deriv}"; }
+          ];
+
+      };
+    };
+  };
+
 }
 /*
 experimental

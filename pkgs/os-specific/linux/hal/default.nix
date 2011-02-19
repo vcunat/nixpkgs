@@ -10,6 +10,8 @@ assert stdenv ? glibc;
 stdenv.mkDerivation rec {
   name = "hal-0.5.14";
 
+  enableParallelBuilding = true;
+
   src = fetchurl {
     url = "http://hal.freedesktop.org/releases/${name}.tar.gz";
     sha256 = "00ld3afcbh4ckb8sli63mm2w69zh6ip4axhy1lxyybgiabxaqfij";

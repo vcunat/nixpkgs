@@ -3,6 +3,7 @@
 
 stdenv.mkDerivation {
   name = "GConf-2.26.2";
+  enableParallelBuilding = true;
   
   src = fetchurl {
     url = mirror://gnome/platform/2.26/2.26.2/sources/GConf-2.26.2.tar.bz2;

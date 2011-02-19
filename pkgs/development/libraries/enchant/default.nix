@@ -2,6 +2,8 @@
 
 stdenv.mkDerivation rec {
   name = "enchant-1.3.0";
+
+  enableParallelBuilding = true;
   
   src = fetchurl {
     url = "http://www.abisource.com/downloads/enchant/1.3.0/${name}.tar.gz";

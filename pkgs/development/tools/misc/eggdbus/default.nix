@@ -2,6 +2,8 @@
 
 stdenv.mkDerivation rec {
   name = "eggdbus-0.6";
+
+  enableParallelBuilding = true;
   
   src = fetchurl {
     url = "http://hal.freedesktop.org/releases/${name}.tar.gz";

@@ -92,6 +92,7 @@ let inherit (builtins) head tail trace; in
                 trap \"closeNest\" EXIT
         ");
 
+        verbose = fullDepEntry "\nset -x\n" ["minInit"];
 
         # changing this ? see [1]
         minInit = fullDepEntry ("
@@ -280,10 +281,9 @@ let inherit (builtins) head tail trace; in
                 ./autogen.sh
         '')["minInit" "addInputs" "doUnpack"];
 
-        # changing this ? see [1]
-        doMake = fullDepEntry ("        
-                make ${toString makeFlags}
-        ") ["minInit" "addInputs" "doUnpack"];
+        doMake = fullDepEntry (''        
+                make ${toString makeFlags} ''${enableParallelBuilding:+-j''${NIX_BUILD_CORES} -l''${NIX_BUILD_CORES}}
+        '') ["minInit" "addInputs" "doUnpack"];
 
         doUnpack = toSrcDir (toString src);
 
@@ -472,7 +472,9 @@ let inherit (builtins) head tail trace; in
           buildCommand = textClosure localDefs localDefs.realPhaseNames;
           meta = localDefs.meta;
 	  passthru = localDefs.passthru // {inherit (localDefs) src; };
-        }) // (if localDefs ? propagatedBuildInputs then {
+        })
+          // (if args ? enableParallelBuilding then { inherit (args) enableParallelBuilding; } else {} )
+          // (if localDefs ? propagatedBuildInputs then {
           inherit (localDefs) propagatedBuildInputs;
         } else {}) // extraDerivationAttrs)
         );

@@ -1,7 +1,7 @@
 { stdenv, fetchurl, pkgconfig, perl, perlXMLParser, gtk, libXft
 , libpng, zlib, popt, boehmgc, libxml2, libxslt, glib, gtkmm
 , glibmm, libsigcxx, lcms, boost, gettext, makeWrapper, intltool
-, gsl, python, pyxml, lxml }:
+, gsl, python, pyxml, lxml, poppler }:
 
 stdenv.mkDerivation rec {
   name = "inkscape-0.48.0";
