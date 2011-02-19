@@ -11,6 +11,8 @@ stdenv.mkDerivation rec {
     sha256 = "0m72rrbgy9qncwhqsq9q35niicy6i06sk3g5i8w9bvkhmib27qll";
   };
 
+  enableParallelBuilding = true;
+
   # Since `libpulse*.la' contain `-lgdbm', it must be propagated.
   propagatedBuildInputs = [ gdbm ];
 

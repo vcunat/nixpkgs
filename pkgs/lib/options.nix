@@ -244,7 +244,7 @@ rec {
               in if o == "" then s else "${o}\n${s}"
           ) "" l;
        # prefixing suffixing \n so that you don't have to think about it
-    in (builtins.listToAttrs ((map (n: nameValuePair n (throw "${n} support not enabled but something accessed a code.zsh attr") ) ) 
+    in (builtins.listToAttrs ((map (n: nameValuePair n (throw "${n} support not enabled but something accessed a code.${n} attr") ) ) 
                               [ "bash" "sh" "zsh" "fish" "fcsh" "dash" "csh" ]))
     // builtins.listToAttrs (map (n: nameValuePair n "\n${codeForShell n list}\n") shells);
 

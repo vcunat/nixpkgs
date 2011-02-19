@@ -2190,6 +2190,8 @@ let
 
   urweb = callPackage ../development/compilers/urweb { };
 
+  urwebHG = callPackage ../development/compilers/urweb { hg = true; };
+
   vala = callPackage ../development/compilers/vala { };
 
   visualcpp = callPackage ../development/compilers/visual-c++ { };
@@ -6511,6 +6513,8 @@ let
   pidginotr = callPackage ../applications/networking/instant-messengers/pidgin-plugins/otr { };
 
   pidginsipe = callPackage ../applications/networking/instant-messengers/pidgin-plugins/sipe { };
+
+  pidginPlugins = callPackage ../applications/networking/instant-messengers/pidgin-plugins { };
 
   pinfo = callPackage ../applications/misc/pinfo { };
 

@@ -19,6 +19,7 @@ let localDefs = builderDefs.passthru.function {
 in with localDefs;
 stdenv.mkDerivation {
   name = "fftw-3.2.2" + ( if singlePrecision then "-single" else "-double" );
+  enableParallelBuilding = true;
   builder = writeScript "fftw-3.2.1-builder"
     (textClosure localDefs [doConfigure doMakeInstall doForceShare]);
   meta = {
