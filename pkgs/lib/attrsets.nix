@@ -102,8 +102,8 @@ rec {
     else
       [];
 
-  /* flip keys and values: {a = 7;} -> {"7" = "a";} */
-  flip = a: listToAttrs ((map (n: nameValuePair (toString (getAttr n a)) n ) (attrNames a)));
+  /* flipAttrs keys and values: {a = 7;} -> {"7" = "a";} */
+  flipAttrs = a: listToAttrs ((map (n: nameValuePair (toString (getAttr n a)) n ) (attrNames a)));
 
   /* Utility function that creates a {name, value} pair as expected by
      builtins.listToAttrs. */
