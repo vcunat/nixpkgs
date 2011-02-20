@@ -139,7 +139,7 @@ runTests {
   };
 
   testFlip = {
-    expr = flipAttrs {a = 7;};
+    expr = attrsFlip {a = 7;};
     expected = {"7"= "a";};
   };
   
