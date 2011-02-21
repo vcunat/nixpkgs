@@ -28,12 +28,14 @@ stdenv.mkDerivation {
 
     mkdir $out/share/postfix/conf
     cp conf/* $out/share/postfix/conf
-    sed -e 's@PATH=.*@PATH=${coreutils}/bin:${findutils}/bin:${gnused}/bin:${gnugrep}/bin:$out/sbin@' -i $out/share/postfix/conf/post-install
-    sed -e '2aPATH=${coreutils}/bin:${findutils}/bin:${gnused}/bin:${gnugrep}/bin:$out/sbin' -i $out/share/postfix/conf/postfix-script
+    sed -i -e "s@^PATH=.*@PATH=$P@" \
+      $out/{share/postfix/conf,libexec/postfix}/post-install \
+      $out/{share/postfix/conf,libexec/postfix}/postfix-script
     chmod a+x $out/share/postfix/conf/{postfix-script,post-install}
   '';
 
   preBuild = ''
+    P=${coreutils}/bin:${findutils}/bin:${gnused}/bin:${gnugrep}/bin:$out/sbin
     export daemon_directory=$out/libexec/postfix
     export command_directory=$out/sbin
     export queue_directory=/var/spool/postfix
@@ -46,6 +48,10 @@ stdenv.mkDerivation {
     export readme_directory=$out/share/postfix/doc
 
     make makefiles CCARGS='-DUSE_TLS -DUSE_SASL_AUTH -DUSE_CYRUS_SASL -DHAS_DB -I${cyrus_sasl}/include/sasl' AUXLIBS='-lssl -lcrypto -lsasl2 -ldb'
+    sed -i "s@\\(/bin:/usr/bin:\\)\\?/usr/sbin@$P@" \
+        src/global/mail_params.h  \
+        src/util/sys_defs.h  \
+        conf/main.cf
   '';
 
   buildInputs = [db4 openssl cyrus_sasl perl];
