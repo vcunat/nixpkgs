@@ -137,5 +137,10 @@ runTests {
       ]);
     expected = true;
   };
+
+  testFlip = {
+    expr = attrFlip {a = 7;};
+    expected = {"7"= "a";};
+  };
   
 }
