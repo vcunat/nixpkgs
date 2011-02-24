@@ -34,20 +34,20 @@ let
 
 stdenv.mkDerivation rec {
 
-  name = "opera-11.00";
+  name = "opera-11.01";
 
   builder = ./builder.sh;
   
   src =
     if stdenv.system == "i686-linux" then
       fetchurl {
-        url = "http://get.opera.com/pub/opera/linux/1100/opera-11.00-1156.i386.linux.tar.bz2";
-        sha256 = "0rdzxnalf1djzm3bwv152fdqjrb20ka7li6y799ral7zyb9mw6lm";
+        url = "http://get.opera.com/pub/opera/linux/1101/opera-11.01-1190.i386.linux.tar.bz2";
+        sha256 = "1n4zbdqk6f0hhlvq69mh44k8pc0yp8dhxq4br801jgsjkmvnj9hh";
       }
     else if stdenv.system == "x86_64-linux" then
       fetchurl {
-        url =  "http://get.opera.com/pub/opera/linux/1100/opera-11.00-1156.x86_64.linux.tar.bz2";
-        sha256 = "1j5isxral2frg9zcspcsbyfk6zijr8hz7gpydymwnfkhd59hbrj6";
+        url =  "http://get.opera.com/pub/opera/linux/1101/opera-11.01-1190.x86_64.linux.tar.bz2";
+        sha256 = "0nzfj40lb87fmx37lsjim1b8a9jdxd0368f6q8w9glkpdh79ry7j";
       }
     else throw "Opera is not supported on ${stdenv.system} (only i686-linux and x86_64 linux are supported)";
 

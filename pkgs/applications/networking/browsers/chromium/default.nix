@@ -41,12 +41,12 @@ stdenv.mkDerivation rec {
   src =
     if stdenv.system == "x86_64-linux" then
       fetchurl {
-        url = "http://build.chromium.org/f/chromium/continuous/linux64/2011-02-12/${version}/chrome-linux.zip";
-        sha256 = "1g1xi8l02mv53r7g3x6w93i0rqdx09k8x7bypm9g51w315k6yssj";
+        url = "http://build.chromium.org/f/chromium/continuous/linux64/2011-02-23/75832/chrome-linux.zip";
+        sha256 = "020kncysnc48f9gb6cvndmmyl89r96fgmn6lwscmf14bpcpd44jg";
       }
     else if stdenv.system == "i686-linux" then
       fetchurl {
-        url = "http://build.chromium.org/f/chromium/continuous/linux/2011-02-12/${version}/chrome-linux.zip";
+        url = throw "TODO";
         sha256 = "163z2b7c7plf0ys18mj0g5ppkdfw9sr8i089hy2h7l0xscp18s11";
       }
     else throw "Chromium is not supported on this platform.";
