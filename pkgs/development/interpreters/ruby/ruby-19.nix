@@ -37,7 +37,7 @@ let
       name = "ruby-trunk";
       # REGION AUTO UPDATE:   { name="ruby19trunk"; type="svn"; url="http://svn.ruby-lang.org/repos/ruby/trunk"; }
       src = sourceFromHead "ruby19trunk-30894.tar.gz"
-                   (throw "source not not published yet: ruby19trunk");
+                   (fetchurl { url = "http://mawercer.de/~nix/repos/ruby19trunk-30946.tar.gz"; sha256 = "b2fca330b3b2b39c8685341ef92a04157af1a325843988d6af787d38928124f8"; });
       # END
     };
     "1.9.2-svn" = {
