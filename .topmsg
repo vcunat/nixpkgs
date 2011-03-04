@@ -72,4 +72,6 @@ pidigin:
 
 postfix: update
 
+haskellMode (emacs): update source
+
 Signed-off-by: Marc Weber <marco-oweber@gmx.de>
