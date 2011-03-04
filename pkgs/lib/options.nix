@@ -248,10 +248,6 @@ rec {
                               [ "bash" "sh" "zsh" "fish" "fcsh" "dash" "csh" ]))
     // builtins.listToAttrs (map (n: nameValuePair n "\n${codeForShell n list}\n") shells);
 
-  # if this merge function fails due to isShellCodeItem you probably missed a definition for supportedShells
-  # in attrs
-  mergeShellCodeOption = mergeTypedOption "shell code item" (isShellCodeItem supportedShells true) concatLists;
-
   fixableMergeFun = merge: f: config:
     merge (
       # generate the list of option sets.
