@@ -1,2 +1,9 @@
+trunk
+nix2/package-updates
 nix2/deepfun-cleanup
+nix2/gimp-git
 nix2/nix-arbitrary-string-as-key-patch
+nix2/overlays
+nix2/php
+nix2/ruby-next
+nix2/urweb-hg
