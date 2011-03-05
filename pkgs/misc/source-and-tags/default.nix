@@ -94,6 +94,20 @@ args: with args; {
     };
   };
 
+  addPythonTagingInfo = deriv: deriv // {
+    passthru = {
+      sourceWithTags = {
+         doUnpack = false; # assuming python has .py files, no archives
+         name = "${deriv.name}-source-ctags";
+         createTagFiles = [
+               { inherit  (deriv) name;
+                 tagCmd = "${toString ctags}/bin/ctags --sort=yes -o \$TAG_FILE -R ${deriv}"; }
+          ];
+
+      };
+    };
+  };
+
 }
 /*
 experimental
