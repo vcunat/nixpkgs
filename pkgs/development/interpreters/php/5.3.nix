@@ -14,6 +14,8 @@ composableDerivation {} ( fixed : let inherit (fixed.fixed) version; in {
 
   buildInputs = ["flex" "bison" "pkgconfig"];
 
+  enableParallelBuilding = true;
+
   flags = {
 
 # much left to do here...
@@ -102,6 +104,9 @@ composableDerivation {} ( fixed : let inherit (fixed.fixed) version; in {
         configureFlags = ["--enable-mbstring"];
       };
 
+      tidy = {
+        configureFlags = ["--with-tidy=${htmlTidy}"];
+      };
       /*
          php is build within this derivation in order to add the xdebug lines to the php.ini.
          So both Apache and command line php both use xdebug without having to configure anything.
@@ -132,6 +137,7 @@ composableDerivation {} ( fixed : let inherit (fixed.fixed) version; in {
     opensslSupport = getConfig ["php" "openssl"] true;
     mbstringSupport = getConfig ["php" "mbstring"] true;
     gdSupport = getConfig ["php" "gd"] true;
+    tidySupport = getConfig ["php" "tidy"] true;
   };
 
   configurePhase = ''
