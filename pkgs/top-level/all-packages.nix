@@ -376,6 +376,8 @@ let
     client = true;
   });
 
+  anyterm = callPackage ../tools/networking/anyterm { };
+
   aria = builderDefsPackage (import ../tools/networking/aria) {
   };
 
