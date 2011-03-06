@@ -65,6 +65,7 @@ builderdefs: enable parallel building and add verbose script
 
 sourceAndTags: ruby support
 adding networkmanager
+adding anyterm
 
 pidigin:
      new attr: pidgin plugins (TODO move all plugins there)
