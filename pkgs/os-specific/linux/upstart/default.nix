@@ -1,11 +1,11 @@
 { stdenv, fetchurl, pkgconfig, dbus, libnih }:
 
 stdenv.mkDerivation rec {
-  name = "upstart-0.6.6";
+  name = "upstart-1.0";
   
   src = fetchurl {
-    url = "http://upstart.ubuntu.com/download/0.6/${name}.tar.gz";
-    sha256 = "1cy962n4ljjxfxaigcnqsl9gq8j09j28g5jg19zk4lc7h1503d3s";
+    url = http://launchpad.net/upstart/1.x/1.0/+download/upstart-1.0.tar.gz;
+    sha256 = "05n608vcb6184ncaw40b6frjyyr9w7apkbnwrh334jf9hz5ypp8f";
   };
 
   buildInputs = [ pkgconfig dbus libnih ];
@@ -26,12 +26,12 @@ stdenv.mkDerivation rec {
   # runtime; otherwise we can't and we need to reboot.
   passthru.interfaceVersion = 2;
 
-  postInstall =
-    ''
-      t=$out/etc/bash_completion.d
-      ensureDir $t
-      cp ${./upstart-bash-completion} $t/upstart
-    '';
+  postInstall = ''
+    t=$out/etc/bash_completion.d
+    ensureDir $t
+    mv contrib/bash_completion/upstart $t
+    sed -i 's@\<have\> \([^ ]\+\)@type -p \1 \&>/dev/null@' $t/upstart
+  '';
 
   meta = {
     homepage = "http://upstart.ubuntu.com/";
