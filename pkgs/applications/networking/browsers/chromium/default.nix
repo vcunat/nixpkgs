@@ -37,17 +37,17 @@ assert stdenv.system == "i686-linux" || stdenv.system == "x86_64-linux" ;
 
 stdenv.mkDerivation rec {
   name = "chrome-${version}";
-  version = "74731";
+  version = "75853";
   src =
     if stdenv.system == "x86_64-linux" then
       fetchurl {
-        url = "http://build.chromium.org/f/chromium/continuous/linux64/2011-02-23/75832/chrome-linux.zip";
-        sha256 = "020kncysnc48f9gb6cvndmmyl89r96fgmn6lwscmf14bpcpd44jg";
+        url = "http://build.chromium.org/f/chromium/continuous/linux64/2011-02-23/${version}/chrome-linux.zip";
+        sha256 = "1bh507j1pm3qrkj8afzhmqicza5nms6f4dc9848xjgcvj9x2qii7";
       }
     else if stdenv.system == "i686-linux" then
       fetchurl {
-        url = throw "TODO";
-        sha256 = "163z2b7c7plf0ys18mj0g5ppkdfw9sr8i089hy2h7l0xscp18s11";
+        url = "http://build.chromium.org/f/chromium/continuous/linux/2011-02-23/${version}/chrome-linux.zip";
+        sha256 = "0rq888yvw5zsh0c3jnp115y4sl1q5kn4pz8flnwhrh35ca15lchn";
       }
     else throw "Chromium is not supported on this platform.";
 
