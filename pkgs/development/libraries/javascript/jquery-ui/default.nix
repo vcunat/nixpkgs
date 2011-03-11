@@ -1,11 +1,11 @@
 { stdenv, fetchurl, unzip }:
 
 stdenv.mkDerivation rec {
-  name = "jquery-ui-1.8.7";
+  name = "jquery-ui-1.8.10";
 
   src = fetchurl {
     url = "http://jqueryui.com/download/${name}.custom.zip";
-    sha256 = "17j6cmzri6gkrhp4qfnr73sql8qiyxzadrii4ljj62i6vhkb1x2i";
+    sha256 = "0yglab9zmxr1il2rmxxd7gycpfaavgpi03h8nc5b2yx2kz80jlik";
   };
 
   sourceRoot = ".";
@@ -27,5 +27,6 @@ stdenv.mkDerivation rec {
   meta = {
     homepage = http://jqueryui.com/;
     description = "A library of JavaScript widgets and effects";
+    platforms = stdenv.lib.platforms.all;
   };
 }
