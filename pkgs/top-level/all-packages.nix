@@ -130,6 +130,7 @@ let
         # pkgsDeepOverride before overridding with overrider.
         # See webkit example - updated implementation of
         # http://wiki.nixos.org/w/index.php?title=Escape_from_dependency_hell
+        # probably this is obsoleted by applyGlobalOverrides. See webkit
         deepOverride = deepOverrides: pkgsFun pkgs (deepOverrides // __overrides);
     in
     helperFunctions // rec {
