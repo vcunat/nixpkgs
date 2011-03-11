@@ -39,8 +39,6 @@ stdenv.mkDerivation rec {
       export GCCARGS="-I${mysql}/include/mysql -I${postgresql}/include -I${sqlite}/include -L${mysql}/lib/mysql -L${postgresql}/lib -L${sqlite}/lib"
     '';
 
-  configureFlags = "--with-openssl=${openssl}"; 
-
   dontDisableStatic = true;
 
   meta = {
