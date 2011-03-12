@@ -1,0 +1,6 @@
+From: Vladimír Čunát <vcunat@gmail.com>
+Subject: [PATCH] vlada/meld
+
+Modified meld colors to be readable with dark themes
+
+Signed-off-by: Vladimír Čunát <vcunat@gmail.com>
