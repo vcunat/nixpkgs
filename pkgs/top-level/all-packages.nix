@@ -6330,6 +6330,10 @@ let
 
   kermit = callPackage ../tools/misc/kermit { };
 
+  kile_beta = lowPrio (callPackage ../applications/editors/kile/beta.nix {
+    inherit (kde4) kdelibs automoc4;
+  });
+
   kino = import ../applications/video/kino {
     inherit fetchurl stdenv pkgconfig libxml2 perl perlXMLParser
       libdv libraw1394 libavc1394 libiec61883 x11 gettext cairo; /* libavformat */
