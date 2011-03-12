@@ -28,7 +28,7 @@ index 0000000..a2f9918
 +" Language:	nix
 +" Maintainer:	Marc Weber <marco-oweber@gmx.de>
 +"               Modify and commit if you feel that way
-+" Last Change:	2007 Dec
++" Last Change:	2011 Feb
 +"
 +" this syntax file can be still be enhanced very much..
 +" Don't ask, do it :-)
@@ -37,6 +37,9 @@ index 0000000..a2f9918
 +if exists("b:current_syntax")
 +  finish
 +endif
++
++" Conform to nix coding style
++set shiftwidth=2 tabstop=2 expandtab
 +
 +syn keyword	nixKeyword	let throw inherit import true false null with
 +syn keyword	nixConditional	if else then
