@@ -1,0 +1,7 @@
+From: Vladimír Čunát <vcunat@gmail.com>
+Subject: [PATCH] vim
+
+- .nix files settings: correct indentation
+- corrected config options
+
+Signed-off-by: Vladimír Čunát <vcunat@gmail.com>
