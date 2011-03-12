@@ -1,10 +1,10 @@
 {fetchurl, stdenv, ncurses}:
 
 stdenv.mkDerivation rec {
-  name = "htop-0.8.3";
+  name = "htop-0.9";
   src = fetchurl {
     url = "mirror://sourceforge/htop/${name}.tar.gz";
-    sha256 = "f03bac8999c57c399cbf4332831bcce905d0393d0f97f7e32a1407b48890dd9d";
+    sha256 = "1zgvwr7giypmxbhvz087d10546dzp47b74nn1v9wqsw8w4w5rrjd";
   };
   buildInputs = [ncurses];
   meta = {
