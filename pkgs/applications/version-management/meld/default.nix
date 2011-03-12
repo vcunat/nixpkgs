@@ -15,7 +15,9 @@ stdenv.mkDerivation {
 
   buildInputs = [ pygtk python intltool scrollkeeper makeWrapper ];
 
-  patchPhase = ''
+  patches = [ ./colors.patch ];
+
+  postPatch = ''
     sed -e s,/usr/local,$out, -i INSTALL
     sed -e 's,#!.*,#!${python}/bin/python,' -i bin/meld
   '';

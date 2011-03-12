@@ -1,0 +1,51 @@
+diff --git a/meld/preferences.py b/meld/preferences.py
+index 878676f..3d0f7fc 100644
+--- a/meld/preferences.py
++++ b/meld/preferences.py
+@@ -254,16 +254,16 @@ class MeldPreferences(prefs.Preferences):
+         "text_codecs": prefs.Value(prefs.STRING, "utf8 latin1"),
+         "ignore_symlinks": prefs.Value(prefs.BOOL,0),
+         "vc_console_visible": prefs.Value(prefs.BOOL, 0),
+-        "color_delete_bg" : prefs.Value(prefs.STRING, "DarkSeaGreen1"),
++        "color_delete_bg" : prefs.Value(prefs.STRING, "#003300"),
+         "color_delete_fg" : prefs.Value(prefs.STRING, "Red"),
+-        "color_replace_bg" : prefs.Value(prefs.STRING, "#ddeeff"),
+-        "color_replace_fg" : prefs.Value(prefs.STRING, "Black"),
+-        "color_conflict_bg" : prefs.Value(prefs.STRING, "Pink"),
+-        "color_conflict_fg" : prefs.Value(prefs.STRING, "Black"),
+-        "color_inline_bg" : prefs.Value(prefs.STRING, "LightSteelBlue2"),
+-        "color_inline_fg" : prefs.Value(prefs.STRING, "Red"),
+-        "color_edited_bg" : prefs.Value(prefs.STRING, "gray90"),
+-        "color_edited_fg" : prefs.Value(prefs.STRING, "Black"),
++        "color_replace_bg" : prefs.Value(prefs.STRING, "#112233"),
++        "color_replace_fg" : prefs.Value(prefs.STRING, "gray80"),
++        "color_conflict_bg" : prefs.Value(prefs.STRING, "#553333"),
++        "color_conflict_fg" : prefs.Value(prefs.STRING, "White"),
++        "color_inline_bg" : prefs.Value(prefs.STRING, "#223344"),
++        "color_inline_fg" : prefs.Value(prefs.STRING, "White"),
++        "color_edited_bg" : prefs.Value(prefs.STRING, "gray20"),
++        "color_edited_fg" : prefs.Value(prefs.STRING, "White"),
+         "filters" : prefs.Value(prefs.STRING,
+             #TRANSLATORS: translate this string ONLY to the first "\t", leave it and the following parts intact
+             _("Backups\t1\t#*# .#* ~* *~ *.{orig,bak,swp}\n") + \
+diff --git a/meld/tree.py b/meld/tree.py
+index 430fbb3..dbd70bb 100644
+--- a/meld/tree.py
++++ b/meld/tree.py
+@@ -39,13 +39,13 @@ class DiffTreeStore(gtk.TreeStore):
+         self.textstyle = [
+             '<span foreground="#888888">%s</span>', # STATE_IGNORED
+             '<span foreground="#888888">%s</span>', # STATE_NONE
+-            '<span foreground="black">%s</span>', # STATE_NORMAL
+-            '<span foreground="black" style="italic">%s</span>', # STATE_NOCHANGE
++            '<span>%s</span>', # STATE_NORMAL
++            '<span style="italic">%s</span>', # STATE_NOCHANGE
+             '<span foreground="#ff0000" background="yellow" weight="bold">%s</span>', # STATE_ERROR
+             '<span foreground="#999999" style="italic">%s</span>', # STATE_EMPTY
+             '<span foreground="#008800" weight="bold">%s</span>', # STATE_NEW
+             '<span foreground="#880000" weight="bold">%s</span>', # STATE_MODIFIED
+-            '<span foreground="#ff0000" background="#ffeeee" weight="bold">%s</span>', # STATE_CONFLICT
++            '<span foreground="#ff0000" background="#553333" weight="bold">%s</span>', # STATE_CONFLICT
+             '<span foreground="#880000" strikethrough="true" weight="bold">%s</span>', # STATE_REMOVED
+             '<span foreground="#888888" strikethrough="true">%s</span>' # STATE_MISSING
+         ]
