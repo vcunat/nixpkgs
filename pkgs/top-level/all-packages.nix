@@ -747,6 +747,7 @@ let
   };
 
   grub2 = callPackage ../tools/misc/grub/1.9x.nix { };
+  grub2_efi = callPackage ../tools/misc/grub/1.9x.nix { EFIsupport = true; };
 
   gssdp = callPackage ../development/libraries/gssdp {
     inherit (gnome) libsoup;
@@ -895,6 +896,8 @@ let
   miniupnpd = callPackage ../tools/networking/miniupnpd { };
 
   mjpegtools = callPackage ../tools/video/mjpegtools { };
+
+  mkcue = callPackage ../tools/cd-dvd/mkcue { };
 
   mktemp = callPackage ../tools/security/mktemp { };
 
@@ -1345,6 +1348,8 @@ let
       libXmu libXaw libXext xextproto libSM libICE libXpm
       libXp;
   };
+
+  vorbisgain = callPackage ../tools/misc/vorbisgain { };
 
   vpnc = callPackage ../tools/networking/vpnc { };
 
@@ -1975,8 +1980,13 @@ let
   haskellPackages_ghc6123 =
     haskellPackagesFun ../development/compilers/ghc/6.12.3.nix false (x : x);
 
+  # Will never make it into a platform release, severe bugs; leave at lowPrio.
   haskellPackages_ghc701 =
     haskellPackagesFun ../development/compilers/ghc/7.0.1.nix  false lowPrio;
+
+  # Will hopefully become new default once Haskell Platform 2011 is released.
+  haskellPackages_ghc702 =
+    haskellPackagesFun ../development/compilers/ghc/7.0.2.nix  false lowPrio;
 
   haskellPackages_ghcHEAD =
     haskellPackagesFun ../development/compilers/ghc/head.nix   false lowPrio;
@@ -2803,6 +2813,8 @@ let
 
   boost = callPackage ../development/libraries/boost { };
 
+  boost146 = callPackage ../development/libraries/boost/1.46.nix { };
+
   # A Boost build with all library variants enabled.  Very large (about 250 MB).
   boostFull = appendToName "full" (boost.override {
     enableDebug = true;
@@ -2874,6 +2886,10 @@ let
   clutter_gtk = callPackage ../development/libraries/clutter-gtk {
     inherit (gnome) gtk;
   };
+
+  cminpack = callPackage ../development/libraries/cminpack { };
+
+  coin3d = callPackage ../development/libraries/coin3d { };
 
   commoncpp2 = callPackage ../development/libraries/commoncpp2 { };
 
@@ -2973,6 +2989,8 @@ let
   fftwSinglePrec = callPackage ../development/libraries/fftw {
     singlePrecision = true;
   };
+
+  flann = callPackage ../development/libraries/flann { };
 
   fltk11 = callPackage ../development/libraries/fltk/fltk11.nix { };
 
@@ -3147,8 +3165,6 @@ let
 
   gmime = callPackage ../development/libraries/gmime { };
 
-  gmime_2_2 = callPackage ../development/libraries/gmime/2.2.x.nix { };
-
   gmm = callPackage ../development/libraries/gmm { };
 
   gmp =
@@ -3279,6 +3295,8 @@ let
 
   });
 
+  glib_2_28 = callPackage ../development/libraries/glib/2.28.x.nix {};
+
   gtkmozembedsharp = callPackage ../development/libraries/gtkmozembed-sharp {
     inherit (gnome) gtk;
     gtksharp = gtksharp2;
@@ -3302,6 +3320,8 @@ let
   };
 
   gtkspell = callPackage ../development/libraries/gtkspell { };
+
+  gts = callPackage ../development/libraries/gts { };
 
   # TODO : Add MIT Kerberos and let admin choose.
   kerberos = heimdal;
@@ -3497,6 +3517,8 @@ let
     inherit (gnome) gtk;
     libmpeg2 = mpeg2dec;
   };
+
+  libf2c = callPackage ../development/libraries/libf2c {};
 
   libfixposix = callPackage ../development/libraries/libfixposix {};
 
@@ -4089,6 +4111,8 @@ let
         # optional
   };
 
+  soqt = callPackage ../development/libraries/soqt { };
+
   speechd = callPackage ../development/libraries/speechd { };
 
   speex = callPackage ../development/libraries/speex { };
@@ -4147,6 +4171,8 @@ let
 
   tokyocabinet = callPackage ../development/libraries/tokyo-cabinet { };
 
+  tremor = callPackage ../development/libraries/tremor { };
+
   unicap = callPackage ../development/libraries/unicap {};
 
   unixODBC = callPackage ../development/libraries/unixODBC { };
@@ -4170,18 +4196,25 @@ let
 
   vxl = callPackage ../development/libraries/vxl { };
 
-  webkit = ((builderDefsPackage ../development/libraries/webkit {
-    inherit (gnome28) gtkdoc libsoup;
-    inherit (gtkLibs) gtk atk pango glib;
-    inherit freetype fontconfig gettext gperf curl
+  webkit = let p = applyGlobalOverrides (x : {
+    libsoup = x.gnome28.libsoup_2_31;
+    gnome28 = x.gnome28 // {
+      libsoup = x.gnome28.libsoup_2_31;
+    };
+  });
+  in
+  (p.builderDefsPackage ../development/libraries/webkit {
+    inherit (p.gnome28) gtkdoc;
+    inherit (p.gtkLibs) gtk atk pango glib;
+    inherit (p) freetype fontconfig gettext gperf curl
       libjpeg libtiff libpng libxml2 libxslt sqlite
       icu cairo perl intltool automake libtool
       pkgconfig autoconf bison libproxy enchant
-      python ruby which flex geoclue;
-    inherit (gst_all) gstreamer gstPluginsBase gstFfmpeg
+      python ruby which flex geoclue libsoup;
+    inherit (p.gst_all) gstreamer gstPluginsBase gstFfmpeg
       gstPluginsGood;
-    inherit (xlibs) libXt renderproto libXrender;
-  }).deepOverride {libsoup = gnome28.libsoup_2_31;});
+    inherit (p.xlibs) libXt renderproto libXrender;
+  });
 
   wvstreams = callPackage ../development/libraries/wvstreams { };
 
@@ -4211,6 +4244,8 @@ let
   xineLib = callPackage ../development/libraries/xine-lib { };
 
   xautolock = callPackage ../misc/screensavers/xautolock { };
+
+  xercesc = callPackage ../development/libraries/xercesc {};
 
   xercesJava = callPackage ../development/libraries/java/xerces {
     ant   = apacheAntGcj;  # for bootstrap purposes
@@ -4486,6 +4521,8 @@ let
   jetty = callPackage ../servers/http/jetty { };
 
   jetty61 = callPackage ../servers/http/jetty/6.1 { };
+
+  joseki = callPackage ../servers/http/joseki {};
 
   lighttpd = callPackage ../servers/http/lighttpd { };
 
@@ -4894,7 +4931,6 @@ let
         kernelPatches.cifs_timeout
         kernelPatches.no_xsave
         kernelPatches.dell_rfkill
-        kernelPatches.xen_pvclock_resume
       ];
   };
 
@@ -6019,6 +6055,10 @@ let
 
   flite = callPackage ../applications/misc/flite { };
 
+  freecad = callPackage ../applications/graphics/freecad {
+    boost = boost146;
+  };
+
   freemind = callPackage ../applications/misc/freemind {
     jdk = jdk;
     jre = jdk;
@@ -6060,6 +6100,8 @@ let
   qjackctl = callPackage ../applications/audio/qjackctl { };
 
   gkrellm = callPackage ../applications/misc/gkrellm { };
+
+  gmu = callPackage ../applications/audio/gmu { };
 
   gnash = callPackage ../applications/video/gnash {
     inherit (gnome) gtkglext;
@@ -6474,7 +6516,6 @@ let
   };
 
   pan = callPackage ../applications/networking/newsreaders/pan {
-    gmime = gmime_2_2;
     spellChecking = false;
   };
 
@@ -6810,6 +6851,7 @@ let
         ++ lib.optional enableAdobeFlash flashplayer
         # RealPlayer is disabled by default for legal reasons.
         ++ lib.optional (system != "i686-linux" && getConfig [browserName "enableRealPlayer"] false) RealPlayer
+        ++ lib.optional (getConfig [browserName "enableDjvu"] false) (djview4)
         ++ lib.optional (getConfig [browserName "enableMPlayer"] false) (MPlayerPlugin browser)
         ++ lib.optional (getConfig [browserName "enableGeckoMediaPlayer"] false) gecko_mediaplayer
         ++ lib.optional (supportsJDK && getConfig [browserName "jre"] false && jrePlugin ? mozillaPlugin) jrePlugin
