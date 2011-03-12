@@ -9,20 +9,16 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "ftp://ftp.lyx.org/pub/lyx/stable/1.6.x/${name}.tar.bz2";
-    sha256 = "c5b3602c58db385be5c52ba958f52239c5fd090320ec99d79b7eb861c1597709";
+    sha256 = "02bpb70n3f3ykgbrkv100c4zvi9r4bsmia9bqpjmnf6vb0n61cy5";
   };
 
-  buildInputs = [texLive qt python makeWrapper ];
+  buildInputs = [texLive qt python makeWrapper];
 
-  # don't ask me why it can't find libX11.so.6
-  postInstall = ''
-    wrapProgram $out/bin/lyx \
-      --prefix LD_LIBRARY_PATH ":" ${libX11}/lib
-  '';
-
-  meta = { 
-      description = "WYSIWYM frontend for LaTeX, DocBook, etc.";
-      homepage = "http://www.lyx.org";
-      license = "GPL2";
+  meta = {
+    description = "WYSIWYM frontend for LaTeX, DocBook, etc.";
+    homepage = "http://www.lyx.org";
+    license = "GPL2";
+    maintainers = [ stdenv.lib.maintainers.neznalek ];
+    platforms = stdenv.lib.platforms.linux;
   };
 }
