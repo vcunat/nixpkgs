@@ -55,6 +55,7 @@ scons:
   sense for NixOS. It seems that Peter Simons doesn't like it for whatever reason
   I don't understand
 
+updating upstart to 1.0 it was announced on the mailinglist. Not all jobs have been retested yet.
 
 adding smlnj
 adding fish shell
