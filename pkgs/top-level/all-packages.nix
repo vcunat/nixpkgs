@@ -698,6 +698,8 @@ let
 
   gource = callPackage ../tools/misc/gource { };
 
+  gptfdisk = callPackage ../tools/system/gptfdisk { };
+
   graphviz = callPackage ../tools/graphics/graphviz {
     inherit (gtkLibs) pango;
   };
