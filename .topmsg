@@ -74,6 +74,8 @@ pidigin:
 
 postfix: update
 
+gptfdisk provided by Shea Levy
+
 haskellMode (emacs): update source
 
 Signed-off-by: Marc Weber <marco-oweber@gmx.de>
