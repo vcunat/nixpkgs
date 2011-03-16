@@ -126,8 +126,8 @@ clone(){
 	    echo "populating TopGit branches..."
 	    tg remote --populate origin
 	else
-	    echo "WARNING: would populate TopGit branches but TopGit is not available" >&2
-	    echo "WARNING: install TopGit to fix the problem" >&2
+            # TODO: is this useful at all? Should for each remote branch a local branch be created?
+	    echo "If you had installed TopGit I would have populated local topic branches" >&2
 	fi
     fi
 
