@@ -120,6 +120,17 @@ clone(){
     # Checkout linked sources.
     init_submodules;
 
+    if [ -f .topdeps ]; then
+	if tg help 2>&1 > /dev/null
+	then
+	    echo "populating TopGit branches..."
+	    tg remote --populate origin
+	else
+            # TODO: is this useful at all? Should for each remote branch a local branch be created?
+	    echo "If you had installed TopGit I would have populated local topic branches" >&2
+	fi
+    fi
+
     cd $top;
 }
 
