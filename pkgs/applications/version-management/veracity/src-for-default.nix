@@ -1,9 +1,9 @@
 rec {
-   version="0.5.0.10325";
-   name="veracity-0.5.0.10325";
-   hash="07lbfdfbjnd0xmbaw799dphb7i8f6w176afwaw0sd65ksjkbfc39";
+   version="0.5.7.10397";
+   name="veracity-0.5.7.10397";
+   hash="09w1qj4wklaf7mw0vavzyqpagcd0cwqppdl8vaqqi0irddgivnq8";
    url="http://download-us.sourcegear.com/Veracity/nightly/veracity-source-${version}.tar.gz";
-   advertisedUrl="http://download-us.sourcegear.com/Veracity/nightly/veracity-source-0.5.0.10325.tar.gz";
+   advertisedUrl="http://download-us.sourcegear.com/Veracity/nightly/veracity-source-0.5.7.10397.tar.gz";
   
   
 }

@@ -1,11 +1,11 @@
 { fetchurl, stdenv, ncurses, help2man }:
 
 stdenv.mkDerivation rec {
-  name = "zile-2.3.20";
+  name = "zile-2.3.22";
 
   src = fetchurl {
     url = "mirror://gnu/zile/${name}.tar.gz";
-    sha256 = "0y07bkb7ypvsnz8ly7w274489icxw5z5hy6z50mx1nywkv2whd3q";
+    sha256 = "0zkmym5vpb653c5gmzic8588v4ksidnhh33s4pjvr24n7vgj9biy";
   };
 
   buildInputs = [ ncurses ];

@@ -30,33 +30,37 @@
 , patchelf
 , cups
 , libgcrypt
+, libXtst
 }:
 
 assert stdenv.system == "i686-linux" || stdenv.system == "x86_64-linux" ;
 
 stdenv.mkDerivation rec {
   name = "chrome-${version}";
-  version = "65039";
-  src = 
-    if stdenv.system == "x86_64-linux" then 
+  version = "75853";
+  src =
+    if stdenv.system == "x86_64-linux" then
       fetchurl {
-        url = "http://build.chromium.org/buildbot/snapshots/chromium-rel-linux-64/${version}/chrome-linux.zip";
-        sha256 = "1ad7kwd1w1958mb3pwzhshawrf2nlxdsf0gy7d2q4qnx5d809vws";
-      } 
-    else if stdenv.system == "i686-linux" then 
+        url = "http://build.chromium.org/f/chromium/continuous/linux64/2011-02-23/${version}/chrome-linux.zip";
+        sha256 = "1bh507j1pm3qrkj8afzhmqicza5nms6f4dc9848xjgcvj9x2qii7";
+      }
+    else if stdenv.system == "i686-linux" then
       fetchurl {
-        url = "http://build.chromium.org/buildbot/snapshots/chromium-rel-linux/${version}/chrome-linux.zip";
-        sha256 = "06hz3gvv3623ldrj141w3mnzw049yylvv9b9q5r6my8icm722phf";
-      } 
+        url = "http://build.chromium.org/f/chromium/continuous/linux/2011-02-23/${version}/chrome-linux.zip";
+        sha256 = "0rq888yvw5zsh0c3jnp115y4sl1q5kn4pz8flnwhrh35ca15lchn";
+      }
     else throw "Chromium is not supported on this platform.";
 
   phases = "unpackPhase installPhase";
 
   buildInputs = [makeWrapper unzip];
 
-  libPath = 
+  libPath =
     stdenv.lib.makeLibraryPath
-       [ stdenv.gcc.libc stdenv.gcc.gcc ffmpeg cairo pango glib libXrender gtk nspr nss fontconfig freetype alsaLib libX11 GConf libXext atk libXt expat zlib libjpeg bzip2 libpng libXScrnSaver dbus dbus_glib cups libgcrypt] ;
+       [ GConf alsaLib atk bzip2 cairo cups dbus dbus_glib expat
+         ffmpeg fontconfig freetype glib gtk libX11 libXScrnSaver
+         libXdamage libXext libXrender libXt libXtst libgcrypt libjpeg
+         libpng nspr nss pango stdenv.gcc.gcc zlib stdenv.gcc.libc ];
 
   installPhase = ''
     ensureDir $out/bin
@@ -76,7 +80,10 @@ stdenv.mkDerivation rec {
     ln -s ${nspr}/lib/libplc4.so $out/lib/libplc4.so.0d
   '';
 
-  meta = {
+  meta =  with stdenv.lib; {
     description = "Chromium, an open source web browser";
+    homepage = http://www.chromium.org/;
+    maintainers = [ maintainers.goibhniu ];
+    license = licenses.bsd3;
   };
 }

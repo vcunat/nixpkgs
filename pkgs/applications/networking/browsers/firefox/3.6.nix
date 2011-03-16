@@ -12,14 +12,14 @@
 
 rec {
 
-  firefoxVersion = "3.6.12";
+  firefoxVersion = "3.6.15";
   
-  xulVersion = "1.9.2.12"; # this attribute is used by other packages
+  xulVersion = "1.9.2.15"; # this attribute is used by other packages
 
   
   src = fetchurl {
     url = "http://releases.mozilla.org/pub/mozilla.org/firefox/releases/${firefoxVersion}/source/firefox-${firefoxVersion}.source.tar.bz2";
-    sha1 = "1cc3885687dd5ad21167d9d45f76eb1458f46bdd";
+    sha1 = "bfb69ae49b2def7482543d4d982fa58993a458e9";
   };
 
 
@@ -40,15 +40,17 @@ rec {
       "--disable-necko-wifi" # maybe we want to enable this at some point
     ];
 
-
   xulrunner = stdenv.mkDerivation {
     name = "xulrunner-${xulVersion}";
     
     inherit src;
 
-    # To be removed when the change gets upstream. I don't know if the patch
-    # affects xulrunner or firefox.
-    patches = [ ./symlinks-bug551152.patch ];
+    patches = [
+      # Loongson2f related patches:
+      ./xulrunner-chromium-mips.patch
+      ./xulrunner-mips-n32.patch
+      ./xulrunner-1.9.2_beta4-mips-bus-error.patch
+    ];
 
     buildInputs =
       [ pkgconfig gtk perl zip libIDL libjpeg libpng zlib cairo bzip2
@@ -56,6 +58,10 @@ rec {
         xlibs.libX11 xlibs.libXrender xlibs.libXft xlibs.libXt file
         alsaLib nspr /* nss */ libnotify xlibs.pixman
       ];
+
+    preConfigure = if stdenv.isMips then ''
+      export ac_cv_thread_keyword=no
+    '' else "";
 
     configureFlags =
       [ "--enable-application=xulrunner"
@@ -91,6 +97,8 @@ rec {
       rm -f $out/bin/run-mozilla.sh
     ''; # */
 
+    enableParallelBuilding = true;
+
     meta = {
       description = "Mozilla Firefox XUL runner";
       homepage = http://www.mozilla.com/en-US/firefox/;
@@ -104,10 +112,6 @@ rec {
     name = "firefox-${firefoxVersion}";
 
     inherit src;
-
-    # To be removed when the change gets upstream. I don't know if the patch
-    # affects xulrunner or firefox.
-    patches = [ ./symlinks-bug551152.patch ];
 
     buildInputs =
       [ pkgconfig gtk perl zip libIDL libjpeg zlib cairo bzip2 python

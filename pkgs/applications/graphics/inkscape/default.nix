@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
   buildInputs = [
     pkgconfig perl perlXMLParser gtk libXft libpng zlib popt boehmgc
     libxml2 libxslt glib gtkmm glibmm libsigcxx lcms boost gettext
-    makeWrapper intltool gsl
+    makeWrapper intltool gsl poppler
   ];
 
   configureFlags = "--with-python";

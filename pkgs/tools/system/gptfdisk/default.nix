@@ -10,15 +10,13 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ libuuid popt ];
 
-  doCheck = false;
-
   installPhase = ''
-                   ensureDir $out/bin
-                   ensureDir $out/share/man/man8
-                   install -v -m755 gdisk sgdisk fixparts $out/bin
-                   install -v -m644 gdisk.8 sgdisk.8 fixparts.8 \
-                                $out/share/man/man8
-                 '';
+    ensureDir $out/bin
+    ensureDir $out/share/man/man8
+    install -v -m755 gdisk sgdisk fixparts $out/bin
+    install -v -m644 gdisk.8 sgdisk.8 fixparts.8 \
+        $out/share/man/man8
+  '';
 
   meta = {
     description = "A set of text-mode partitioning tools for Globally Unique Identifier (GUID) Partition Table (GPT) disks";
@@ -27,7 +25,8 @@ stdenv.mkDerivation rec {
 
     homepage = http://www.rodsbooks.com/gdisk/;
 
-    maintainers = [ "Shea Levy <shea@shealevy.com>" ];
+    maintainers = stdenv.lib.maintainers.shlevy;
     platforms = stdenv.lib.platforms.linux;
   };
 }
+
