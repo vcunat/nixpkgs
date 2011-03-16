@@ -394,16 +394,9 @@ let
 
   autojump = callPackage ../tools/misc/autojump { };
 
-  avahi =
-    let qt4Support = getConfig [ "avahi" "qt4Support" ] false;
-    in
-      makeOverridable (import ../development/libraries/avahi) {
-        inherit stdenv fetchurl pkgconfig libdaemon dbus perl perlXMLParser
-          expat gettext intltool lib;
-        inherit (gtkLibs) glib gtk;
-        inherit qt4Support;
-        qt4 = if qt4Support then qt4 else null;
-      };
+  avahi = callPackage ../development/libraries/avahi {
+    qt4Support = getConfig [ "avahi" "qt4Support" ] false;
+  };
 
   axel = callPackage ../tools/networking/axel { };
 
@@ -414,6 +407,8 @@ let
   bc = callPackage ../tools/misc/bc { };
 
   bfr = callPackage ../tools/misc/bfr { };
+
+  bluedevil = newScope pkgs.kde4 ../tools/bluetooth/bluedevil { };
 
   bootchart = callPackage ../tools/system/bootchart { };
 
@@ -661,7 +656,7 @@ let
   gawk = callPackage ../tools/text/gawk { };
 
   gdmap = callPackage ../tools/system/gdmap {
-    inherit (gtkLibs216) gtk;
+    inherit (pkgs.gtkLibs) gtk;
   };
 
   genext2fs = callPackage ../tools/filesystems/genext2fs { };
@@ -685,8 +680,10 @@ let
   glxinfo = callPackage ../tools/graphics/glxinfo { };
 
   gnokii = builderDefsPackage (import ../tools/misc/gnokii) {
-    inherit intltool perl gettext libusb pkgconfig;
+    inherit intltool perl gettext libusb pkgconfig bluez readline pcsclite
+      libical;
     inherit (gtkLibs) gtk glib;
+    inherit (xorg) libXpm;
   };
 
   gnugrep =
@@ -725,6 +722,8 @@ let
   gnuvd = callPackage ../tools/misc/gnuvd { };
 
   gource = callPackage ../tools/misc/gource { };
+
+  gptfdisk = callPackage ../tools/system/gptfdisk { };
 
   graphviz = callPackage ../tools/graphics/graphviz {
     inherit (gtkLibs) pango;
@@ -1903,45 +1902,7 @@ let
   # packages.
 
   # This should point to the current default version.
-  haskellPackages = haskellPackages_ghc6123;
-
-  # Old versions of ghc that currently don't build because the binary
-  # is broken.
-  /*
-  haskellPackages_ghc642 = callPackage ./haskell-packages.nix {
-    ghc = import ../development/compilers/ghc/6.4.2.nix {
-      inherit fetchurl stdenv perl ncurses readline m4 gmp;
-      ghc = ghc642Binary;  };
-  };
-
-  haskellPackages_ghc661 = callPackage ./haskell-packages.nix {
-    ghc = import ../development/compilers/ghc/6.6.1.nix {
-      inherit fetchurl stdenv readline perl58 gmp ncurses m4;
-      ghc = ghc642Binary;
-  };
-  };
-
-  haskellPackages_ghc682 = callPackage ./haskell-packages.nix {
-    ghc = import ../development/compilers/ghc/6.8.2.nix {
-      inherit fetchurl stdenv perl gmp ncurses m4;
-      readline = readline5;
-      ghc = ghc642Binary;
-  };
-  };
-
-  haskellPackages_ghc683 = recurseIntoAttrs (import ./haskell-packages.nix {
-    inherit pkgs;
-    ghc = callPackage ../development/compilers/ghc/6.8.3.nix {
-      ghc = ghc642Binary;
-      haddock = import ../development/tools/documentation/haddock/boot.nix {
-        inherit gmp;
-        cabal = import ../development/libraries/haskell/cabal/cabal.nix {
-          inherit stdenv fetchurl lib;
-          ghc = ghc642Binary;    };
-      };
-    };
-  });
-  */
+  haskellPackages = haskellPackages_ghc702;
 
   # NOTE: After discussion, we decided to enable recurseIntoAttrs for all
   # currently available ghc versions. (Before, it used to be enabled only
@@ -1950,46 +1911,35 @@ let
   # reducing the number or "enabled" versions again.
 
   # Helper functions to abstract away from repetitive instantiations.
-  haskellPackagesFun = ghcPath : profDefault : modifyPrio : recurseIntoAttrs (import ./haskell-packages.nix {
-    inherit pkgs newScope modifyPrio;
+  haskellPackagesFun = ghcPath : prefFun : profDefault : modifyPrio : recurseIntoAttrs (import ./haskell-packages.nix {
+    inherit pkgs newScope modifyPrio prefFun;
     enableLibraryProfiling = getConfig [ "cabal" "libraryProfiling" ] profDefault;
-    ghc = callPackage ghcPath {
-      ghc = ghc6101Binary;    };
+    ghc = callPackage ghcPath { ghc = ghc6101Binary; };
   });
 
   # Currently active GHC versions.
-  haskellPackages_ghc6101 =
-    haskellPackagesFun ../development/compilers/ghc/6.10.1.nix false (x : x);
-
-  haskellPackages_ghc6102 =
-    haskellPackagesFun ../development/compilers/ghc/6.10.2.nix false (x : x);
-
-  haskellPackages_ghc6103 =
-    haskellPackagesFun ../development/compilers/ghc/6.10.3.nix false (x : x);
-
   haskellPackages_ghc6104 =
-    haskellPackagesFun ../development/compilers/ghc/6.10.4.nix false (x : x);
+    haskellPackagesFun ../development/compilers/ghc/6.10.4.nix (x : x.ghc6104Prefs) false (x : x);
 
   haskellPackages_ghc6121 =
-    haskellPackagesFun ../development/compilers/ghc/6.12.1.nix false (x : x);
+    haskellPackagesFun ../development/compilers/ghc/6.12.1.nix (x : x.ghc6121Prefs) false (x : x);
 
   haskellPackages_ghc6122 =
-    haskellPackagesFun ../development/compilers/ghc/6.12.2.nix false (x : x);
+    haskellPackagesFun ../development/compilers/ghc/6.12.2.nix (x : x.ghc6122Prefs) false (x : x);
 
-  # Current default version.
   haskellPackages_ghc6123 =
-    haskellPackagesFun ../development/compilers/ghc/6.12.3.nix false (x : x);
+    haskellPackagesFun ../development/compilers/ghc/6.12.3.nix (x : x.ghc6123Prefs) false (x : x);
 
   # Will never make it into a platform release, severe bugs; leave at lowPrio.
   haskellPackages_ghc701 =
-    haskellPackagesFun ../development/compilers/ghc/7.0.1.nix  false lowPrio;
+    haskellPackagesFun ../development/compilers/ghc/7.0.1.nix  (x : x.ghc701Prefs) false lowPrio;
 
-  # Will hopefully become new default once Haskell Platform 2011 is released.
+  # Current default version.
   haskellPackages_ghc702 =
-    haskellPackagesFun ../development/compilers/ghc/7.0.2.nix  false lowPrio;
+    haskellPackagesFun ../development/compilers/ghc/7.0.2.nix  (x : x.ghc702Prefs) false (x : x);
 
   haskellPackages_ghcHEAD =
-    haskellPackagesFun ../development/compilers/ghc/head.nix   false lowPrio;
+    haskellPackagesFun ../development/compilers/ghc/head.nix   (x : x.ghcHEADPrefs) false lowPrio;
 
   haxeDist = import ../development/compilers/haxe {
     inherit fetchurl sourceFromHead stdenv lib ocaml zlib makeWrapper neko;
@@ -2830,9 +2780,6 @@ let
   buddy = callPackage ../development/libraries/buddy { };
 
   cairo = callPackage ../development/libraries/cairo { };
-  cairo_1_10_0 = callPackage ../development/libraries/cairo/1.10.nix {
-    pixman = xlibs.pixman_0_20_0;
-  };
 
   cairomm = callPackage ../development/libraries/cairomm { };
 
@@ -2916,7 +2863,7 @@ let
   db45 = callPackage ../development/libraries/db4/db4-4.5.nix { };
 
   dbus = callPackage ../development/libraries/dbus {
-    useX11 = true; # !!! `false' doesn't build
+    useX11 = true;
   };
 
   dbus_glib = makeOverridable (import ../development/libraries/dbus-glib) {
@@ -3019,6 +2966,8 @@ let
 
   fribidi = callPackage ../development/libraries/fribidi { };
 
+  funambol = callPackage ../development/libraries/funambol { };
+
   fam = gamin;
 
   gamin = callPackage ../development/libraries/gamin { };
@@ -3032,10 +2981,6 @@ let
   };
 
   gdbm = callPackage ../development/libraries/gdbm { };
-
-  gdk_pixbuf = callPackage ../development/libraries/gdk-pixbuf {
-    inherit (gtkLibs1x) gtk;
-  };
 
   gegl = callPackage ../development/libraries/gegl {
     #  avocodec avformat librsvg
@@ -3227,13 +3172,13 @@ let
 
   gtkmathview = callPackage ../development/libraries/gtkmathview { };
 
-  gtkLibs = gtkLibs220;
+  gtkLibs = gtkLibs224;
 
   glib = gtkLibs.glib;
   gtk = gtkLibs.gtk;
   pango = gtkLibs.pango;
 
-  gtkLibs1x = recurseIntoAttrs (let callPackage = newScope pkgs.gtkLibs1x; in rec {
+  gtkLibs1x = recurseIntoAttrs (let callPackage = newScope pkgs.gtkLibs1x; in {
 
     glib = callPackage ../development/libraries/glib/1.2.x.nix { };
 
@@ -3241,7 +3186,7 @@ let
 
   });
 
-  gtkLibs216 = recurseIntoAttrs (let callPackage = newScope pkgs.gtkLibs216; in rec {
+  gtkLibs216 = recurseIntoAttrs (let callPackage = newScope pkgs.gtkLibs216; in {
 
     glib = callPackage ../development/libraries/glib/2.20.x.nix { };
 
@@ -3259,25 +3204,7 @@ let
 
   });
 
-  gtkLibs218 = recurseIntoAttrs (let callPackage = newScope pkgs.gtkLibs218; in rec {
-
-    glib = callPackage ../development/libraries/glib/2.22.x.nix { };
-
-    glibmm = callPackage ../development/libraries/glibmm/2.22.x.nix { };
-
-    atk = callPackage ../development/libraries/atk/1.28.x.nix { };
-
-    pango = callPackage ../development/libraries/pango/1.26.x.nix { };
-
-    pangomm = callPackage ../development/libraries/pangomm/2.26.x.nix { };
-
-    gtk = callPackage ../development/libraries/gtk+/2.18.x.nix { };
-
-    gtkmm = callPackage ../development/libraries/gtkmm/2.18.x.nix { };
-
-  });
-
-  gtkLibs220 = recurseIntoAttrs (let callPackage = pkgs.newScope pkgs.gtkLibs220; in rec {
+  gtkLibs220 = recurseIntoAttrs (let callPackage = pkgs.newScope pkgs.gtkLibs220; in {
 
     glib = callPackage ../development/libraries/glib/2.24.x.nix { };
 
@@ -3295,7 +3222,25 @@ let
 
   });
 
-  glib_2_28 = callPackage ../development/libraries/glib/2.28.x.nix {};
+  gtkLibs224 = recurseIntoAttrs (let callPackage = pkgs.newScope pkgs.gtkLibs224; in {
+
+    glib = callPackage ../development/libraries/glib/2.28.x.nix { };
+
+    glibmm = callPackage ../development/libraries/glibmm/2.22.x.nix { };
+
+    atk = callPackage ../development/libraries/atk/1.32.x.nix { };
+
+    pango = callPackage ../development/libraries/pango/1.28.x.nix { };
+
+    pangomm = callPackage ../development/libraries/pangomm/2.26.x.nix { };
+
+    gdk_pixbuf = callPackage ../development/libraries/gdk-pixbuf/2.22.x.nix { };
+
+    gtk = callPackage ../development/libraries/gtk+/2.24.x.nix { };
+
+    gtkmm = callPackage ../development/libraries/gtkmm/2.18.x.nix { };
+
+  });
 
   gtkmozembedsharp = callPackage ../development/libraries/gtkmozembed-sharp {
     inherit (gnome) gtk;
@@ -3434,6 +3379,8 @@ let
 
   libavc1394 = callPackage ../development/libraries/libavc1394 { };
 
+  libbluedevil = callPackage ../development/libraries/libbluedevil { };
+
   libcaca = callPackage ../development/libraries/libcaca { };
 
   libcanberra = callPackage ../development/libraries/libcanberra {
@@ -3555,6 +3502,8 @@ let
   liblastfmSF = callPackage ../development/libraries/liblastfmSF { };
 
   liblastfm = callPackage ../development/libraries/liblastfm { };
+
+  liblikeback = newScope pkgs.kde4 ../development/libraries/liblikeback { };
 
   liblqr1 = callPackage ../development/libraries/liblqr-1 {
     inherit (gnome) glib;
@@ -3826,10 +3775,6 @@ let
   mesa = callPackage ../development/libraries/mesa {
     lipo = if stdenv.isDarwin then darwinLipoUtility else null;
   };
-  mesa_7_9 = callPackage ../development/libraries/mesa/7.9.nix {
-    lipo = if stdenv.isDarwin then darwinLipoUtility else null;
-  };
-
 
   metaEnvironment = recurseIntoAttrs (let callPackage = newScope pkgs.metaEnvironment; in rec {
     sdfLibrary    = callPackage ../development/libraries/sdf-library { aterm = aterm28; };
@@ -5205,9 +5150,7 @@ let
 
   libraw1394 = callPackage ../development/libraries/libraw1394 { };
 
-  libsexy = callPackage ../development/libraries/libsexy {
-    inherit (gtkLibs) glib gtk pango;
-  };
+  libsexy = callPackage ../development/libraries/libsexy { };
 
   librsvg = gnome.librsvg;
 
@@ -5629,6 +5572,8 @@ let
     inherit (pkgsi686Linux.gtkLibs) glib pango atk gtk;
   };
 
+  akunambol = newScope pkgs.kde4 ../applications/networking/sync/akunambol { };
+
   amarok = newScope pkgs.kde4 ../applications/audio/amarok { };
 
   amsn = callPackage ../applications/networking/instant-messengers/amsn {
@@ -5875,8 +5820,8 @@ let
     Xaw3d = null;
     gtk = if stdenv.isDarwin then null else gtkLibs.gtk;
     # TODO: these packages don't build on Darwin.
-    gconf = if stdenv.isDarwin then null else gnome.GConf;
-    librsvg = if stdenv.isDarwin then null else librsvg;
+    gconf = null /* if stdenv.isDarwin then null else gnome.GConf */;
+    librsvg = null /* if stdenv.isDarwin then null else librsvg */;
   };
 
   emacsSnapshot = lowPrio (callPackage ../applications/editors/emacs-snapshot {
@@ -5962,9 +5907,7 @@ let
       libgnomeui libglade glib gtk scrollkeeper gnome_keyring;
   });
 
-  evolution_data_server = (newScope (gnome // gtkLibs))
-  ../servers/evolution-data-server {
-  };
+  evolution_data_server = newScope (gnome // gtkLibs) ../servers/evolution-data-server { };
 
   exrdisplay = callPackage ../applications/graphics/exrdisplay {
     fltk = fltk20;
@@ -6025,9 +5968,7 @@ let
     inherit (gnome) libIDL;
   };
 
-  firefox40Pkgs = let p = (applyGlobalOverrides (x : {cairo = x.cairo_1_10_0;}));
-  in p.callPackage
-      ../applications/networking/browsers/firefox/4.0.nix {
+  firefox40Pkgs = callPackage ../applications/networking/browsers/firefox/4.0.nix {
     inherit (p.gtkLibs) gtk pango;
     inherit (p.gnome) libIDL;
   };
