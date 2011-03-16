@@ -1,11 +1,11 @@
 {stdenv, fetchurl, libcap}:
 
 stdenv.mkDerivation rec{
-  name = "lxc-0.7.3";
+  name = "lxc-0.7.4";
 
   src = fetchurl {
     url = "mirror://sourceforge/lxc/${name}.tar.gz";
-    sha256 = "02fs90gj8vc3sls2kknqhdv8nk7r2k85slx8x8slfz4vnz6jhfzs";
+    sha256 = "1xpf82wzkc50civjv67ighcjpwd6g96xdyd9kainclm088m7n8x8";
   };
 
   patchPhase = ''
