@@ -2219,6 +2219,8 @@ let
       freeglut e2fsprogs libsamplerate pcre libevent libedit;
   };
 
+  j = callPackage ../development/interpreters/j {};
+
   kaffe = callPackage ../development/interpreters/kaffe { };
 
   lua4 = callPackage ../development/interpreters/lua-4 { };
@@ -4575,7 +4577,7 @@ let
     inherit fetchurl fetchsvn stdenv pkgconfig freetype fontconfig
       libxslt expat libdrm libpng zlib perl mesa
       xkeyboard_config dbus hal libuuid openssl gperf m4
-      autoconf libtool xmlto asciidoc udev;
+      autoconf libtool xmlto asciidoc udev bison flex;
 
     # XXX: Update to newer Automake on the next big rebuild; better yet:
     # remove the dependency on Automake.
@@ -5961,8 +5963,8 @@ let
   };
 
   firefox40Pkgs = callPackage ../applications/networking/browsers/firefox/4.0.nix {
-    inherit (p.gtkLibs) gtk pango;
-    inherit (p.gnome) libIDL;
+    inherit (gtkLibs) gtk pango;
+    inherit (gnome) libIDL;
   };
 
   firefox36Wrapper = wrapFirefox firefox36Pkgs.firefox "firefox" "";
@@ -7280,6 +7282,8 @@ let
     inherit (xlibs) libX11 libXaw xproto libXt libSM libICE
       libXmu libXext libXcursor;
   };
+
+  jags = callPackage ../applications/science/math/jags { };
 
   liblapack = callPackage ../development/libraries/science/math/liblapack { };
 
