@@ -6268,7 +6268,7 @@ let
   kermit = callPackage ../tools/misc/kermit { };
 
   kile_beta = lowPrio (callPackage ../applications/editors/kile/beta.nix {
-    inherit (kde4) kdelibs automoc4;
+    inherit (kde4) kdelibs;
   });
 
   kino = import ../applications/video/kino {
