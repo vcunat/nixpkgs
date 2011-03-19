@@ -1,6 +1,8 @@
---- powertop-1.13/Makefile	2010-07-20 01:08:21.000000000 +0200
-+++ powertop-1.13/Makefile	2011-01-20 19:48:11.855092763 +0100
-@@ -2,5 +2,5 @@
+diff -ru powertop-1.13/Makefile powertop-1.13.new/Makefile
+--- powertop-1.13/Makefile
++++ powertop-1.13.new/Makefile
+@@ -1,6 +1,6 @@
+ VERSION = 1.13
  
 -BINDIR=/usr/bin
 -LOCALESDIR=/usr/share/locale
@@ -8,4 +10,6 @@
 +BINDIR=${out}/bin
 +LOCALESDIR=${out}/share/locale
 +MANDIR=${out}/share/man/man8
- WARNFLAGS=-Wall -Wshadow -W -Wformat -Wimplicit-function-declaration -Wimplicit-int
+ WARNFLAGS=-Wall  -W -Wshadow -W -Wformat -Wimplicit-function-declaration -Wimplicit-int
+ CFLAGS?=-Os -g ${WARNFLAGS}
+ CC?=gcc
