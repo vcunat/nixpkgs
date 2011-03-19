@@ -4144,9 +4144,9 @@ let
   vxl = callPackage ../development/libraries/vxl { };
 
   webkit = let p = applyGlobalOverrides (x : {
-    libsoup = x.gnome28.libsoup_2_31;
+    libsoup = x.gnome28.libsoup_2_33;
     gnome28 = x.gnome28 // {
-      libsoup = x.gnome28.libsoup_2_31;
+      libsoup = x.gnome28.libsoup_2_33;
     };
   });
   in
@@ -5014,6 +5014,16 @@ let
   };
 
   linux_2_6_37 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.37.nix) {
+    inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
+    kernelPatches =
+      [ #kernelPatches.fbcondecor_2_6_35
+        kernelPatches.sec_perm_2_6_24
+        #kernelPatches.aufs2_2_6_35
+        #kernelPatches.mips_restart_2_6_36
+      ];
+  };
+
+  linux_2_6_38 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.38.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
     kernelPatches =
       [ #kernelPatches.fbcondecor_2_6_35
