@@ -1,0 +1,6 @@
+From: Vladimír Čunát <vcunat@gmail.com>
+Subject: [PATCH] vlada/grip
+
+Grip adjustments: needed ncurses to build
+
+Signed-off-by: Vladimír Čunát <vcunat@gmail.com>
