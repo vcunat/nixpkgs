@@ -3743,6 +3743,8 @@ let
 
   libxslt = callPackage ../development/libraries/libxslt { };
 
+  libxml_xml_dtd_xhtml = callPackage ../data/sgml+xml/schemas/xml-dtd/xhtml { };
+
   libixp_for_wmii = lowPrio (import ../development/libraries/libixp_for_wmii {
     inherit fetchurl stdenv;
   });
