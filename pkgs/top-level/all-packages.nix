@@ -960,6 +960,8 @@ let
 
   ncompress = callPackage ../tools/compression/ncompress { };
 
+  ndisc6 = callPackage ../tools/networking/ndisc6 { };
+  
   netcat = callPackage ../tools/networking/netcat { };
 
   netkittftp = callPackage ../tools/networking/netkit/tftp { };
@@ -5559,6 +5561,8 @@ let
 
   mph_2b_damase = callPackage ../data/fonts/mph-2b-damase { };
 
+  posix_man_pages = callPackage ../data/documentation/man-pages-posix { };
+
   pthreadmanpages = callPackage ../data/documentation/pthread-man-pages { };
 
   shared_mime_info = callPackage ../data/misc/shared-mime-info { };
@@ -6081,6 +6085,7 @@ let
   gmu = callPackage ../applications/audio/gmu { };
 
   gnash = callPackage ../applications/video/gnash {
+    xulrunner = icecatXulrunner3;
     inherit (gnome) gtkglext;
     inherit (gst_all) gstreamer gstPluginsBase gstPluginsGood gstFfmpeg;
   };
