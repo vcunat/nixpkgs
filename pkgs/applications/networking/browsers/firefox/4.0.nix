@@ -11,18 +11,16 @@
   enableOfficialBranding ? false
 }:
 
-assert stdenv.gcc ? libc;
-
 rec {
 
-  firefoxVersion = "4.0";
+  firefoxVersion = "4.0b7";
   
-  xulVersion = "2.0"; # this attribute is used by other packages
+  xulVersion = "2.0b7"; # this attribute is used by other packages
 
   
   src = fetchurl {
     url = "http://releases.mozilla.org/pub/mozilla.org/firefox/releases/${firefoxVersion}/source/firefox-${firefoxVersion}.source.tar.bz2";
-    sha1 = "403da9dd65662e5c4dd34299214e04cb6f80575e";
+    sha256 = "02cc466a92af828ff3bc563d4515bd98064cf5f136b5871e072b9408fb4db128";
   };
 
   commonConfigureFlags =
@@ -49,7 +47,7 @@ rec {
     inherit src;
 
     buildInputs =
-      [ pkgconfig gtk perl zip libIDL libjpeg libpng zlib cairo bzip2
+    [ pkgconfig gtk perl zip libIDL libjpeg libpng zlib cairo bzip2
         python dbus dbus_glib pango freetype fontconfig xlibs.libXi
         xlibs.libX11 xlibs.libXrender xlibs.libXft xlibs.libXt file
         alsaLib nspr /* nss */ libnotify xlibs.pixman libvpx yasm mesa
@@ -62,11 +60,9 @@ rec {
         "--disable-javaxpcom"
       ] ++ commonConfigureFlags;
 
-    enableParallelBuilding = true;
-      
     # !!! Temporary hack.
     preBuild = ''
-      export NIX_ENFORCE_PURITY=
+     export NIX_ENFORCE_PURITY=
     '';
 
     # Hack to work around make's idea of -lbz2 dependency
@@ -115,8 +111,6 @@ rec {
 
     inherit src;
 
-    enableParallelBuilding = true;
-      
     buildInputs =
       [ pkgconfig gtk perl zip libIDL libjpeg zlib cairo bzip2 python
         dbus dbus_glib pango freetype fontconfig alsaLib nspr libnotify
@@ -128,7 +122,6 @@ rec {
     configureFlags =
       [ "--enable-application=browser"
         "--with-libxul-sdk=${xulrunner}/lib/xulrunner-devel-${xulrunner.version}"
-        "--enable-chrome-format=jar"
       ]
       ++ commonConfigureFlags
       ++ stdenv.lib.optional enableOfficialBranding "--enable-official-branding";

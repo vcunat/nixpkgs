@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, makeWrapper, boost, file, gettext
+{ stdenv, fetchurl, makeWrapper, autoconf, automake, boost, file, gettext
 , glib, glibc, gnome_keyring, gtk, gtkmm, intltool, libctemplate, libglade
 , libgnome, libsigcxx, libtool, libuuid, libxml2, libzip, lua, mesa, mysql
 , pango, paramiko, pcre, pexpect, pkgconfig, pycrypto, python, sqlite
@@ -6,20 +6,22 @@
 
 stdenv.mkDerivation rec {
   pname = "mysql-workbench";
-  version = "5.2.33";
+  version = "5.2.31a";
   name = "${pname}-${version}";
 
   src = fetchurl {
     url = "http://mirror.services.wisc.edu/mysql/Downloads/MySQLGUITools/mysql-workbench-gpl-${version}-src.tar.gz";
-    sha256 = "193iikz0wfm3yvazficxfiqb84f34psq0bcasp3l41n9dygbgldc";
+    sha256 = "0mvjpin2qmnr8ksiknpcmlqjh5r3mafjcjdrnzbccyxc6r55xiy3";
   };
 
-  buildInputs = [ boost file gettext glib glibc gnome_keyring gtk gtkmm intltool
+  buildInputs = [ autoconf automake boost file gettext glib glibc gnome_keyring gtk gtkmm intltool
     libctemplate libglade libgnome libsigcxx libtool libuuid libxml2 libzip lua makeWrapper mesa
     mysql paramiko pcre pexpect pkgconfig pycrypto python sqlite ];
 
   preConfigure = ''
     substituteInPlace $(pwd)/frontend/linux/workbench/mysql-workbench.in --replace "catchsegv" "${glibc}/bin/catchsegv"
+
+    ./autogen.sh --prefix=$out
   '';
 
   postInstall = ''
@@ -56,7 +58,7 @@ mkfifo $FIFOCTL
 ) &
 
 exec 19> $FIFOCTL
-            '
+            ' 
   '';
 
   meta = with stdenv.lib; {

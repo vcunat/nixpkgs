@@ -1,5 +1,4 @@
-{ stdenv, fetchurl, libX11, libXext, libXinerama, libXpm, libXft, freetype,
-  fontconfig }:
+{ stdenv, fetchurl, libX11, libXext, libXinerama, libXpm, libXft }:
 
 stdenv.mkDerivation {
   name = "jwm-2.0.1";
@@ -9,13 +8,7 @@ stdenv.mkDerivation {
      sha256 = "1ix5y00cmg3cyazl0adzgv49140zxaf2dpngyg1dyy4ma6ysdmnw";
   };
 
-  buildInputs = [ libX11 libXext libXinerama libXpm libXft freetype 
-    fontconfig ];
-
-  preConfigure = ''
-    export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -I${freetype}/include/freetype2 "
-    export NIX_LDFLAGS="$NIX_LDFLAGS -lXft -lfreetype -lfontconfig "
-  '';
+  buildInputs = [ libX11 libXext libXinerama libXpm libXft ];
 
   postInstall =
     ''

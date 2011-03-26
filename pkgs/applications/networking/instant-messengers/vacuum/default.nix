@@ -1,6 +1,6 @@
 x@{builderDefsPackage
   , qt4, openssl
-  , xproto, libX11, libXScrnSaver, scrnsaverproto
+  , xproto, libX11
   , ...}:
 builderDefsPackage
 (a :  
@@ -11,11 +11,11 @@ let
   buildInputs = map (n: builtins.getAttr n x)
     (builtins.attrNames (builtins.removeAttrs x helperArgNames));
   sourceInfo = rec {
-    version="1.1.0";
+    version="1.0.2";
     baseName="vacuum";
     name="${baseName}-${version}";
-    url="http://vacuum-im.googlecode.com/files/${name}.tar.gz";
-    hash="c956b0cf5cc0a1acee47a96f0b0e7ab5d716e48cac4a7fcbca496f901a219dcc";
+    url="http://vacuum-im.googlecode.com/files/${name}-source.tar.gz";
+    hash="01ndwxpgr8911f2nfyb6i7avmmlwfikn031q1s60js4lgbqdq3b7";
   };
 in
 rec {
@@ -34,6 +34,8 @@ rec {
     echo "Fixing a name collision with a function added in Qt 4.7"
     sed -re 's/qHash[(][a-z ]*QUrl/vacuum_obsolete_&/' -i src/plugins/dataforms/dataforms.cpp
   '') ["minInit" "doUnpack"];
+
+  goSrcDir = ''cd vacuum-*/'';
 
   doQMake = a.fullDepEntry (''
     qmake INSTALL_PREFIX=$out -recursive vacuum.pro

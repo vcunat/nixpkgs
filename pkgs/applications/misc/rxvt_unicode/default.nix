@@ -1,9 +1,8 @@
-{ stdenv, fetchurl, perlSupport, libX11, libXt, libXft, ncurses, perl,
-  fontconfig, freetype, pkgconfig, libXrender }:
+{ stdenv, fetchurl, perlSupport, libX11, libXt, libXft, ncurses, perl }:
 
 let 
   name = "rxvt-unicode";
-  version = "9.10";
+  version = "9.07";
   n = "${name}-${version}";
 in
 
@@ -12,21 +11,18 @@ stdenv.mkDerivation (rec {
   name = "${n}${if perlSupport then "-with-perl" else ""}";
 
   src = fetchurl {
-    url = "http://dist.schmorp.de/rxvt-unicode/Attic/rxvt-unicode-${version}.tar.bz2";
-    sha256 = "1c238f7e545b1a8da81239b826fb2a7d196c73effbcbd211db7a50995a0a067a";
+    url = "http://dist.schmorp.de/rxvt-unicode/rxvt-unicode-9.07.tar.bz2";
+    sha256 = "18y5mb3cm1gawjm723q5r7yk37s9drzg39kna036i694m2667865";
   };
 
   buildInputs =
-    [ libX11 libXt libXft ncurses /* required to build the terminfo file */ 
-      fontconfig freetype pkgconfig libXrender ]
+    [ libX11 libXt libXft ncurses /* required to build the terminfo file */ ]
     ++ stdenv.lib.optional perlSupport perl;
 
   preConfigure =
     ''
       configureFlags="${if perlSupport then "--enable-perl" else "--disable-perl"}";
       export TERMINFO=$out/share/terminfo # without this the terminfo won't be compiled by tic, see man tic
-      NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -I${freetype}/include/freetype2"
-      NIX_LDFLAGS="$NIX_LDFLAGS -lfontconfig -lXrender "
     ''
     # make urxvt find its perl file lib/perl5/site_perl is added to PERL5LIB automatically
     + stdenv.lib.optionalString perlSupport ''

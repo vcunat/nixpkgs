@@ -1,6 +1,7 @@
 { stdenv, fetchurl, cmake, qt4, perl, shared_mime_info, libvorbis, taglib
 , ffmpeg, flac, libsamplerate, libdvdread, lame, libsndfile, libmad, gettext
-, kdelibs, kdemultimedia, automoc4, phonon, makeWrapper
+, kdelibs, kdemultimedia, cdrdao, cdrtools, dvdplusrwtools
+, automoc4, phonon, makeWrapper
 }:
 
 stdenv.mkDerivation rec {
@@ -12,9 +13,13 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ cmake qt4 perl shared_mime_info libvorbis taglib
                   ffmpeg flac libsamplerate libdvdread lame libsndfile
-                  libmad gettext stdenv.gcc.libc
-                  kdelibs kdemultimedia automoc4 phonon
+                  libmad gettext stdenv.gcc.libc cdrdao cdrtools
+                  kdelibs kdemultimedia automoc4 phonon dvdplusrwtools
                   makeWrapper ];
+
+  postInstall = ''
+    wrapProgram $out/bin/k3b --suffix PATH : "${cdrdao}/bin:${dvdplusrwtools}/bin:${cdrtools}/bin"
+  '';
 
   meta = with stdenv.lib; {
     description = "CD/DVD Burning Application for KDE";

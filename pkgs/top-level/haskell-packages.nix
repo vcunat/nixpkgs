@@ -107,7 +107,9 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   # packages. It isn't the Cabal library, which is a core package of GHC
   # and therefore not separately listed here.
 
-  cabal = callPackage ../development/libraries/haskell/cabal/cabal.nix {};
+  cabal = callPackage ../development/libraries/haskell/cabal/cabal.nix {
+    enableLibraryProfiling = enableLibraryProfiling;
+  };
 
   # Haskell Platform
   #
@@ -318,7 +320,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   cgi_3001_1_7_2 = callPackage ../development/libraries/haskell/cgi/3001.1.7.2.nix {};
   cgi_3001_1_7_3 = callPackage ../development/libraries/haskell/cgi/3001.1.7.3.nix {};
   cgi_3001_1_7_4 = callPackage ../development/libraries/haskell/cgi/3001.1.7.4.nix {};
-  cgi = self.cgi_3001_1_7_1;
+  cgi = self.cgi_3001_1_7_1; 
 
   Chart = callPackage ../development/libraries/haskell/Chart {};
 
@@ -447,7 +449,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
     inherit (pkgs.xlibs) libSM libICE libXmu libXi;
   };
 
-  GLUT = self.GLUT_2_1_1_2;
+  GLUT = self.GLUT_2_1_1_2; 
 
   gtk = callPackage ../development/libraries/haskell/gtk {
     inherit (pkgs) pkgconfig glibc;
@@ -671,8 +673,6 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   parsec  = self.parsec2;
 
   parsimony = callPackage ../development/libraries/haskell/parsimony {};
-
-  pathtype = callPackage ../development/libraries/haskell/pathtype {};
 
   pcreLight = callPackage ../development/libraries/haskell/pcre-light {
     inherit (pkgs) pcre;
@@ -904,7 +904,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   };
 
   X11Xft = callPackage ../development/libraries/haskell/X11-xft {
-    inherit (pkgs) pkgconfig freetype fontconfig;
+    inherit (pkgs) pkgconfig;
     inherit (pkgs.xlibs) libXft;
   };
 
@@ -1020,7 +1020,9 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   cabalInstall_0_10_2 = callPackage ../tools/package-management/cabal-install/0.10.2.nix {};
   cabalInstall = self.cabalInstall_0_6_2;
 
-  lhs2tex = callPackage ../tools/typesetting/lhs2tex {};
+  lhs2tex = callPackage ../tools/typesetting/lhs2tex {
+    inherit (pkgs) tetex polytable;
+  };
 
   myhasktags = callPackage ../tools/misc/myhasktags {};
 

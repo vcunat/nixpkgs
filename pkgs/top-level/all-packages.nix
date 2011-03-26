@@ -608,8 +608,6 @@ let
 
   ecryptfs = callPackage ../tools/security/ecryptfs { };
 
-  efibootmgr = callPackage ../tools/system/efibootmgr { };
-
   enblendenfuse = callPackage ../tools/graphics/enblend-enfuse { };
 
   encfs = callPackage ../tools/filesystems/encfs { };
@@ -1525,7 +1523,6 @@ let
 
   zsync = callPackage ../tools/compression/zsync { };
 
-
   ### SHELLS
 
 
@@ -2248,8 +2245,6 @@ let
       libpng libtiff libjpeg readline libsndfile libxml2
       freeglut e2fsprogs libsamplerate pcre libevent libedit;
   };
-
-  j = callPackage ../development/interpreters/j {};
 
   kaffe = callPackage ../development/interpreters/kaffe { };
 
@@ -3298,6 +3293,8 @@ let
   # TODO : Add MIT Kerberos and let admin choose.
   kerberos = heimdal;
 
+  hawknl = callPackage ../development/libraries/hawknl { };
+
   heimdal = callPackage ../development/libraries/kerberos/heimdal.nix { };
 
   herqqSvn = callPackage ../development/libraries/herqq/svn.nix { };
@@ -4076,8 +4073,6 @@ let
 
   SDL_ttf = callPackage ../development/libraries/SDL_ttf { };
 
-  sfml_svn = callPackage ../development/libraries/sfml { };
-
   slang = callPackage ../development/libraries/slang { };
 
   slibGuile = callPackage ../development/libraries/slib {
@@ -4174,9 +4169,9 @@ let
   vxl = callPackage ../development/libraries/vxl { };
 
   webkit = let p = applyGlobalOverrides (x : {
-    libsoup = x.gnome28.libsoup_2_33;
+    libsoup = x.gnome28.libsoup_2_31;
     gnome28 = x.gnome28 // {
-      libsoup = x.gnome28.libsoup_2_33;
+      libsoup = x.gnome28.libsoup_2_31;
     };
   });
   in
@@ -4202,10 +4197,6 @@ let
   };
 
   wxGTK28 = callPackage ../development/libraries/wxGTK-2.8 {
-    inherit (gtkLibs) gtk;
-  };
-
-  wxGTK29 = callPackage ../development/libraries/wxGTK-2.9 {
     inherit (gtkLibs) gtk;
   };
 
@@ -4613,7 +4604,7 @@ let
     inherit fetchurl fetchsvn stdenv pkgconfig freetype fontconfig
       libxslt expat libdrm libpng zlib perl mesa
       xkeyboard_config dbus hal libuuid openssl gperf m4
-      autoconf libtool xmlto asciidoc udev bison flex;
+      autoconf libtool xmlto asciidoc udev;
 
     # XXX: Update to newer Automake on the next big rebuild; better yet:
     # remove the dependency on Automake.
@@ -4685,6 +4676,8 @@ let
   darwinSwVersUtility = callPackage ../os-specific/darwin/sw_vers { };
 
   darwinLipoUtility = callPackage ../os-specific/darwin/lipo { };
+
+  darwinInstallNameToolUtility = callPackage ../os-specific/darwin/install_name_tool { };
 
   devicemapper = lvm2;
 
@@ -4998,12 +4991,6 @@ let
       ];
   };
 
-  linux_2_6_34_tuxonice = linux_2_6_34.override (attrs: {
-    kernelPatches = attrs.kernelPatches ++ [
-      kernelPatches.tuxonice_2_6_34
-    ];
-  });
-
   linux_2_6_35 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.35.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
     kernelPatches =
@@ -5013,12 +5000,6 @@ let
       ] ++ lib.optional (platform.kernelArch == "arm")
         kernelPatches.sheevaplug_modules_2_6_35;
   };
-
-  linux_2_6_35_tuxonice = linux_2_6_35.override (attrs: {
-    kernelPatches = attrs.kernelPatches ++ [
-      kernelPatches.tuxonice_2_6_35
-    ];
-  });
 
   linux_nanonote_jz_2_6_34 = makeOverridable
     (import ../os-specific/linux/kernel/linux-nanonote-jz-2.6.34.nix) {
@@ -5062,29 +5043,7 @@ let
       ];
   };
 
-  linux_2_6_36_tuxonice = linux_2_6_36.override (attrs: {
-    kernelPatches = attrs.kernelPatches ++ [
-      kernelPatches.tuxonice_2_6_36
-    ];
-  });
-
   linux_2_6_37 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.37.nix) {
-    inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
-    kernelPatches =
-      [ kernelPatches.fbcondecor_2_6_37
-        kernelPatches.sec_perm_2_6_24
-        #kernelPatches.aufs2_2_6_35
-        #kernelPatches.mips_restart_2_6_36
-      ];
-  };
-
-  linux_2_6_37_tuxonice = linux_2_6_37.override (attrs: {
-    kernelPatches = attrs.kernelPatches ++ [
-      kernelPatches.tuxonice_2_6_37
-    ];
-  });
-
-  linux_2_6_38 = makeOverridable (import ../os-specific/linux/kernel/linux-2.6.38.nix) {
     inherit fetchurl stdenv perl mktemp module_init_tools ubootChooser;
     kernelPatches =
       [ #kernelPatches.fbcondecor_2_6_35
@@ -5206,13 +5165,9 @@ let
     recurseIntoAttrs (linuxPackagesFor linux_2_6_32_xen pkgs.linuxPackages_2_6_32_xen);
   linuxPackages_2_6_33 = recurseIntoAttrs (linuxPackagesFor linux_2_6_33 pkgs.linuxPackages_2_6_33);
   linuxPackages_2_6_34 = recurseIntoAttrs (linuxPackagesFor linux_2_6_34 pkgs.linuxPackages_2_6_34);
-  linuxPackages_2_6_34_tuxonice = recurseIntoAttrs (linuxPackagesFor linux_2_6_34_tuxonice pkgs.linuxPackages_2_6_34_tuxonice);
   linuxPackages_2_6_35 = recurseIntoAttrs (linuxPackagesFor linux_2_6_35 pkgs.linuxPackages_2_6_35);
-  linuxPackages_2_6_35_tuxonice = recurseIntoAttrs (linuxPackagesFor linux_2_6_35_tuxonice pkgs.linuxPackages_2_6_35_tuxonice);
   linuxPackages_2_6_36 = recurseIntoAttrs (linuxPackagesFor linux_2_6_36 pkgs.linuxPackages_2_6_36);
-  linuxPackages_2_6_36_tuxonice = recurseIntoAttrs (linuxPackagesFor linux_2_6_36_tuxonice pkgs.linuxPackages_2_6_36_tuxonice);
   linuxPackages_2_6_37 = recurseIntoAttrs (linuxPackagesFor linux_2_6_37 pkgs.linuxPackages_2_6_37);
-  linuxPackages_2_6_37_tuxonice = recurseIntoAttrs (linuxPackagesFor linux_2_6_37_tuxonice pkgs.linuxPackages_2_6_37_tuxonice);
   linuxPackages_nanonote_jz_2_6_34 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_34 pkgs.linuxPackages_nanonote_jz_2_6_34);
   linuxPackages_nanonote_jz_2_6_35 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_35 pkgs.linuxPackages_nanonote_jz_2_6_35);
   linuxPackages_nanonote_jz_2_6_36 = recurseIntoAttrs (linuxPackagesFor linux_nanonote_jz_2_6_36 pkgs.linuxPackages_nanonote_jz_2_6_36);
@@ -5641,8 +5596,6 @@ let
 
   aangifte2009 = callPackage_i686 ../applications/taxes/aangifte-2009 { };
 
-  aangifte2010 = callPackage_i686 ../applications/taxes/aangifte-2010 { };
-
   abcde = callPackage ../applications/audio/abcde { };
 
   abiword = callPackage ../applications/office/abiword {
@@ -5733,6 +5686,14 @@ let
     python = python3;
   });
 
+  bmp = callPackage ../applications/audio/bmp {
+    inherit (gnome) esound libglade;
+  };
+
+  bmp_plugin_musepack = callPackage ../applications/audio/bmp-plugins/musepack { };
+
+  bmp_plugin_wma = callPackage ../applications/audio/bmp-plugins/wma { };
+
   bvi = callPackage ../applications/editors/bvi { };
 
   calibre = callPackage ../applications/misc/calibre {
@@ -5766,9 +5727,11 @@ let
     };
 
   chrome = callPackage ../applications/networking/browsers/chromium {
+    inherit (gtkLibs) gtk glib pango atk;
     inherit (gnome) GConf;
     inherit (xorg) libXdamage;
     patchelf = patchelf06;
+    libjpeg = libjpeg62;
   };
 
   chromeWrapper = wrapFirefox chrome "chrome" "";
@@ -6030,19 +5993,24 @@ let
   firefox = firefox36Pkgs.firefox;
   firefoxWrapper = firefox36Wrapper;
 
+  firefox35Pkgs = callPackage ../applications/networking/browsers/firefox/3.5.nix {
+    inherit (gtkLibs) gtk pango;
+    inherit (gnome) libIDL;
+  };
+
+  firefox35Wrapper = wrapFirefox firefox35Pkgs.firefox "firefox" "";
+
   firefox36Pkgs = callPackage ../applications/networking/browsers/firefox/3.6.nix {
     inherit (gtkLibs) gtk pango;
     inherit (gnome) libIDL;
   };
 
-  firefox36Wrapper = wrapFirefox firefox36Pkgs.firefox "firefox" "";
-
   firefox40Pkgs = callPackage ../applications/networking/browsers/firefox/4.0.nix {
-    inherit (gtkLibs) gtk pango;
-    inherit (gnome) libIDL;
+    inherit (p.gtkLibs) gtk pango;
+    inherit (p.gnome) libIDL;
   };
 
-  firefox40Wrapper = lowPrio (wrapFirefox firefox40Pkgs.firefox "firefox" "");
+  firefox36Wrapper = wrapFirefox firefox36Pkgs.firefox "firefox" "";
 
   flac = callPackage ../applications/audio/flac { };
 
@@ -6895,8 +6863,6 @@ let
 
   xawtv = callPackage ../applications/video/xawtv { };
 
-  xbindkeys = callPackage ../tools/X11/xbindkeys { };
-
   xchat = callPackage ../applications/networking/irc/xchat { };
 
   xchm = callPackage ../applications/misc/xchm { };
@@ -7098,8 +7064,6 @@ let
       libICE libSM xproto;
     inherit libpng zlib;
   };
-
-  mars = callPackage ../games/mars { };
 
   micropolis = callPackage ../games/micropolis { };
 
@@ -7377,8 +7341,6 @@ let
       libXmu libXext libXcursor;
   };
 
-  jags = callPackage ../applications/science/math/jags { };
-
   liblapack = callPackage ../development/libraries/science/math/liblapack { };
 
 
@@ -7515,6 +7477,8 @@ let
 
   cupsBjnp = callPackage ../misc/cups/drivers/cups-bjnp { };
 
+  darcnes = callPackage ../misc/emulators/darcnes { };
+
   dblatex = callPackage ../misc/tex/dblatex { };
 
   dosbox = callPackage ../misc/emulators/dosbox { };
@@ -7524,6 +7488,8 @@ let
   ekiga = newScope (pkgs.gtkLibs // pkgs.gnome) ../applications/networking/ekiga { };
 
   electricsheep = callPackage ../misc/screensavers/electricsheep { };
+
+  fakenes = callPackage ../misc/emulators/fakenes { };
 
   foldingathome = callPackage ../misc/foldingathome { };
 
