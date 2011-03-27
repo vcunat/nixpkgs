@@ -972,6 +972,8 @@ let
 
   networkmanager = callPackage ../tools/networking/network-manager { };
 
+  networkmanagerapplet = newScope gnome ../tools/networking/network-manager-applet { };
+
   nilfs_utils = callPackage ../tools/filesystems/nilfs-utils {};
 
   nmap = callPackage ../tools/security/nmap {
@@ -1112,6 +1114,8 @@ let
   plotutils = callPackage ../tools/graphics/plotutils { };
 
   pngnq = callPackage ../tools/graphics/pngnq { };
+
+  polkit_gnome = callPackage ../tools/misc/polkit-gnome { };
 
   povray = callPackage ../tools/graphics/povray { };
 
@@ -7083,6 +7087,8 @@ let
 
   quake3game = callPackage ../games/quake3/game { };
 
+  racer = callPackage ../games/racer { };
+
   rogue = callPackage ../games/rogue { };
 
   sauerbraten = callPackage ../games/sauerbraten {};
@@ -7098,6 +7104,8 @@ let
     inherit pkgconfig fetchsvn perl;
     inherit (xlibs) libX11;
   };
+
+  simutrans = callPackage ../games/simutrans { };
 
   six = callPackage ../games/six {
     inherit (kde3) arts kdelibs;
