@@ -37,15 +37,17 @@ in
     in
     stdenv.mkDerivation {
     buildInputs = [ pkgs.python ];
-    name = "hg-subversion";
     # REGION AUTO UPDATE: { name="hg-subversion"; type="hg"; url="https://bitbucket.org/durin42/hgsubversion"; groups = "mercurial-extensions"; }
-    src = sourceFromHead "hg-subversion-13e24740a500.tar.gz"
-                 (fetchurl { url = "http://mawercer.de/~nix/repos/hg-subversion-13e24740a500.tar.gz"; sha256 = "dc303fd6c76435209bb8f3aa19035d829856261f49dc6a6dbc2bbd055e32a20f"; });
+    src = (fetchurl { url = "http://mawercer.de/~nix/reposhg-subversion-hg-6f0b0a4.tar.bz2"; sha256 = "535b08ee21aa14160434f58626c6ff3c952fecee7c9d408d365bbc4b7fdccb1f"; });
+    name = "hg-subversion-hg-6f0b0a4";
     # END
 
     buildPhase = ":";
 
+    # home required for tests !?
     installPhase = ''
+      mkdir home
+      export HOME=`pwd`/home
       python setup.py install --prefix=$out
       echo 'running hgsubversion test which takes quite a while'
       PATH=${hg.svnPythonSupport}/bin:$PATH
