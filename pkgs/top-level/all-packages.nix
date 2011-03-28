@@ -5584,7 +5584,7 @@ let
   };
 
   adobeReader = callPackage_i686 ../applications/misc/adobe-reader {
-    inherit (pkgsi686Linux.gtkLibs) glib pango atk gtk;
+    gtkLibs = pkgsi686Linux.gtkLibs;
   };
 
   akunambol = newScope pkgs.kde4 ../applications/networking/sync/akunambol { };
