@@ -6000,6 +6000,7 @@ let
   evince = hiPrio (callPackage ../applications/misc/evince {
     inherit (gnome) gnomedocutils gnomeicontheme libgnome
       libgnomeui libglade glib gtk scrollkeeper gnome_keyring;
+    poppler = poppler14;
   });
 
   evolution_data_server = newScope (gnome // gtkLibs) ../servers/evolution-data-server { };
