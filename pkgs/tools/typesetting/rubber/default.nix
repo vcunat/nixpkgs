@@ -4,7 +4,7 @@ stdenv.mkDerivation rec {
   name = "rubber-1.1";
 
   src = fetchurl {
-    url = "http://ebeffara.free.fr/pub/${name}.tar.gz";
+    url = http://launchpadlibrarian.net/53558954/rubber-1.1.tar.gz;
     sha256 = "1xbkv8ll889933gyi2a5hj7hhh216k04gn8fwz5lfv5iz8s34gbq";
   };
 
