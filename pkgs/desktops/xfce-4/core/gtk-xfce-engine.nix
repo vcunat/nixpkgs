@@ -1,15 +1,14 @@
 { stdenv, fetchurl, pkgconfig, intltool, gtk }:
 
 stdenv.mkDerivation rec {
-  name = "gtk-xfce-engine-2.6.0";
-  
+  name = "gtk-xfce-engine-2.8.1";
+
   src = fetchurl {
-    url = "http://www.xfce.org/archive/xfce/4.6.2/src/${name}.tar.bz2";
-    sha1 = "a7be2f330833d150c5fb37f68a4c2138348b5446";
+    url = "mirror://xfce/${name}.tar.bz2";
+    sha256 = "05z63cbgbb4ldpdra4bpd37knwny2k9anjw9hrm5rvfdfhnsbc3w";
   };
 
-  buildInputs =
-    [ pkgconfig intltool gtk ];
+  buildInputs = [ pkgconfig intltool gtk ];
 
   meta = {
     homepage = http://www.xfce.org/;

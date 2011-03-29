@@ -3,11 +3,11 @@
 , gamin }:
 
 stdenv.mkDerivation rec {
-  name = "thunar-1.0.2";
-  
+  name = "Thunar-1.3.0";
+
   src = fetchurl {
-    url = http://www.xfce.org/archive/xfce/4.6.2/src/Thunar-1.0.2.tar.bz2;
-    sha1 = "f7ae00c32402e4bc502aba15477b78e2c558c7c3";
+    url = "mirror://xfce/${name}.tar.bz2";
+    sha256 = "02j3dcgk65mig3jmrg740d1swc8sbn3mkkyrca1ijvv1a955345n";
   };
 
   buildInputs =

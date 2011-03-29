@@ -1,16 +1,16 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfcegui4
+{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui
 , libwnck, xfconf, libglade, libxfce4menu, xfce4panel, thunar, exo }:
 
 stdenv.mkDerivation rec {
-  name = "xfdesktop-4.6.2";
-  
+  name = "xfdesktop-4.8.1";
+
   src = fetchurl {
-    url = "http://www.xfce.org/archive/xfce/4.6.2/src/${name}.tar.bz2";
-    sha1 = "cefcd1c1386d34386d4e900cbf88b7c24ef3bafb";
+    url = "mirror://xfce/${name}.tar.bz2";
+    sha256 = "1f200xqgj74j52a2szfjrgpa2ni03yc313ss4rzn3izhzawq6r2r";
   };
 
   buildInputs =
-    [ pkgconfig intltool gtk libxfce4util libxfcegui4 libwnck xfconf
+    [ pkgconfig intltool gtk libxfce4util libxfce4ui libwnck xfconf
       libglade libxfce4menu xfce4panel thunar exo
     ];
 

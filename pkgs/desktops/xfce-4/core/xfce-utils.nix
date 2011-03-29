@@ -1,16 +1,16 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfcegui4 }:
+{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui }:
 
 stdenv.mkDerivation rec {
-  name = "xfce-utils-4.6.2";
-  
+  name = "xfce-utils-4.8.1";
+
   src = fetchurl {
-    url = "http://www.xfce.org/archive/xfce/4.6.2/src/${name}.tar.bz2";
-    sha1 = "6373886c3d70e576859741bde747a235567ffd8e";
+    url = "mirror://xfce/${name}.tar.bz2";
+    sha256 = "11l6mxy9ml2ji4ymq8mwfh6vjgb70wj7616z991mxilwddmwc17d";
   };
 
   configureFlags = "--with-xsession-prefix=$(out)/share/xsessions";
 
-  buildInputs = [ pkgconfig intltool gtk libxfce4util libxfcegui4 ];
+  buildInputs = [ pkgconfig intltool gtk libxfce4util libxfce4ui ];
 
   meta = {
     homepage = http://www.xfce.org/;

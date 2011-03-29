@@ -5,12 +5,12 @@
 , gtk
 }:
 
-stdenv.mkDerivation {
-  name = "xfce-terminal-0.4.5";
-  
+stdenv.mkDerivation rec {
+  name = "xfce-terminal-0.4.6";
+
   src = fetchurl {
-    url = http://archive.xfce.org/src/apps/terminal/0.4/Terminal-0.4.5.tar.bz2;
-    sha256 = "14w8mhmyrq6dd9574zfvq0pymknljckq6qgcv1r6c1r22jydrzcj";
+    url = "mirror://xfce/apps/terminal/0.4/Terminal-0.4.6.tar.bz2";
+    sha256 = "0zw9dy072g1cgwfqybr3y9x9afmaw13fqnv9gan58d5zn79mb39s";
   };
 
   buildInputs = [ pkgconfig intltool exo gtk vte libxfce4util ncurses ];

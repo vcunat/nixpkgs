@@ -1,16 +1,16 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfcegui4
+{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui
 , libwnck, dbus_glib, xfconf, libglade, xorg }:
 
 stdenv.mkDerivation rec {
-  name = "xfce4-session-4.6.2";
-  
+  name = "xfce4-session-4.8.1";
+
   src = fetchurl {
-    url = "http://www.xfce.org/archive/xfce/4.6.2/src/${name}.tar.bz2";
-    sha1 = "2a5778a1543f97845f118a186e2dbb8a8ea3ff4b";
+    url = "mirror://xfce/${name}.tar.bz2";
+    sha256 = "0adqd1gf48mck8dy7i5xchnl4d331cxg18j09xxx5m3yv1vjmx8x";
   };
 
   buildInputs =
-    [ pkgconfig intltool gtk libxfce4util libxfcegui4 libwnck dbus_glib
+    [ pkgconfig intltool gtk libxfce4util libxfce4ui libwnck dbus_glib
       xfconf libglade xorg.iceauth
     ];
 

@@ -1,17 +1,17 @@
 { stdenv, fetchurl, pkgconfig, intltool, libexif, gtk, thunar
-, exo, dbus_glib, libxfce4util, libxfcegui4, xfconf }:
+, exo, dbus_glib, libxfce4util, libxfce4ui, xfconf }:
 
 stdenv.mkDerivation rec {
-  name = "ristretto-0.0.22";
-  
+  name = "ristretto-0.0.93";
+
   src = fetchurl {
-    url = "http://www.xfce.org/archive/src/apps/ristretto/0.0/${name}.tar.gz";
-    sha1 = "bddbc8618ba67699ccf5ee4ea0b538b1be7fdb0a";
+    url = "http://www.xfce.org/archive/src/apps/ristretto/0.0/${name}.tar.bz2";
+    sha256 = "1zrc4q6619nvzlqhcg1qg48cvfcxfyy3fb7f5cpps1nq58lbyk0h";
   };
 
   buildInputs =
     [ pkgconfig intltool libexif gtk thunar exo dbus_glib
-      libxfce4util libxfcegui4 xfconf
+      libxfce4util libxfce4ui xfconf
     ];
 
   NIX_LDFLAGS = "-lX11";

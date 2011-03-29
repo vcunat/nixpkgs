@@ -2,11 +2,11 @@
 , enableHAL ? true, hal, dbus_glib }:
 
 stdenv.mkDerivation rec {
-  name = "exo-0.3.107";
-  
+  name = "exo-0.6.0";
+
   src = fetchurl {
-    url = "http://www.xfce.org/archive/xfce/4.6.2/src/${name}.tar.bz2";
-    sha256 = "18z2xmdl577r60ln2waai10dd7i384k0bxrmf7gchrxd9c9aq4ha";
+    url = "mirror://xfce/${name}.tar.bz2";
+    sha256 = "04py7iw60a3kxqj2szxwbd09bws1vm0n9v9v7006g3jvvlbc0s98";
   };
 
   buildInputs =

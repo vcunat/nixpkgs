@@ -1,5 +1,5 @@
 { stdenv, fetchurl, pkgconfig, intltool, glib, gst_all, gtk
-, libxfce4util, libxfcegui4, xfce4panel, xfconf, makeWrapper }:
+, libxfce4util, libxfce4ui, xfce4panel, xfconf, makeWrapper }:
 
 let
 
@@ -12,16 +12,16 @@ let
 in
 
 stdenv.mkDerivation rec {
-  name = "xfce4-mixer-4.6.1";
-  
+  name = "xfce4-mixer-4.8.0";
+
   src = fetchurl {
-    url = "http://archive.xfce.org/src/apps/xfce4-mixer/4.6/${name}.tar.bz2";
-    sha1 = "e86163782fc4fc31671c7cb212d23d34106ad3af";
+    url = "http://archive.xfce.org/src/apps/xfce4-mixer/4.8/${name}.tar.bz2";
+    sha256 = "1aqgjxvck6hx26sk3n4n5avhv02vs523mfclcvjb3xnks3yli7wz";
   };
 
   buildInputs =
     [ pkgconfig intltool glib gst_all.gstreamer gstPluginsBase gtk
-      libxfce4util libxfcegui4 xfce4panel xfconf makeWrapper
+      libxfce4util libxfce4ui xfce4panel xfconf makeWrapper
     ];
 
   postInstall =
