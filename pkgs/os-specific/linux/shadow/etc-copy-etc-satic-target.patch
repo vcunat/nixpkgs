@@ -1,8 +1,8 @@
 diff --git a/libmisc/copydir.c b/libmisc/copydir.c
-index fac585c..2fc99ec 100644
+index fac585c..ddf3788 100644
 --- a/libmisc/copydir.c
 +++ b/libmisc/copydir.c
-@@ -490,6 +490,20 @@ static int copy_symlink (const char *src, const char *dst,
+@@ -490,6 +490,27 @@ static int copy_symlink (const char *src, const char *dst,
  	if (NULL == oldlink) {
  		return -1;
  	}
@@ -17,6 +17,13 @@ index fac585c..2fc99ec 100644
 +          char *target = readlink_malloc (oldlink);
 +          free (oldlink);
 +          int r = copy_entry(target, dst, uid, gid);
++
++          /* make writeable by user */
++          struct stat s;
++          stat(dst, &s);
++          s.st_mode |= S_IWUSR; // u+w
++          chmod(dst, s.st_mode); // not minding higher bits because chmod (coreutils) doesn't either
++
 +          free (target);
 +          return r;
 +        }
