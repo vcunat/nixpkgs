@@ -60,7 +60,8 @@ updating upstart to 1.0 it was announced on the mailinglist. Not all jobs have b
 adding smlnj
 adding fish shell
 
-shadow: useradd: dereference /etc/skel/* symlinks so that files are put into home directories Also enable parallel building
+shadow: useradd: dereference /etc/skel/* symlinks so that files are put into
+home directories Also enable parallel building, make files writable
 
 builderdefs: enable parallel building and add verbose script
 
