@@ -1,37 +1,3 @@
-{ stdenv
-, fetchurl
-, ffmpeg
-, cairo
-, pango
-, glib
-, libXrender
-, libXScrnSaver
-, libXdamage
-, gtk
-, nspr
-, nss
-, fontconfig
-, freetype
-, alsaLib
-, libX11
-, GConf
-, libXext
-, libXt
-, atk
-, makeWrapper
-, unzip
-, expat
-, zlib
-, libjpeg
-, bzip2
-, libpng
-, dbus
-, dbus_glib
-, patchelf
-, cups
-, libgcrypt
-, libXtst
-}:
 
 assert stdenv.system == "i686-linux" || stdenv.system == "x86_64-linux" ;
 

@@ -636,25 +636,6 @@ rec {
     };
   });
 
-  pip = buildPythonPackage ( rec {
-    name = "pip-0.8.2";
-
-    doCheck = false;
-
-    src = fetchurl {
-      url = http://pypi.python.org/packages/source/p/pip/pip-0.8.2.tar.gz;
-      md5 = "df1eca0abe7643d92b5222240bed15f6";
-    };
-
-    meta = {
-      description = "python package installer";
-      homepage = http://pypi.python.org/pypi/pip;
-      license = "MIT";
-      maintainers = [stdenv.lib.maintainers.marcweber];
-      platforms = stdenv.lib.platforms.linux;
-    };
-
-  });
 
   optfunc = buildPythonPackage ( rec {
     name = "optfunc-git";
@@ -676,6 +657,26 @@ rec {
       description = "A new experimental interface to optparse which works by introspecting a function definition";
       homepage = "http://simonwillison.net/2009/May/28/optfunc/";
     };
+  });
+
+  pip = buildPythonPackage ( rec {
+    name = "pip-0.8.2";
+
+    doCheck = false;
+
+    src = fetchurl {
+      url = http://pypi.python.org/packages/source/p/pip/pip-0.8.2.tar.gz;
+      md5 = "df1eca0abe7643d92b5222240bed15f6";
+    };
+
+    meta = {
+      description = "python package installer";
+      homepage = http://pypi.python.org/pypi/pip;
+      license = "MIT";
+      maintainers = [stdenv.lib.maintainers.marcweber];
+      platforms = stdenv.lib.platforms.linux;
+    };
+
   });
 
   ply = buildPythonPackage (rec {
