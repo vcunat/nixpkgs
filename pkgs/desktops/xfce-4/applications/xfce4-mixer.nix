@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, intltool, glib, gst_all, gtk
+{ stdenv, fetchXfce, pkgconfig, intltool, glib, gst_all, gtk
 , libxfce4util, libxfce4ui, xfce4panel, xfconf, makeWrapper }:
 
 let
@@ -14,10 +14,7 @@ in
 stdenv.mkDerivation rec {
   name = "xfce4-mixer-4.8.0";
 
-  src = fetchurl {
-    url = "http://archive.xfce.org/src/apps/xfce4-mixer/4.8/${name}.tar.bz2";
-    sha256 = "1aqgjxvck6hx26sk3n4n5avhv02vs523mfclcvjb3xnks3yli7wz";
-  };
+  src = fetchXfce.app name "1aqgjxvck6hx26sk3n4n5avhv02vs523mfclcvjb3xnks3yli7wz";
 
   buildInputs =
     [ pkgconfig intltool glib gst_all.gstreamer gstPluginsBase gtk

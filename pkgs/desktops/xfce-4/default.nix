@@ -1,6 +1,6 @@
 { callPackage, pkgs }:
 
-  let lib = import "../../lib"; in
+  let lib = import ../../lib; in
 {
 
 
@@ -12,13 +12,14 @@
     generic = prepend : name : hash :
       let p = builtins.parseDrvName name;
           versions = lib.splitString "." p.version;
-          ver_maj = lib.intersperse "." (lib.take 2 versions);
+          ver_maj = lib.concatStrings (lib.intersperse "." (lib.take 2 versions));
       in pkgs.fetchurl {
-        url = "mirror://xfce/${prepend}/${p.name}/xx/${name}.tar.bz2";
+        url = "mirror://xfce/${prepend}/${p.name}/${ver_maj}/${name}.tar.bz2";
         sha256 = hash;
       };
     core = generic "xfce";
     app = generic "apps";
+    art = generic "art";
   };
 
   #### CORE
@@ -53,14 +54,6 @@
 
   # not used anymore
   libxfce4menu = callPackage ./core/libxfce4menu.nix { };
-
-
-
-
-
-
-
-
 
   gtk_xfce_engine = callPackage ./core/gtk-xfce-engine.nix { };
 

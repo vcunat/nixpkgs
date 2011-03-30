@@ -1,14 +1,11 @@
-{ stdenv, fetchurl, pkgconfig, intltool, exo, gtk, libxfce4util, libxfce4ui
+{ stdenv, fetchXfce, pkgconfig, intltool, exo, gtk, libxfce4util, libxfce4ui
 , libglade, xfconf, xorg, libwnck, libnotify }:
 
 #TODO: optional packages
 stdenv.mkDerivation rec {
   name = "xfce4-settings-4.8.1";
 
-  src = fetchurl {
-    url = "mirror://xfce/${name}.tar.bz2";
-    sha256 = "0nhv3x87j0zfa4cb581rxngbbyxk30gwn3hwfk00wp0abi8gmx8d";
-  };
+  src = fetchXfce.core name "0nhv3x87j0zfa4cb581rxngbbyxk30gwn3hwfk00wp0abi8gmx8d";
 
   buildInputs =
     [ pkgconfig intltool exo gtk libxfce4util libxfce4ui libglade

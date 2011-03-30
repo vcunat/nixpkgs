@@ -1,12 +1,9 @@
-{ stdenv, fetchurl, pkgconfig, intltool, libxfce4util, libxfcegui4, gtk }:
+{ stdenv, fetchXfce, pkgconfig, intltool, libxfce4util, libxfcegui4, gtk }:
 
 stdenv.mkDerivation rec {
   name = "mousepad-0.2.16";
 
-  src = fetchurl {
-    url = "http://www.xfce.org/archive/src/apps/mousepad/0.2/${name}.tar.bz2";
-    sha1 = "4e63033e0a71578f3ec9a0d2e6a505efd0424ef9";
-  };
+  src = fetchXfce.app name "0gp7yh8b9w3f1n2la1l8nlqm0ycf0w0qkgcyv9yd51qv9gyr7rc6";
 
   buildInputs = [ pkgconfig intltool libxfce4util libxfcegui4 gtk ];
 

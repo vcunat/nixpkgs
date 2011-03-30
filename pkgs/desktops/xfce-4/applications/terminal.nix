@@ -1,17 +1,15 @@
-{ stdenv, fetchurl
+{ stdenv, fetchXfce
 , pkgconfig, ncurses
 , intltool, vte
 , exo, libxfce4util
 , gtk
 }:
 
+let version = "0.4.6"; in
 stdenv.mkDerivation rec {
-  name = "xfce-terminal-0.4.6";
+  name = "xfce-terminal-${version}";
 
-  src = fetchurl {
-    url = "mirror://xfce/apps/terminal/0.4/Terminal-0.4.6.tar.bz2";
-    sha256 = "0zw9dy072g1cgwfqybr3y9x9afmaw13fqnv9gan58d5zn79mb39s";
-  };
+  src = fetchXfce.app "Terminal-${version}" "0zw9dy072g1cgwfqybr3y9x9afmaw13fqnv9gan58d5zn79mb39s";
 
   buildInputs = [ pkgconfig intltool exo gtk vte libxfce4util ncurses ];
 

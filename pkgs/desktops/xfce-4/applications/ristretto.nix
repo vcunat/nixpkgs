@@ -1,13 +1,10 @@
-{ stdenv, fetchurl, pkgconfig, intltool, libexif, gtk, thunar
+{ stdenv, fetchXfce, pkgconfig, intltool, libexif, gtk, thunar
 , exo, dbus_glib, libxfce4util, libxfce4ui, xfconf }:
 
 stdenv.mkDerivation rec {
   name = "ristretto-0.0.93";
 
-  src = fetchurl {
-    url = "http://www.xfce.org/archive/src/apps/ristretto/0.0/${name}.tar.bz2";
-    sha256 = "1zrc4q6619nvzlqhcg1qg48cvfcxfyy3fb7f5cpps1nq58lbyk0h";
-  };
+  src = fetchXfce.app name "1zrc4q6619nvzlqhcg1qg48cvfcxfyy3fb7f5cpps1nq58lbyk0h";
 
   buildInputs =
     [ pkgconfig intltool libexif gtk thunar exo dbus_glib

@@ -1,13 +1,10 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, xfconf
+{ stdenv, fetchXfce, pkgconfig, intltool, gtk, libxfce4util, xfconf
 , libglade, libstartup_notification }:
 
 stdenv.mkDerivation rec {
   name = "libxfcegui4-4.8.1";
 
-  src = fetchurl {
-    url = "mirror://xfce/${name}.tar.bz2";
-    sha256 = "0hr4h6a9p6w3qw1976p8v9c9pwhd9zhrjlbaph0p7nyz7j1836ih";
-  };
+  src = fetchXfce.core name "0hr4h6a9p6w3qw1976p8v9c9pwhd9zhrjlbaph0p7nyz7j1836ih";
 
   # By default, libxfcegui4 tries to install into libglade's prefix.
   # Install into our own prefix instead.

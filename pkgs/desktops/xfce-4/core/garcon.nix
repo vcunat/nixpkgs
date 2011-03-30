@@ -1,14 +1,16 @@
 { stdenv, fetchXfce, pkgconfig, intltool, gtk }:
 
 stdenv.mkDerivation rec {
-  name = "xfce4-icon-theme-4.4.3";
+  name = "garcon-0.1.5";
 
-  src = fetchXfce.art name "1yk6rx3zr9grm4jwpjvqdkl13pisy7qn1wm5cqzmd2kbsn96cy6l";
+  src = fetchXfce.core name "1xa0nciklqp6iizm7ngx1apfn2raas406r4k75zmn995bmq9bfkz";
 
   buildInputs = [ pkgconfig intltool gtk ];
 
   meta = {
     homepage = http://www.xfce.org/;
-    description = "Icons for Xfce";
+#TODO
+    description = "";
+    license = "";
   };
 }
