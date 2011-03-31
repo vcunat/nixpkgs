@@ -1955,6 +1955,11 @@ let
   haskellPackages_ghc702 =
     haskellPackagesFun ../development/compilers/ghc/7.0.2.nix  (x : x.ghc702Prefs) false (x : x);
 
+  # Can become default after a short testing phase. There's also a minor platform
+  # release planned based on 703. Please keep at lowPrio until then.
+  haskellPackages_ghc703 =
+    haskellPackagesFun ../development/compilers/ghc/7.0.3.nix  (x : x.ghc703Prefs) false lowPrio;
+
   haskellPackages_ghcHEAD =
     haskellPackagesFun ../development/compilers/ghc/head.nix   (x : x.ghcHEADPrefs) false lowPrio;
 
@@ -2284,6 +2289,8 @@ let
 
   phpXdebug = callPackage ../development/interpreters/php-xdebug { };
 
+  picolisp = callPackage ../development/interpreters/picolisp {};
+
   pltScheme = builderDefsPackage (import ../development/interpreters/plt-scheme) {
     inherit cairo fontconfig freetype libjpeg libpng openssl
       perl mesa zlib which;
@@ -2606,6 +2613,8 @@ let
 
   ired = callPackage ../development/tools/analysis/radare/ired.nix { };
 
+  jam = callPackage ../development/tools/build-managers/jam { };
+
   jikespg = callPackage ../development/tools/parsing/jikespg { };
 
   lcov = callPackage ../development/tools/analysis/lcov { };
@@ -2753,6 +2762,8 @@ let
   aprutil = callPackage ../development/libraries/apr-util {
     bdbSupport = true;
   };
+
+  asio = callPackage ../development/libraries/asio { };
 
   aspell = callPackage ../development/libraries/aspell { };
 
@@ -3842,6 +3853,10 @@ let
 
   muparser = callPackage ../development/libraries/muparser { };
 
+  mygui = callPackage ../development/libraries/mygui {};
+
+  myguiSvn = callPackage ../development/libraries/mygui/svn.nix {};
+
   ncurses = makeOverridable (import ../development/libraries/ncurses) {
     inherit fetchurl stdenv;
     unicode = system != "i686-cygwin";
@@ -4083,6 +4098,8 @@ let
     scheme = guile;
   };
 
+  smpeg = callPackage ../development/libraries/smpeg { };
+
   snack = callPackage ../development/libraries/snack {
         # optional
   };
@@ -4160,7 +4177,7 @@ let
 
   urt = callPackage ../development/libraries/urt { };
 
-  ustr = callPackage ../development/libraries/ustr { stdenv = overrideGCC stdenv gcc44; };
+  ustr = callPackage ../development/libraries/ustr { };
 
   ucommon = callPackage ../development/libraries/ucommon { };
 
@@ -5118,11 +5135,15 @@ let
 
     aufs2 = callPackage ../os-specific/linux/aufs2 { };
 
-    aufs2_1 = callPackage ../os-specific/linux/aufs2.1 { };
+    aufs2_1 = if kernel.features ? aufs2_1 then
+      callPackage ../os-specific/linux/aufs2.1 { }
+      else null;
+
+    aufs2_1_util = if kernel.features ? aufs2_1 then
+      callPackage ../os-specific/linux/aufs2.1-util { }
+      else null;
 
     aufs2_util = callPackage ../os-specific/linux/aufs2-util { };
-
-    aufs2_1_util = callPackage ../os-specific/linux/aufs2.1-util { };
 
     blcr = callPackage ../os-specific/linux/blcr {
       #libtool = libtool_1_5; # libtool 2 causes a fork bomb
@@ -5663,9 +5684,7 @@ let
     inherit (gnome) libglade libgnomecanvas;
   };
 
-  adobeReader = callPackage_i686 ../applications/misc/adobe-reader {
-    inherit (pkgsi686Linux.gtkLibs) glib pango atk gtk;
-  };
+  adobeReader = callPackage_i686 ../applications/misc/adobe-reader { };
 
   akunambol = newScope pkgs.kde4 ../applications/networking/sync/akunambol { };
 
@@ -6744,7 +6763,7 @@ let
 
   teamspeak_client = callPackage ../applications/networking/instant-messengers/teamspeak/client.nix { };
 
-  taskJuggler = callPackage ../applications/misc/taskjuggler {
+  taskjuggler = callPackage ../applications/misc/taskjuggler {
     qt = qt3;
 
     # KDE support is not working yet.
@@ -6910,6 +6929,8 @@ let
   xchm = callPackage ../applications/misc/xchm { };
 
   xcompmgr = callPackage ../applications/window-managers/xcompmgr { };
+
+  xdaliclock = callPackage ../tools/misc/xdaliclock {};
 
   xdg_utils = callPackage ../tools/X11/xdg-utils { };
 
@@ -7135,6 +7156,10 @@ let
 
   racer = callPackage ../games/racer { };
 
+  rigsofrods = callPackage ../games/rigsofrods {
+    mygui = myguiSvn;
+  };
+
   rogue = callPackage ../games/rogue { };
 
   sauerbraten = callPackage ../games/sauerbraten {};
@@ -7194,6 +7219,8 @@ let
     plib = plib.override { enablePIC = if stdenv.isi686 then false else true; };
   };
 
+  trigger = callPackage ../games/trigger { };
+
   ufoai = callPackage ../games/ufoai {
     inherit (gnome) gtksourceview gtkglext;
   };
@@ -7208,7 +7235,9 @@ let
 
   ut2004demo = callPackage ../games/ut2004demo { };
 
-  warmux = callPackage ../games/warmux {};
+  vdrift = callPackage ../games/vdrift { };
+
+  warmux = callPackage ../games/warmux { };
 
   warsow = callPackage ../games/warsow {
     libjpeg = libjpeg62;
@@ -7227,6 +7256,8 @@ let
   };
 
   zdoom = callPackage ../games/zdoom { };
+
+  zod = callPackage ../games/zod { };
 
   zoom = callPackage ../games/zoom { };
 

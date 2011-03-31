@@ -86,6 +86,7 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   ghc6123Prefs = super : super // super.haskellPlatformDefaults_2010_2_0_0 super;
   ghc701Prefs  = super : super // super.haskellPlatformDefaults_2011_2_0_0 super; # link
   ghc702Prefs  = super : super // super.haskellPlatformDefaults_2011_2_0_0 super;
+  ghc703Prefs  = super : super // super.haskellPlatformDefaults_2011_2_0_0 super; # link
   ghcHEADPrefs = super : super // super.haskellPlatformDefaults_2011_2_0_0 super; # link
 
   # GHC and its wrapper
@@ -355,6 +356,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   dataAccessorTemplate = callPackage ../development/libraries/haskell/data-accessor/data-accessor-template.nix {};
 
+  dataDefault = callPackage ../development/libraries/haskell/data-default {};
+
   dataenc = callPackage ../development/libraries/haskell/dataenc {};
 
   dataReify = callPackage ../development/libraries/haskell/data-reify {};
@@ -590,6 +593,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   MemoTrie = callPackage ../development/libraries/haskell/MemoTrie {};
 
+  mersenneRandomPure64 = callPackage ../development/libraries/haskell/mersenne-random-pure64 {};
+
   MissingH = callPackage ../development/libraries/haskell/MissingH {};
 
   mmap = callPackage ../development/libraries/haskell/mmap {};
@@ -600,7 +605,11 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   monadlab = callPackage ../development/libraries/haskell/monadlab {};
 
+  monadLoops = callPackage ../development/libraries/haskell/monad-loops {};
+
   monadPeel = callPackage ../development/libraries/haskell/monad-peel {};
+
+  MonadPrompt = callPackage ../development/libraries/haskell/MonadPrompt {};
 
   MonadRandom = callPackage ../development/libraries/haskell/MonadRandom {};
 
@@ -633,6 +642,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   nonNegative = callPackage ../development/libraries/haskell/non-negative {};
 
   numericPrelude = callPackage ../development/libraries/haskell/numeric-prelude {};
+
+  OneTuple = callPackage ../development/libraries/haskell/OneTuple {};
 
   OpenAL = callPackage ../development/libraries/haskell/OpenAL {
     inherit (pkgs) openal;
@@ -709,6 +720,10 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
     time = self.time_1_2_0_3;
   };
 
+  randomFu = callPackage ../development/libraries/haskell/random-fu {};
+
+  randomShuffle = callPackage ../development/libraries/haskell/random-shuffle {};
+
   readline = callPackage ../development/libraries/haskell/readline {
     inherit (pkgs) readline ncurses;
   };
@@ -744,6 +759,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
   scion = callPackage ../development/libraries/haskell/scion {};
 
   sendfile = callPackage ../development/libraries/haskell/sendfile {};
+
+  stateref = callPackage ../development/libraries/haskell/stateref {};
 
   statistics = callPackage ../development/libraries/haskell/statistics {};
 
@@ -800,6 +817,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   svgcairo = callPackage ../development/libraries/haskell/svgcairo {};
 
+  tagged = callPackage ../development/libraries/haskell/tagged {};
+
   tagsoup = callPackage ../development/libraries/haskell/tagsoup {};
 
   terminfo = callPackage ../development/libraries/haskell/terminfo {
@@ -825,6 +844,8 @@ let result = let callPackage = x : y : modifyPrio (newScope result.final x y);
 
   transformers_0_2_2_0 = callPackage ../development/libraries/haskell/transformers/0.2.2.0.nix {};
   transformers = self.transformers_0_2_2_0;
+
+  tuple = callPackage ../development/libraries/haskell/tuple {};
 
   uniplate = callPackage ../development/libraries/haskell/uniplate {};
 
