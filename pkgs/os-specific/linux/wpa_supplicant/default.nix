@@ -1,16 +1,16 @@
-{ stdenv, fetchurl, lib, openssl, qt4, inkscape, dbus_libs, pkgconfig, libnl1
+{ stdenv, fetchurl, lib, openssl, dbus_libs, pkgconfig, libnl
 , readlineSupport ? true, readline
 }:
 assert readlineSupport -> readline!=null;
 
 stdenv.mkDerivation rec {
-  version = "0.7.3";
+  version = "1.0";
 
   name = "wpa_supplicant-${version}";
 
   src = fetchurl {
-    url = "http://hostap.epitest.fi/releases/wpa_supplicant-${version}.tar.gz";
-    sha256 = "0hwlsn512q2ps8wxxjmkjfdg3vjqqb9mxnnwfv1wqijkm3551kfh";
+    url = "http://hostap.epitest.fi/releases/${name}.tar.gz";
+    sha256 = "171b9027rbzy64zaal4832ix9i3mm6ypwmynbpia5bss793ivm4i";
   };
   extraConfig = lib.concatStringsSep "\n" (
     [ "CONFIG_DEBUG_SYSLOG=y"
@@ -18,6 +18,7 @@ stdenv.mkDerivation rec {
       "CONFIG_CTRL_IFACE_DBUS_NEW=y"
       "CONFIG_CTRL_IFACE_DBUS_INTRO=y"
       "CONFIG_DRIVER_NL80211=y"
+      "CONFIG_LIBNL32=y"
     ] ++ lib.optional readlineSupport "CONFIG_READLINE=y"
   );
 
@@ -25,27 +26,20 @@ stdenv.mkDerivation rec {
     cd wpa_supplicant
     cp -v defconfig .config
     echo ${extraConfig} | tee -a .config
+    echo CONFIG_LIBNL32=y | tee -a .config
     substituteInPlace Makefile --replace /usr/local $out
   '';
 
-  buildInputs = [ openssl dbus_libs libnl1 ]
+  buildInputs = [ openssl dbus_libs libnl ]
     ++ lib.optional readlineSupport readline;
 
   buildNativeInputs = [ pkgconfig ];
 
   patches =
-    [ # Upstream patch required for NetworkManager-0.9
-      (fetchurl {
-        url = "http://w1.fi/gitweb/gitweb.cgi?p=hostap-07.git;a=commitdiff_plain;h=b80b5639935d37b95d00f86b57f2844a9c775f57";
-        name = "wpa_supplicant-nm-0.9.patch";
-        sha256 = "1pqba0l4rfhba5qafvvbywi9x1qmphs944p704bh1flnx7cz6ya8";
-      })
-      # wpa_supplicant crashes when controlled through dbus (wicd/nm)
-      # see: https://bugzilla.redhat.com/show_bug.cgi?id=678625
-      (fetchurl {
-        url = "https://bugzilla.redhat.com/attachment.cgi?id=491018";
-        name = "dbus-assertion-fix.patch";
-        sha256 = "6206d79bcd800d56cae73e2a01a27ac2bee961512f77e5d62a59256a9919077a";
+    [ (fetchurl {
+        url = "https://projects.archlinux.org/svntogit/packages.git/plain/trunk/hostap_allow-linking-with-libnl-3.2.patch?h=packages/wpa_supplicant";
+        name = "hostap_allow-linking-with-libnl-3.2.patch";
+        sha256 = "0iwvjq0apc6mv1r03k5pnyjgda3q47yx36c4lqvv8i8q1vn7kbf2";
       })
     ];
 
