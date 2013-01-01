@@ -2,10 +2,8 @@
 
 cabal.mkDerivation (self: {
   pname = "cryptohash";
-  version = "0.7.5";
-  sha256 = "18x1k22m2mw0jx3p1mc68n0gg1vsnkp50qvmlkh3i34vdnjcdrqg";
-  isLibrary = true;
-  isExecutable = true;
+  version = "0.8.2";
+  sha256 = "0mym1q5sa1pqfffy0p8v12lfim1dlaczppw3c3wjhxgs222303wj";
   buildDepends = [ cereal cryptoApi tagged ];
   meta = {
     homepage = "http://github.com/vincenthz/hs-cryptohash";

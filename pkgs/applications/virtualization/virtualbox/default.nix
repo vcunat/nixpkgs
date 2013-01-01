@@ -4,13 +4,15 @@
 , xorriso, makeself, perl, pkgconfig
 , javaBindings ? false, jdk ? null
 , pythonBindings ? false, python ? null
+, enableExtensionPack ? false, requireFile ? null, patchelf ? null
 }:
 
 with stdenv.lib;
 
 let
 
-  version = "4.1.22";
+  version = "4.2.4";
+  extpackRevision = "81684";
 
   forEachModule = action: ''
     for mod in \
@@ -29,12 +31,20 @@ let
     done
   '';
 
+  extensionPack = requireFile {
+    name = "Oracle_VM_VirtualBox_Extension_Pack-${version}-${extpackRevision}"
+         + ".vbox-extpack";
+    # Has to be base16 because it's used as an input to VBoxExtPackHelperApp!
+    sha256 = "62078e057a4ab56aec5ac086746522b3d94787333d0444169471fa5152c609ed";
+    url = "https://www.virtualbox.org/wiki/Downloads";
+  };
+
 in stdenv.mkDerivation {
   name = "virtualbox-${version}-${kernel.version}";
 
   src = fetchurl {
     url = "http://download.virtualbox.org/virtualbox/${version}/VirtualBox-${version}.tar.bz2";
-    sha256 = "7abb506203dd0d69b4b408fd999b5b9a479a9adce5f80e9b5569641c053dd153";
+    sha256 = "a7c607523c1c10b7b978ab39a92bb646517316548aa4a1a74b6e434ac2bf0adc";
   };
 
   buildInputs =
@@ -44,7 +54,9 @@ in stdenv.mkDerivation {
     ++ optional javaBindings jdk
     ++ optional pythonBindings python;
 
-  patchPhase = ''
+  patches = [ ./remove_fa_ir.patch ];
+
+  postPatch = ''
     set -x
     MODULES_BUILD_DIR=`echo ${kernel}/lib/modules/*/build`
     sed -e 's@/lib/modules/`uname -r`/build@'$MODULES_BUILD_DIR@ \
@@ -106,10 +118,25 @@ in stdenv.mkDerivation {
         ln -s "$libexec/$file" $out/bin/$file
     done
 
+    ${optionalString enableExtensionPack ''
+      "$libexec/VBoxExtPackHelperApp" install \
+        --base-dir "$libexec/ExtensionPacks" \
+        --cert-dir "$libexec/ExtPackCertificates" \
+        --name "Oracle VM VirtualBox Extension Pack" \
+        --tarball "${extensionPack}"
+        --sha-256 "${extensionPack.outputHash}"
+    ''}
+
     # Create and fix desktop item
     mkdir -p $out/share/applications
     sed -i -e "s|Icon=VBox|Icon=$libexec/VBox.png|" $libexec/virtualbox.desktop
     ln -sfv $libexec/virtualbox.desktop $out/share/applications
+    # Icons
+    mkdir -p $out/share/icons/hicolor
+    for size in `ls -1 $libexec/icons`; do
+      mkdir -p $out/share/icons/hicolor/$size/apps
+      ln -s $libexec/icons/$size/*.png $out/share/icons/hicolor/$size/apps
+    done
   '';
 
   meta = {

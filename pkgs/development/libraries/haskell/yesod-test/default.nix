@@ -6,8 +6,8 @@
 
 cabal.mkDerivation (self: {
   pname = "yesod-test";
-  version = "0.3.0.1";
-  sha256 = "0dfdvhk3mspqhqicjapqvjzmi0hpd2641zb1899fk6mank8yfz0m";
+  version = "0.3.2";
+  sha256 = "1wd5iwar6jxbv0p7p47js4spivwhph98h403bnmf3dl7069nyjcs";
   buildDepends = [
     attoparsec blazeHtml blazeMarkup caseInsensitive hspec htmlConduit
     httpTypes HUnit monadControl network persistent poolConduit text

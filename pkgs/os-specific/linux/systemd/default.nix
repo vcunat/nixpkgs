@@ -1,23 +1,27 @@
 { stdenv, fetchurl, pkgconfig, intltool, gperf, libcap, dbus, kmod
-, xz, pam, acl, cryptsetup, libuuid, m4, utillinux, usbutils, pciutils
-, glib, kbd
+, xz, pam, acl, cryptsetup, libuuid, m4, utillinux
+, glib, kbd, libxslt, coreutils, libgcrypt
 }:
 
 assert stdenv.gcc.libc or null != null;
 
 stdenv.mkDerivation rec {
-  name = "systemd-188";
+  name = "systemd-196";
 
   src = fetchurl {
     url = "http://www.freedesktop.org/software/systemd/${name}.tar.xz";
-    sha256 = "0nr1cg1mizbwcafjcqw3c30mx6xdv596jpbgjlxr6myvc5hfsfg8";
+    sha256 = "1gz4an5havzwzp7xsinn01prwvf51hgipb8pbciri0fxlmcadm3b";
   };
 
-  patches = [ ./fail-after-reaching-respawn-limit.patch ];
+  patches =
+    [ ./reexec.patch
+      ./ignore-duplicates.patch
+      ./crypt-devices-are-ready.patch
+    ];
 
   buildInputs =
     [ pkgconfig intltool gperf libcap dbus kmod xz pam acl
-      /* cryptsetup */ libuuid m4 usbutils pciutils glib
+      /* cryptsetup */ libuuid m4 glib libxslt libgcrypt
     ];
 
   configureFlags =
@@ -31,7 +35,6 @@ stdenv.mkDerivation rec {
       "--with-dbussystemservicedir=$(out)/share/dbus-1/system-services"
       "--with-dbussessionservicedir=$(out)/share/dbus-1/services"
       "--with-firmware-path=/root/test-firmware:/var/run/current-system/firmware"
-      "--with-pci-ids-path=${pciutils}/share/pci.ids"
       "--with-tty-gid=3" # tty in NixOS has gid 3
     ];
 
@@ -47,6 +50,9 @@ stdenv.mkDerivation rec {
           --replace /sbin/swapoff ${utillinux}/sbin/swapoff \
           --replace /sbin/fsck ${utillinux}/sbin/fsck
       done
+
+      substituteInPlace src/journal/catalog.c \
+        --replace /usr/lib/systemd/catalog/ $out/lib/systemd/catalog/
     '';
 
   NIX_CFLAGS_COMPILE =
@@ -56,11 +62,19 @@ stdenv.mkDerivation rec {
       # lead to a cyclic dependency.
       "-DPOLKIT_AGENT_BINARY_PATH=\"/run/current-system/sw/bin/pkttyagent\""
       "-fno-stack-protector"
+      # Work around our kernel headers being too old.  FIXME: remove
+      # this after the next stdenv update.
+      "-DFS_NOCOW_FL=0x00800000"
     ];
 
-  makeFlags = "CPPFLAGS=-I${stdenv.gcc.libc}/include";
+  # Use /var/lib/udev rather than /etc/udev for the generated hardware
+  # database.  Upstream doesn't want this (see commit
+  # 1e1954f53386cb773e2a152748dd31c4d36aa2d8) because using /var is
+  # forbidden in early boot, but in NixOS the initrd guarantees that
+  # /var is mounted.
+  makeFlags = "CPPFLAGS=-I${stdenv.gcc.libc}/include hwdb_bin=/var/lib/udev/hwdb.bin";
 
-  installFlags = "localstatedir=$(TMPDIR)/var sysconfdir=$(out)/etc";
+  installFlags = "localstatedir=$(TMPDIR)/var sysconfdir=$(out)/etc sysvinitdir=$(TMPDIR)/etc/init.d";
 
   # Get rid of configuration-specific data.
   postInstall =
@@ -75,7 +89,14 @@ stdenv.mkDerivation rec {
       for i in init halt poweroff runlevel reboot shutdown; do
         ln -s $out/bin/systemctl $out/sbin/$i
       done
-    '';
+
+      # Fix reference to /bin/false in the D-Bus services.
+      for i in $out/share/dbus-1/system-services/*.service; do
+        substituteInPlace $i --replace /bin/false ${coreutils}/bin/false
+      done
+
+      rm -rf $out/etc/rpm
+    ''; # */
 
   enableParallelBuilding = true;
 
@@ -88,8 +109,9 @@ stdenv.mkDerivation rec {
   passthru.interfaceVersion = 2;
 
   meta = {
-    homepage = http://www.freedesktop.org/wiki/Software/systemd;
+    homepage = "http://www.freedesktop.org/wiki/Software/systemd";
     description = "A system and service manager for Linux";
     platforms = stdenv.lib.platforms.linux;
+    maintainers = [ stdenv.lib.maintainers.eelco stdenv.lib.maintainers.simons ];
   };
 }

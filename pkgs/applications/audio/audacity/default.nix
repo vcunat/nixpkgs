@@ -4,12 +4,12 @@
   }:
 
 stdenv.mkDerivation rec {
-  version = "2.0.0";
+  version = "2.0.2";
   name = "audacity-${version}";
 
   src = fetchurl {
     url = "http://audacity.googlecode.com/files/audacity-minsrc-${version}.tar.bz2";
-    sha256 = "0spbib3f86b4qri0g13idyxvysg28hkpsglmjza681zrln62hjfq";
+    sha256 = "17c7p5jww5zcg2k2fs1751mv5kbadcmgicszi1zxwj2p5b35x2mc";
   };
 
   #TODO: the reference to ffmpeg disappears and it then can't find it when importing audio

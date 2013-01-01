@@ -1,24 +1,25 @@
-{ cabal, aeson, attoparsec, cereal, clientsession, configurator
-, dataLens, dataLensTemplate, directoryTree, filepath, hashable
-, heist, logict, MonadCatchIOTransformers, mtl, mwcRandom
-, pwstoreFast, snapCore, snapServer, stm, syb, text, time
-, transformers, unorderedContainers, utf8String, vector
-, vectorAlgorithms, xmlhtml
+{ cabal, aeson, attoparsec, cereal, clientsession, comonad
+, configurator, directoryTree, dlist, errors, filepath, hashable
+, heist, lens, logict, MonadCatchIOTransformers, mtl, mwcRandom
+, pwstoreFast, regexPosix, snapCore, snapServer, stm, syb, text
+, time, transformers, unorderedContainers, vector, vectorAlgorithms
+, xmlhtml
 }:
 
 cabal.mkDerivation (self: {
   pname = "snap";
-  version = "0.9.2";
-  sha256 = "12sqc6j6v57jll8pkgzj71f6s435rwhqxqzl78l3rk4qn6sc0gzi";
+  version = "0.10.0.1";
+  sha256 = "14j9lgcdyxh7n4yidfvn1r94nziljiqz6nsqgq114v34bnn6l2yn";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [
-    aeson attoparsec cereal clientsession configurator dataLens
-    dataLensTemplate directoryTree filepath hashable heist logict
-    MonadCatchIOTransformers mtl mwcRandom pwstoreFast snapCore
-    snapServer stm syb text time transformers unorderedContainers
-    utf8String vector vectorAlgorithms xmlhtml
+    aeson attoparsec cereal clientsession comonad configurator
+    directoryTree dlist errors filepath hashable heist lens logict
+    MonadCatchIOTransformers mtl mwcRandom pwstoreFast regexPosix
+    snapCore snapServer stm syb text time transformers
+    unorderedContainers vector vectorAlgorithms xmlhtml
   ];
+  jailbreak = true;
   meta = {
     homepage = "http://snapframework.com/";
     description = "Top-level package for the Snap Web Framework";

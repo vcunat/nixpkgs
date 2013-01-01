@@ -3,12 +3,11 @@
 
 cabal.mkDerivation (self: {
   pname = "shelly";
-  version = "0.14.0.1";
-  sha256 = "062c3zqr6ad61p0s423h8rhimqfld6p95z3qzrmag9f29a5f4fbz";
+  version = "0.15.3.3";
+  sha256 = "0g062rzpcksnszcjln9z39lw9cd084k0zs9pbr23s1985xkf6cj7";
   buildDepends = [
     mtl systemFileio systemFilepath text time unixCompat
   ];
-  jailbreak = true;
   meta = {
     homepage = "https://github.com/yesodweb/Shelly.hs";
     description = "shell-like (systems) programming in Haskell";

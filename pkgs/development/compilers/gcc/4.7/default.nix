@@ -49,7 +49,7 @@ assert langGo -> langCC;
 with stdenv.lib;
 with builtins;
 
-let version = "4.7.1";
+let version = "4.7.2";
 
     # Whether building a cross-compiler for GNU/Hurd.
     crossGNU = cross != null && cross.config == "i586-pc-gnu";
@@ -60,8 +60,7 @@ let version = "4.7.1";
       # The GNAT Makefiles did not pay attention to CFLAGS_FOR_TARGET for its
       # target libraries and tools.
       ++ optional langAda ./gnat-cflags.patch
-      ++ optional langFortran ./gfortran-driving.patch
-      ++ optional (stdenv.isGNU || crossGNU) ./hurd-sigrtmin.patch;
+      ++ optional langFortran ./gfortran-driving.patch;
 
     javaEcj = fetchurl {
       # The `$(top_srcdir)/ecj.jar' file is automatically picked up at
@@ -164,7 +163,7 @@ stdenv.mkDerivation ({
 
   src = fetchurl {
     url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.bz2";
-    sha256 = "0vs0v89zzgkngkw2p8kdynyk7j8ky4wf6zyrg3rsschpl1pky28n";
+    sha256 = "115h03hil99ljig8lkrq4qk426awmzh0g99wrrggxf8g07bq74la";
   };
 
   inherit patches;
@@ -182,7 +181,6 @@ stdenv.mkDerivation ({
       let
         libc = if libcCross != null then libcCross else stdenv.glibc;
         gnu_h = "gcc/config/gnu.h";
-        i386_gnu_h = "gcc/config/i386/gnu.h";
         extraCPPDeps =
              libc.propagatedBuildInputs
           ++ stdenv.lib.optional (libpthreadCross != null) libpthreadCross
@@ -195,8 +193,8 @@ stdenv.mkDerivation ({
           then "-L${libpthreadCross}/lib ${libpthreadCross.TARGET_LDFLAGS}"
           else "-L${libpthread}/lib";
       in
-        '' echo "augmenting \`CPP_SPEC' in \`${i386_gnu_h}' with \`${extraCPPSpec}'..."
-           sed -i "${i386_gnu_h}" \
+        '' echo "augmenting \`CPP_SPEC' in \`${gnu_h}' with \`${extraCPPSpec}'..."
+           sed -i "${gnu_h}" \
                -es'|CPP_SPEC *"\(.*\)$|CPP_SPEC "${extraCPPSpec} \1|g'
 
            echo "augmenting \`LIB_SPEC' in \`${gnu_h}' with \`${extraLibSpec}'..."
@@ -206,8 +204,6 @@ stdenv.mkDerivation ({
            echo "setting \`NATIVE_SYSTEM_HEADER_DIR' and \`STANDARD_INCLUDE_DIR' to \`${libc}/include'..."
            sed -i "${gnu_h}" \
                -es'|#define STANDARD_INCLUDE_DIR.*$|#define STANDARD_INCLUDE_DIR "${libc}/include"|g'
-           sed -i gcc/config/t-gnu \
-               -es'|NATIVE_SYSTEM_HEADER_DIR.*$|NATIVE_SYSTEM_HEADER_DIR = ${libc}/include|g'
         ''
     else if cross != null || stdenv.gcc.libc != null then
       # On NixOS, use the right path to the dynamic linker instead of
@@ -292,7 +288,9 @@ stdenv.mkDerivation ({
         )
       )
     }
-    ${if (stdenv ? glibc) then " --with-native-system-header-dir=${stdenv.glibc}/include" else ""}
+    ${if (stdenv ? glibc && cross == null)
+      then " --with-native-system-header-dir=${stdenv.glibc}/include"
+      else ""}
     ${ # Trick that should be taken out once we have a mips64el-linux not loongson2f
       if cross == null && stdenv.system == "mips64el-linux" then "--with-arch=loongson2f" else ""}
     ${if langAda then " --enable-libada" else ""}
@@ -308,7 +306,6 @@ stdenv.mkDerivation ({
     else "install";
 
   crossAttrs = {
-    patches = patches ++ [ ./hurd-sigrtmin.patch ];
     AR = "${stdenv.cross.config}-ar";
     LD = "${stdenv.cross.config}-ld";
     CC = "${stdenv.cross.config}-gcc";
