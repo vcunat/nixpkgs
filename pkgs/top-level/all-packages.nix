@@ -3587,6 +3587,7 @@ let
 
   ffmpeg = callPackage ../development/libraries/ffmpeg {
     vpxSupport = !stdenv.isMips;
+    vdpauSupport = true;
   };
   # the highest version using libav 0.7.*
   ffmpeg_0_9 = callPackage ../development/libraries/ffmpeg {
@@ -5136,7 +5137,9 @@ let
 
   xbase = callPackage ../development/libraries/xbase { };
 
-  xineLib = callPackage ../development/libraries/xine-lib { };
+  xineLib = callPackage ../development/libraries/xine-lib {
+    vdpauSupport = true;
+  };
 
   xautolock = callPackage ../misc/screensavers/xautolock { };
 
