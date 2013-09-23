@@ -717,7 +717,6 @@ let
   jedit = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   jfsrec = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   jigdo = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
-  jing_tools = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   jjtraveler = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   jnettop = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   jre = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
@@ -1167,7 +1166,6 @@ let
   monodoc = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   monotone = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   monotoneViz = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
-  mountall = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   mozart = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   mozilla = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };
   mozplugger = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };

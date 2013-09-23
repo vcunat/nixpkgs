@@ -82,7 +82,7 @@
     }
   },
   { "name": "Plone",
-    "extends": "http://dist.plone.org/release/4.3.1/versions.cfg",
+    "extends": "http://dist.plone.org/release/4.3.2/versions.cfg",
     "doCheck": false,
     "installCommand": "easy_install --always-unzip --no-deps --prefix=\"$out\" .",
     "override": {
@@ -103,6 +103,23 @@
       },
       "Products.CMFCalendar": {
         "propagatedBuildInputs": [ "eggtestinfo" ]
+      },
+      "Pillow": {
+        "buildInputs": [
+          "pkgs.freetype",
+          "pkgs.libjpeg",
+          "pkgs.zlib",
+          "pkgs.libtiff",
+          "pkgs.libwebp"
+        ],
+        "configurePhase": [
+          "sed -i \"setup.py\" \\",
+          "    -e 's|^FREETYPE_ROOT =.*$|FREETYPE_ROOT = _lib_include(\"${pkgs.freetype}\")|g ;",
+          "        s|^JPEG_ROOT =.*$|JPEG_ROOT = _lib_include(\"${pkgs.libjpeg}\")|g ;",
+          "        s|^ZLIB_ROOT =.*$|ZLIB_ROOT = _lib_include(\"${pkgs.zlib}\")|g ;",
+          "        s|^LCMS_ROOT =.*$|LCMS_ROOT = _lib_include(\"${pkgs.libwebp}\")|g ;",
+          "        s|^TIFF_ROOT =.*$|TIFF_ROOT = _lib_include(\"${pkgs.libtiff}\")|g ;'"
+        ]
       }
     }
   },

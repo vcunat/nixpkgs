@@ -1,9 +1,9 @@
-{ stdenv, fetchurl, upx, freetype, fontconfig }:
+{ stdenv, fetchurl, freetype, fontconfig }:
 
 assert stdenv.lib.elem stdenv.system [ "i686-linux" "x86_64-linux" ];
 
 stdenv.mkDerivation rec {
-  name = "phantomjs-1.7.0";
+  name = "phantomjs-1.9.2";
 
   # I chose to use the binary build for now.
   # The source version is quite nasty to compile
@@ -13,19 +13,15 @@ stdenv.mkDerivation rec {
   src = if stdenv.system == "i686-linux" then
           fetchurl {
             url = "http://phantomjs.googlecode.com/files/${name}-linux-i686.tar.bz2";
-            sha256 = "045d80lymjxnsssa0sgp5pgkahm651jk69ibk3mjczk3ykc1k91f";
+            sha256 = "1nywb9xhcfjark6zfjlnrljc08r5185vv25vfcc65jzla8hy75qp";
           }
         else # x86_64-linux
           fetchurl {
             url = "http://phantomjs.googlecode.com/files/${name}-linux-x86_64.tar.bz2";
-            sha256 = "1m14czhi3b388didn0a881glsx8bnsg9gnxgj5lghr4l5mgqyrd7";
+            sha256 = "1xsjx4j6rwkq27y4iqdn0ai4yrq70a3g9309blywki0g976phccg";
           };
 
-  nativeBuildInputs = stdenv.lib.optional (stdenv.system == "x86_64-linux") upx;
-
-  buildPhase = stdenv.lib.optionalString (stdenv.system == "x86_64-linux") ''
-    upx -d bin/phantomjs
-  '' + ''
+  buildPhase = ''
     patchelf \
       --set-interpreter "$(cat $NIX_GCC/nix-support/dynamic-linker)" \
       --set-rpath ${freetype}/lib:${fontconfig}/lib:${stdenv.gcc.gcc}/lib64:${stdenv.gcc.gcc}/lib \

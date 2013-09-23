@@ -101,7 +101,9 @@ with stdenv.lib;
   FB_SIS_300 y
   FB_SIS_315 y
   FB_3DFX_ACCEL y
-  FB_GEODE y
+  ${optionalString (versionOlder version "3.9" || stdenv.system == "i686-linux") ''
+    FB_GEODE y
+  ''}
 
   # Video configuration.
   # Enable KMS for devices whose X.org driver supports it.
@@ -240,6 +242,8 @@ with stdenv.lib;
     CGROUP_MEM_RES_CTLR_SWAP y
   ''}
   DEVPTS_MULTIPLE_INSTANCES y
+  BLK_DEV_THROTTLING y
+  CFQ_GROUP_IOSCHED y
 
   # Enable staging drivers.  These are somewhat experimental, but
   # they generally don't hurt.
