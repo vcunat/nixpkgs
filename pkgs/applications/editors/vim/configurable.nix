@@ -1,6 +1,6 @@
 # TODO tidy up eg The patchelf code is patching gvim even if you don't build it..
 # but I have gvim with python support now :) - Marc
-args@{source ? "latest", ...}: with args;
+args@{source ? "default", ...}: with args;
 
 
 let inherit (args.composableDerivation) composableDerivation edf; in
@@ -11,7 +11,7 @@ composableDerivation {
                    else stdenv ).mkDerivation;
 } (fix: {
 
-    name = "vim_configurable-7.3";
+    name = "vim_configurable-7.4";
 
     enableParallelBuilding = true; # test this
 
@@ -20,8 +20,8 @@ composableDerivation {
       "default" =
         # latest release
         args.fetchurl {
-            url = ftp://ftp.vim.org/pub/vim/unix/vim-7.3.tar.bz2;
-            sha256 = "079201qk8g9yisrrb0dn52ch96z3lzw6z473dydw9fzi0xp5spaw";
+            url = ftp://ftp.vim.org/pub/vim/unix/vim-7.4.tar.bz2;
+            sha256 = "1pjaffap91l2rb9pjnlbrpvb3ay5yhhr3g91zabjvw1rqk9adxfh";
           };
       "vim-nox" =
           {
@@ -31,14 +31,16 @@ composableDerivation {
             name = "vim-nox-hg-2082fc3";
             # END
           }.src;
-      "latest" = {
-        # vim latest usually is vim + bug fixes. So it should be very stable
-         # REGION AUTO UPDATE: { name="vim"; type="hg"; url="https://vim.googlecode.com/hg"; }
-         src = (fetchurl { url = "http://mawercer.de/~nix/repos/vim-hg-7f98896.tar.bz2"; sha256 = "efcb8cc5924b530631a8e5fc2a0622045c2892210d32d300add24aded51866f1"; });
-         name = "vim-hg-7f98896";
-         # END
-      }.src;
-    };
+      };
+
+    # if darwin support is enabled, we want to make sure we're not building with
+    # OS-installed python framework
+    preConfigure
+      = stdenv.lib.optionalString
+        (stdenv.isDarwin && (config.vim.darwin or true)) ''
+          sed -i "5387,5390d" src/auto/configure
+          sed -i "5394d" src/auto/configure
+        '';
 
     configureFlags
       = [ "--enable-gui=${args.gui}" "--with-features=${args.features}" ];
@@ -58,7 +60,19 @@ composableDerivation {
       // edf { name = "xsmp_interact"; } #Disable XSMP interaction
       // edf { name = "mzscheme"; } #Include MzScheme interpreter.
       // edf { name = "perl"; feat = "perlinterp"; enable = { nativeBuildInputs = [perl]; };} #Include Perl interpreter.
-      // edf { name = "python"; feat = "pythoninterp"; enable = { nativeBuildInputs = [python]; }; } #Include Python interpreter.
+
+      // edf {
+        name = "python";
+        feat = "pythoninterp";
+        enable = {
+          nativeBuildInputs = [ python ];
+        } // lib.optionalAttrs stdenv.isDarwin {
+          configureFlags
+            = [ "--enable-pythoninterp=yes"
+                "--with-python-config-dir=${python}/lib" ];
+        };
+      }
+
       // edf { name = "tcl"; enable = { nativeBuildInputs = [tcl]; }; } #Include Tcl interpreter.
       // edf { name = "ruby"; feat = "rubyinterp"; enable = { nativeBuildInputs = [ruby]; };} #Include Ruby interpreter.
       // edf { name = "lua" ; feat = "luainterp"; enable = { nativeBuildInputs = [lua]; configureFlags = ["--with-lua-prefix=${args.lua}"];};}
@@ -104,7 +118,7 @@ composableDerivation {
       // edf "gtktest" "gtktest" { } #Do not try to compile and run a test GTK program
     */
 
-  postInstall = if stdenv.isLinux then ''
+  postInstall = stdenv.lib.optionalString stdenv.isLinux ''
     rpath=`patchelf --print-rpath $out/bin/vim`;
     for i in $nativeBuildInputs; do
       echo adding $i/lib
@@ -113,7 +127,7 @@ composableDerivation {
     echo $nativeBuildInputs
     echo $rpath
     patchelf --set-rpath $rpath $out/bin/{vim,gvim}
-  '' else "";
+  '';
 
   dontStrip = 1;
 
