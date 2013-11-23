@@ -14,7 +14,7 @@ let
     baseName="sauerbraten";
     version="3331";
     name="${baseName}-r${version}";
-    url="https://sauerbraten.svn.sourceforge.net/svnroot/sauerbraten";
+    url="https://svn.code.sf.net/p/sauerbraten/code";
     hash="0904hk9rz2x941c9587bfxa4rca81260j3m2hjjrp984w67x2w7y";
   };
 in
@@ -66,7 +66,7 @@ rec {
     [
       raskin
     ];
-    platforms = with a.lib.platforms;
+    hydraPlatforms =
       # raskin: tested amd64-linux;
       # not setting platforms because it is 0.5+ GiB of game data
       [];

@@ -1,23 +1,29 @@
-# Create a python that knows about additional python packages via
-# PYTHONPATH
+{ stdenv, python, buildEnv, makeWrapper, recursivePthLoader, extraLibs ? [], postBuild ? ""
+, stdLibs ? stdenv.lib.attrValues python.modules
+}:
 
-{ stdenv, python, makeWrapper, recursivePthLoader, extraLibs ? [] }:
+# Create a python executable that knows about additional packages.
 
-stdenv.mkDerivation {
+(buildEnv {
   name = "python-${python.version}-wrapper";
+  paths = stdenv.lib.filter (x : x ? pythonPath) (stdenv.lib.closePropagation extraLibs) ++ stdLibs ++ [ python recursivePthLoader ];
+  ignoreCollisions = false;
 
-  propagatedBuildInputs = extraLibs ++ [ python makeWrapper recursivePthLoader ];
+  postBuild = ''
+    . "${makeWrapper}/nix-support/setup-hook"
 
-  unpackPhase = "true";
-  installPhase = ''
+    if [ -L "$out/bin" ]; then
+        unlink "$out/bin"
+    fi
     mkdir -p "$out/bin"
-    for prg in 2to3 idle pdb pdb${python.majorVersion} pydoc python python-config python${python.majorVersion} python${python.majorVersion}-config smtpd.py; do
-      makeWrapper "$python/bin/$prg" "$out/bin/$prg" --suffix PYTHONPATH : "$PYTHONPATH"
-    done
-    ensureDir "$out/share"
-    ln -s "$python/share/man" "$out/share/man"
-  '';
 
+    cd "${python}/bin"
+    for prg in *; do
+      rm -f "$out/bin/$prg"
+      makeWrapper "${python}/bin/$prg" "$out/bin/$prg" --set PYTHONHOME "$out"
+    done
+  '' + postBuild;
+}) // {
   inherit python;
   inherit (python) meta;
 }

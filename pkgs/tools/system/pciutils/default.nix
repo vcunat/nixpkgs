@@ -3,21 +3,20 @@
 let
   pciids = fetchurl {
     # Obtained from http://pciids.sourceforge.net/v2.2/pci.ids.bz2.
-    url = http://tarballs.nixos.org/pci.ids.20120929.bz2;
-    sha256 = "1q3i479ay88wam1zz1vbgkbqb2axg8av9qjxaigrqbnw2pv0srmb";
+    url = http://tarballs.nixos.org/pci.ids.20131006.bz2;
+    sha256 = "1vmshcgxqminiyh52pdcak24lm24qlic49py9cmkp96y1s48lvsc";
   };
 in
 stdenv.mkDerivation rec {
-  name = "pciutils-3.2.0";
+  name = "pciutils-3.2.1"; # with database from 2013-11-10
 
   src = fetchurl {
     url = "mirror://kernel/software/utils/pciutils/${name}.tar.bz2";
-    sha256 = "0d9as9jzjjg5c1nwf58z1y1i7rf9fqxmww1civckhcvcn0xr85mq";
+    sha256 = "1pnwwc4sq0q7zz3mw2rsrc9j5rxwpdvxirqjmxcd0brf0hcjpm8j";
   };
 
   buildInputs = [ pkgconfig zlib kmod which ];
 
-  # currently up-to-date
   #preBuild = "bunzip2 < ${pciids} > pci.ids";
 
   makeFlags = "SHARED=yes PREFIX=\${out}";

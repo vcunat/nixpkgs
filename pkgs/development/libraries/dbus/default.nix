@@ -3,8 +3,8 @@
 , libX11, libICE, libSM, useX11 ? (stdenv.isLinux || stdenv.isDarwin) }:
 
 let
-  version = "1.6.14"; # 1.7.* isn't recommended, even for gnome 3.8
-  sha256 = "0v7mcxwfmpjf7vndnvf2kf02al61clrxs36bqii20s0lawfh2xjn";
+  version = "1.6.16"; # 1.7.* isn't recommended, even for gnome 3.8
+  sha256 = "0wrmh5azszb54zpy7d0zjsy456khcv8yc19ivqrygkdg7a3l4gs6";
 
   inherit (stdenv) lib;
 
@@ -77,7 +77,8 @@ let
   });
 
 
-in rec {
+  attrs = rec {
+  # If you change much fix indentation
 
   # This package has been split because most applications only need dbus.lib
   # which serves as an interface to a *system-wide* daemon,
@@ -114,4 +115,5 @@ in rec {
   docs = dbus_drv "docs" "doc" {
     postInstall = ''rm -r "$out/lib"'';
   };
-}
+};
+in attrs.libs // attrs

@@ -30,8 +30,8 @@
 
 cabal.mkDerivation (self: {
   pname = "yesod-platform";
-  version = "1.2.4.2";
-  sha256 = "1hmzdwjqi3cxdmyvcr48kprrsa8h548z272mif07114d0qh48x4w";
+  version = "1.2.4.4";
+  sha256 = "0avqaqx81rald37j4qxp75ixgq5q4a3b8fnlmfsp9d54nfp3hxji";
   buildDepends = [
     aeson ansiTerminal asn1Data asn1Types attoparsec attoparsecConduit
     authenticate base64Bytestring baseUnicodeSymbols blazeBuilder

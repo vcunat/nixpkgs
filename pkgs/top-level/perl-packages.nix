@@ -1925,10 +1925,14 @@ rec {
   };
 
   DateManip = buildPerlPackage {
-    name = "DateManip-5.54";
+    name = "Date-Manip-6.41";
     src = fetchurl {
-      url = mirror://cpan/authors/id/S/SB/SBECK/Date-Manip-5.54.tar.gz;
-      sha256 = "0ap2jgqx7yvjsyph9zsvadsih41cj991j3jwgz5261sq7q74y7xn";
+      url = mirror://cpan/authors/id/S/SB/SBECK/Date-Manip-6.41.tar.gz;
+      sha256 = "f7f654d8a85836bfbb248e21dd2ad39e592aa259f247bf77ef791ff19360de09";
+    };
+    propagatedBuildInputs = [ TestInter ];
+    meta = {
+      description = "Date manipulation routines";
     };
   };
 
@@ -3396,6 +3400,15 @@ rec {
     propagatedBuildInputs = [ HTTPDate ];
   };
 
+  FileMimeInfo = buildPerlPackage {
+    name = "File-MimeInfo-0.20";
+    src = fetchurl {
+      url = "http://search.cpan.org/CPAN/authors/id/M/MI/MICHIELB/File-MimeInfo-0.20.tar.gz";
+      sha256 = "1738yi3a0xcbvffqymjb6cyh999q4pryalfwbkmdbjdks2y0bxz0";
+    };
+    propagatedBuildInputs = [ FileBaseDir FileDesktopEntry ];
+  };
+
   FileModified = buildPerlPackage {
     name = "File-Modified-0.07";
     src = fetchurl {
@@ -3525,6 +3538,20 @@ rec {
     propagatedBuildInputs = [ TestScript ];
   };
 
+  FinanceQuote = buildPerlPackage {
+    name = "Finance-Quote-1.18";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/E/EC/ECOCODE/Finance-Quote-1.18.tar.gz;
+      sha256 = "4240faabe0646defd4ec76ca9e111977b9e8060eaec41adeb284eb422a428393";
+    };
+    propagatedBuildInputs = [ CryptSSLeay HTMLTableExtract HTMLTree HTTPMessage LWP ];
+    meta = {
+      homepage = http://finance-quote.sourceforge.net/;
+      description = "Get stock and mutual fund quotes from various exchanges";
+      license = "gpl";
+    };
+  };
+
   FontAFM = buildPerlPackage rec {
     name = "Font-AFM-1.20";
     src = fetchurl {
@@ -3630,6 +3657,19 @@ rec {
       homepage = https://github.com/rjbs/Getopt-Long-Descriptive;
       description = "Getopt::Long, but simpler and more powerful";
       license = "perl5";
+    };
+  };
+
+  GnuPG = buildPerlPackage {
+    name = "GnuPG-0.19";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/Y/YA/YANICK/GnuPG-0.19.tar.gz;
+      sha256 = "af53f2d3f63297e046676eae14a76296afdd2910e09723b6b113708622b7989b";
+    };
+    buildInputs = [ pkgs.gnupg1orig ];
+    meta = {
+      platforms = stdenv.lib.platforms.linux;
+      maintainers = with maintainers; [ ocharles ];
     };
   };
 
@@ -3778,6 +3818,15 @@ rec {
     buildInputs = [ pkgs.unzip ];
   };
 
+  HTMLElementExtended = buildPerlPackage {
+    name = "HTML-Element-Extended-1.18";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/M/MS/MSISK/HTML-Element-Extended-1.18.tar.gz;
+      sha256 = "f3ef1af108f27fef15ebec66479f251ce08aa49bd00b0462c9c80c86b4b6b32b";
+    };
+    propagatedBuildInputs = [ HTMLTree ];
+  };
+
   HTMLFromANSI = buildPerlPackage {
     name = "HTML-FromANSI-2.03";
     src = fetchurl {
@@ -3870,6 +3919,15 @@ rec {
       sha256 = "0xb5zj67y2sjid9bs3yfm81rgi91fmn38wy1ryngssw6vd92ijh2";
     };
     propagatedBuildInputs = [HTMLParser];
+  };
+
+  HTMLTableExtract = buildPerlPackage {
+    name = "HTML-TableExtract-2.11";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/M/MS/MSISK/HTML-TableExtract-2.11.tar.gz;
+      sha256 = "1861d55a2aa1728ef56ea2d08d630b9a008456f1106994e4e49e76f56e4955ee";
+    };
+    propagatedBuildInputs = [ HTMLElementExtended HTMLParser ];
   };
 
   HTMLTagset = buildPerlPackage rec {
@@ -4587,6 +4645,21 @@ rec {
     src = fetchurl {
       url = mirror://cpan/authors/id/A/AU/AUDREYT/Locale-Maketext-Simple-0.18.tar.gz;
       sha256 = "14kx7vkxyfqndy90rzavrjp2346aidyc7x5dzzdj293qf8s4q6ig";
+    };
+  };
+
+  LocalePO = buildPerlPackage {
+    name = "Locale-PO-0.23";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/C/CO/COSIMO/Locale-PO-0.23.tar.gz;
+      sha256 = "52e5fdc88ec4eb00512418a938dc5089476ea66c9e744fee3c6bbfdf17a0d302";
+    };
+    propagatedBuildInputs = [ FileSlurp ];
+    meta = {
+      description = "Perl module for manipulating .po entries from GNU gettext";
+      license = "unknown";
+      platforms = stdenv.lib.platforms.linux;
+      maintainers = with maintainers; [ ocharles ];
     };
   };
 
@@ -6116,6 +6189,7 @@ rec {
       url = "mirror://cpan/authors/id/D/DT/DTOWN/${name}.tar.gz";
       sha256 = "0hdpn1cw52x8cw24m9ayzpf4rwarm0khygn1sv3wvwxkrg0pphql";
     };
+    doCheck = false; # The test suite fails, see https://rt.cpan.org/Public/Bug/Display.html?id=85799
   };
 
   NetSSLeay = buildPerlPackage rec {
@@ -7553,7 +7627,7 @@ rec {
   };
 
   Switch = buildPerlPackage rec {
-    name = "Switch";
+    name = "Switch-2.16";
     src = fetchurl {
       url = "mirror://cpan/authors/id/R/RG/RGARCIA/Switch-2.16.tar.gz";
       sha256 = "1n7rgp1q3zwglv1pka3bnhq5g41334lwc53g31w6g44my8kqz31h";
@@ -7607,6 +7681,21 @@ rec {
       sha256 = "0hy1225zg2yg11xhgj0wbiapzjyf6slx17ln36zqvfm07k6widlx";
     };
     doCheck = false; # no `hostname' in stdenv
+  };
+
+  TAPParserSourceHandlerpgTAP = buildPerlModule {
+    name = "TAP-Parser-SourceHandler-pgTAP-3.29";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/D/DW/DWHEELER/TAP-Parser-SourceHandler-pgTAP-3.29.tar.gz;
+      sha256 = "918aa9ada7a05334ace7304e7b9e002bbf0b569bfcf8fb06118777bdabd60e1b";
+    };
+    meta = {
+      homepage = http://search.cpan.org/dist/Tap-Parser-Sourcehandler-pgTAP/;
+      description = "Stream TAP from pgTAP test scripts";
+      license = "perl";
+      platforms = stdenv.lib.platforms.linux;
+      maintainers = with maintainers; [ ocharles ];
+    };
   };
 
   TaskCatalystTutorial = buildPerlPackage rec {
@@ -7673,6 +7762,19 @@ rec {
       sha256 = "1mqqqs0dhfr6bp1305j9ns05q4pq1n3f561l6p8848k5ml3dh87a";
     };
     propagatedBuildInputs = [ TemplateToolkit ];
+    meta = {
+      maintainers = with maintainers; [ ocharles ];
+      platforms   = stdenv.lib.platforms.unix;
+    };
+  };
+
+  TemplatePluginJSONEscape = buildPerlPackage {
+    name = "Template-Plugin-JSON-Escape-0.02";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/N/NA/NANTO/Template-Plugin-JSON-Escape-0.02.tar.gz;
+      sha256 = "051a8b1d3bc601d58fc51e246067d36450cfe970278a0456e8ab61940f13cd86";
+    };
+    propagatedBuildInputs = [ JSON TemplateToolkit ];
     meta = {
       maintainers = with maintainers; [ ocharles ];
       platforms   = stdenv.lib.platforms.unix;
@@ -8499,6 +8601,18 @@ rec {
     src = fetchurl {
       url = "mirror://cpan/modules/by-module/Text/${name}.tar.gz";
       sha256 = "0lr76wrsj8wcxrq4wi8z1640w4dmdbkznp06q744rg3g0bd238d5";
+    };
+  };
+
+  TestInter = buildPerlPackage {
+    name = "Test-Inter-1.05";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/S/SB/SBECK/Test-Inter-1.05.tar.gz;
+      sha256 = "bda95ef503f1c1b39a5cd1ea686d18a67a63b56a8eb458f0614fc2acc51f7988";
+    };
+    meta = {
+      description = "Framework for more readable interactive test scripts";
+      license = "perl";
     };
   };
 

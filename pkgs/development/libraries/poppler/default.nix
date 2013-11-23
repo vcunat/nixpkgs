@@ -4,8 +4,8 @@
 }:
 
 let
-  version = "0.24.1"; # even major numbers are stable
-  sha256 = "1ipzirrh5ppkq99zb59xpfg5j2fgc8mr569r1cmxjjqql0dc1vsw";
+  version = "0.24.3"; # even major numbers are stable
+  sha256 = "0kip6mxp4lscr3wvgfashqk7ymhx2w1hgdilfpgig0a5kr805kfj";
 
   qtcairo_patches =
     let qtcairo = fetchgit { # the version for poppler-0.22
@@ -54,7 +54,6 @@ let
     };
   } merge ]); # poppler_drv
 
-in rec {
   /* We always use cairo in poppler, so we always depend on glib,
      so we always build the glib wrapper (~350kB).
      We also always build the cpp wrapper (<100kB).
@@ -69,4 +68,5 @@ in rec {
     NIX_LDFLAGS = "-lpoppler";
     postConfigure = "cd qt4";
   };
-}
+
+in { inherit poppler_glib poppler_qt4; } // poppler_glib

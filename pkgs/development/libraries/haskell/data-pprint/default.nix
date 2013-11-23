@@ -2,8 +2,8 @@
 
 cabal.mkDerivation (self: {
   pname = "data-pprint";
-  version = "0.2.1.5";
-  sha256 = "0dalm41l93303rraxi9kipxkm11a0mly3w488afj700ny5v6l9ij";
+  version = "0.2.3";
+  sha256 = "1ygbhn399d4hlrdjmg7gxbr5akydb78p6qa80rv7m6j0fsqzbf6y";
   buildDepends = [ deepseq mtl parallel time ];
   meta = {
     description = "Prettyprint and compare Data values";
