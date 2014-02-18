@@ -1,30 +1,33 @@
-{ stdenv, fetchurl, gmp }:
+{ stdenv, fetchurl, patchelf, gmp }:
 
+let
+  version = "20130715";
+in
 stdenv.mkDerivation rec {
-  name = "mlton-20100608";
+  name = "mlton-${version}";
 
   binSrc =
     if stdenv.system == "i686-linux" then (fetchurl {
-      url = "http://sourceforge.net/projects/mlton/files/mlton/20100608/${name}-1.x86-linux.static.tgz";
-      sha256 = "16qg8df9hg2pmnsblkgxp6bgm7334rsqkxqzskv5fl21wivmnwfw";
+      url = "http://sourceforge.net/projects/mlton/files/mlton/${version}/${name}-1.x86-linux.tgz";
+      sha256 = "1kxjjmnw4xk2d9hpvz43w9dvyhb3025k4zvjx785c33nrwkrdn4j";
     })
     else if stdenv.system == "x86_64-linux" then (fetchurl {
-        url = "http://sourceforge.net/projects/mlton/files/mlton/20100608/${name}-1.amd64-linux.static.tgz";
-        sha256 = "0i6ic8f6prl0cigrmf6bj9kqz3plzappxn17lz1rg2v832nfbw9r";
+        url = "http://sourceforge.net/projects/mlton/files/mlton/${version}/${name}-1.amd64-linux.tgz";
+        sha256 = "0fyhwxb4nmpirjbjcvk9f6w67gmn2gkz7xcgz0xbfih9kc015ygn";
     })
     else throw "Architecture not supported";
 
   codeSrc =
     fetchurl {
-      url = "http://sourceforge.net/projects/mlton/files/mlton/20100608/${name}.src.tgz";
-      sha256 = "0cqb3k6ld9965hyyfyayi510f205vqzd5qqm3crh13nasvq2rjzj";
+      url = "http://sourceforge.net/projects/mlton/files/mlton/${version}/${name}.src.tgz";
+      sha256 = "0v1x2hrh9hiqkvnbq11kf34v4i5a2x0ffxbzqaa8skyl26nmfn11";
     };
 
   srcs = [ binSrc codeSrc ];
 
   sourceRoot = name;
 
-  buildInputs = [ gmp ];
+  buildInputs = [ patchelf gmp ];
 
   makeFlags = [ "all-no-docs" ];
 
@@ -51,6 +54,15 @@ stdenv.mkDerivation rec {
     chmod u+x $(pwd)/../usr/bin/mllex
     chmod u+x $(pwd)/../usr/bin/mlyacc
     chmod u+x $(pwd)/../usr/bin/mlton
+
+    # So the builder runs the binary compiler with gmp.
+    export LD_LIBRARY_PATH=${gmp}/lib:$LD_LIBRARY_PATH
+
+    # Patch ELF interpreter.
+    patchelf --set-interpreter ${stdenv.glibc}/lib/ld-linux-x86-64.so.2 $(pwd)/../usr/lib/mlton/mlton-compile
+    for e in mllex mlyacc ; do
+      patchelf --set-interpreter ${stdenv.glibc}/lib/ld-linux-x86-64.so.2 $(pwd)/../usr/bin/$e
+    done
   '';
 
   doCheck = true;

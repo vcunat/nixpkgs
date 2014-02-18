@@ -19,7 +19,7 @@ with pkgs.lib;
   # ISO naming.
   isoImage.isoName = "${config.isoImage.isoBaseName}-${config.system.nixosVersion}-${pkgs.stdenv.system}.iso";
 
-  isoImage.volumeID = substring 0 32 "NIXOS_${config.system.nixosVersion}";
+  isoImage.volumeID = substring 0 11 "NIXOS_${config.system.nixosVersion}";
 
   # Make the installer more likely to succeed in low memory
   # environments.  The kernel's overcommit heustistics bite us
@@ -36,7 +36,7 @@ with pkgs.lib;
   isoImage.makeEfiBootable = true;
 
   # Add Memtest86+ to the CD.
-  boot.loader.grub.memtest86 = true;
+  boot.loader.grub.memtest86.enable = true;
 
   # Get a console as soon as the initrd loads fbcon on EFI boot
   boot.initrd.kernelModules = [ "fbcon" ];

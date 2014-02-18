@@ -1,15 +1,15 @@
-{ cabal, aeson, attoparsec, conduit, hspec, HUnit, resourcet, text
-, transformers, unorderedContainers, vector
+{ cabal, aeson, attoparsec, conduit, hspec, HUnit, resourcet
+, scientific, text, transformers, unorderedContainers, vector
 }:
 
 cabal.mkDerivation (self: {
   pname = "yaml";
-  version = "0.8.5.1";
-  sha256 = "0vbampykc5a027q5fh5w6i1bxblyxx7s3nzhpzaa4c1yz8nz3k57";
+  version = "0.8.7.2";
+  sha256 = "00dmmws0gmp9fb2ha6z055ix7jlsiry24bwhkl226b680gi9a84d";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [
-    aeson attoparsec conduit resourcet text transformers
+    aeson attoparsec conduit resourcet scientific text transformers
     unorderedContainers vector
   ];
   testDepends = [

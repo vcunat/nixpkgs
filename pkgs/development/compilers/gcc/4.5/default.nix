@@ -212,7 +212,7 @@ stdenv.mkDerivation ({
     ++ (optional (ppl != null) ppl)
     ++ (optional (cloogppl != null) cloogppl)
     ++ (optional (zlib != null) zlib)
-    ++ (optional (boehmgc != null) boehmgc)
+    ++ (optional langJava boehmgc)
     ++ (optionals langJava [zip unzip])
     ++ (optionals javaAwtGtk ([gtk pkgconfig libart_lgpl] ++ xlibs))
     ++ (optionals (cross != null) [binutilsCross])
@@ -360,7 +360,7 @@ stdenv.mkDerivation ({
   passthru = { inherit langC langCC langAda langFortran langVhdl
       enableMultilib version; };
 
-  enableParallelBuilding = true;
+  enableParallelBuilding = !langAda;
 
   meta = {
     homepage = http://gcc.gnu.org/;

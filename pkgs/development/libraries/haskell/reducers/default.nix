@@ -5,8 +5,8 @@
 
 cabal.mkDerivation (self: {
   pname = "reducers";
-  version = "3.10.1";
-  sha256 = "0pgywdgq0rqir95n4z3nzmyx5n54a1df9abyanz4qfv0g080fjkz";
+  version = "3.10.2";
+  sha256 = "159srk8v6zmfprq80mx3rpqrxzgzvf7xiwm8ywfaxrqyfcwkkjmg";
   buildDepends = [
     comonad fingertree hashable keys pointed semigroupoids semigroups
     text transformers unorderedContainers

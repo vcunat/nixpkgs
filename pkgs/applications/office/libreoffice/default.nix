@@ -6,7 +6,7 @@
 
 { stdenv, fetchurl, pam, python3, tcsh, libxslt, perl, ArchiveZip
 , CompressZlib, zlib, libjpeg, expat, pkgconfigUpstream, freetype, libwpd
-, libxml2, db4, sablotron, curl, libXaw, fontconfig, libsndfile, neon
+, libxml2, db, sablotron, curl, libXaw, fontconfig, libsndfile, neon
 , bison, flex, zip, unzip, gtk, libmspack, getopt, file, cairo, which
 , icu, boost, jdk, ant, libXext, libX11, libXtst, libXi, cups
 , libXinerama, openssl, gperf, cppunit, GConf, ORBit2, poppler
@@ -54,7 +54,7 @@ let
 
      buildInputs = [ libtool pkgconfig libxml2 ];
   };
-  
+
   # doesn't work with srcs versioning
   libmspub = stdenv.mkDerivation rec {
      version = "0.0.6";
@@ -66,8 +66,8 @@ let
      };
 
      configureFlags = "--disable-werror";
- 
-     buildInputs = [ zlib libwpd libwpg pkgconfig boost icu ];  
+
+     buildInputs = [ zlib libwpd libwpg pkgconfig boost icu ];
   };
 
   # doesn't exist in srcs
@@ -82,7 +82,7 @@ let
 
      configureFlags = "--with-boost=${boost}";
 
-     buildInputs = [ boost mdds pkgconfig ];  
+     buildInputs = [ boost mdds pkgconfig ];
   };
 
   fetchThirdParty = {name, md5}: fetchurl {
@@ -224,8 +224,8 @@ stdenv.mkDerivation rec {
     "--disable-kde"
     "--disable-postgresql-sdbc"
     "--with-package-format=native"
-    "--with-jdk-home=${jdk}"
-    "--with-ant-home=${ant}"
+    "--with-jdk-home=${jdk}/lib/openjdk"
+    "--with-ant-home=${ant}/lib/ant"
     "--without-afms"
     "--without-fonts"
     "--without-myspell-dicts"
@@ -248,7 +248,7 @@ stdenv.mkDerivation rec {
 
   buildInputs =
     [ ant ArchiveZip autoconf automake bison boost cairo clucene_core
-      CompressZlib cppunit cups curl db4 dbus_glib expat file flex fontconfig
+      CompressZlib cppunit cups curl db dbus_glib expat file flex fontconfig
       freetype GConf getopt gnome_vfs gperf gst_plugins_base gstreamer gtk
       hunspell icu jdk kde4.kdelibs lcms libcdr libexttextcat unixODBC libjpeg
       libmspack librdf_redland librsvg libsndfile libvisio libwpd libwpg libX11

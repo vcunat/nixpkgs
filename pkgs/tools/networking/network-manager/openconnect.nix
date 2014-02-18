@@ -4,7 +4,7 @@
 stdenv.mkDerivation rec {
   name = "${pname}${if withGnome then "-gnome" else ""}-${version}";
   pname = "NetworkManager-openconnect";
-  version = networkmanager.version;
+  version = "0.9.8.4";
 
   src = fetchurl {
     url = "mirror://gnome/sources/${pname}/0.9/${pname}-${version}.tar.xz";
@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
      substituteInPlace "configure" \
        --replace "/sbin/sysctl" "${procps}/sbin/sysctl"
      substituteInPlace "src/nm-openconnect-service.c" \
-       --replace "/sbin/openconnect" "${openconnect}/sbin/openconnect" \
+       --replace "/usr/sbin/openconnect" "${openconnect}/sbin/openconnect" \
        --replace "/sbin/modprobe" "${module_init_tools}/sbin/modprobe"
   '';
 

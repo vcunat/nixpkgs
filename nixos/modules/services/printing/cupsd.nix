@@ -143,13 +143,15 @@ in
       };
 
     services.printing.drivers =
-      [ pkgs.cups pkgs.cups_pdf_filter pkgs.ghostscript additionalBackends pkgs.perl pkgs.coreutils pkgs.gnused ];
+      [ pkgs.cups pkgs.cups_pdf_filter pkgs.ghostscript additionalBackends
+        pkgs.perl pkgs.coreutils pkgs.gnused pkgs.bc pkgs.gawk pkgs.gnugrep
+	];
 
     services.printing.cupsdConf =
       ''
         LogLevel info
 
-        SystemGroup root
+        SystemGroup root wheel
 
         Listen localhost:631
         Listen /var/run/cups/cups.sock
@@ -222,9 +224,6 @@ in
           </Limit>
         </Policy>
       '';
-
-    # Allow CUPS to receive IPP printer announcements via UDP.
-    networking.firewall.allowedUDPPorts = [ 631 ];
 
     security.pam.services.cups = {};
 

@@ -1,6 +1,6 @@
 { stdenv, fetchurl
 , bzip2
-, db4
+, db
 , gdbm
 , libX11, xproto
 , ncurses
@@ -17,10 +17,10 @@ with stdenv.lib;
 
 let
   majorVersion = "3.3";
-  version = "${majorVersion}.2";
+  version = "${majorVersion}.3";
 
   buildInputs = filter (p: p != null) [
-    zlib bzip2 gdbm sqlite db4 readline ncurses openssl tcl tk libX11 xproto
+    zlib bzip2 gdbm sqlite db readline ncurses openssl tcl tk libX11 xproto
   ];
 in
 stdenv.mkDerivation {
@@ -29,7 +29,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "http://www.python.org/ftp/python/${version}/Python-${version}.tar.bz2";
-    sha256 = "16myvina7nakyyg7r5gnjyydk8bzar988vmxsw2k485w5gz04wpp";
+    sha256 = "1jwd9pw7vx6xpjyi7iv5j3rwwkf3vzrwj36kcj1qh8zn2avfj9p5";
   };
 
   NIX_LDFLAGS = stdenv.lib.optionalString stdenv.isLinux "-lgcc_s";
@@ -57,7 +57,7 @@ stdenv.mkDerivation {
   passthru = {
     zlibSupport = zlib != null;
     sqliteSupport = sqlite != null;
-    db4Support = db4 != null;
+    dbSupport = db != null;
     readlineSupport = readline != null;
     opensslSupport = openssl != null;
     tkSupport = (tk != null) && (tcl != null) && (libX11 != null) && (xproto != null);
@@ -69,8 +69,8 @@ stdenv.mkDerivation {
   enableParallelBuilding = true;
 
   meta = {
-    homepage = "http://python.org";
-    description = "a high-level dynamically-typed programming language";
+    homepage = http://python.org;
+    description = "A high-level dynamically-typed programming language";
     longDescription = ''
       Python is a remarkably powerful dynamic programming language that
       is used in a wide variety of application domains. Some of its key
@@ -81,7 +81,7 @@ stdenv.mkDerivation {
       high level dynamic data types.
     '';
     license = stdenv.lib.licenses.psfl;
-    platforms = stdenv.lib.platforms.all;
+    platforms = stdenv.lib.platforms.linux;
     maintainers = with stdenv.lib.maintainers; [ simons chaoflow ];
   };
 }

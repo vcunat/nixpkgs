@@ -40,23 +40,29 @@ let
       inherit url sha256;
     };
 
+    buildInputs = [ python ]; # cannot patch shebangs otherwise
+
     phases = [ "unpackPhase" "patchPhase" "installPhase" ];
 
     opensslPatches = optional useOpenSSL openssl.patches;
 
     prePatch = "patchShebangs .";
 
-    patches = singleton (
-      if versionOlder version "31.0.0.0"
-      then ./sandbox_userns_30.patch
-      else ./sandbox_userns_31.patch
-    );
+    patches = singleton ./sandbox_userns_31.patch;
 
     postPatch = ''
-      sed -i -r -e 's/-f(stack-protector)(-all)?/-fno-\1/' build/common.gypi
-      sed -i -e 's|/usr/bin/gcc|gcc|' third_party/WebKit/Source/core/core.gypi
+      sed -i -r \
+        -e 's/-f(stack-protector)(-all)?/-fno-\1/' \
+        -e 's|/bin/echo|echo|' \
+        build/common.gypi
+      sed -i '/not RunGN/,+1d' build/gyp_chromium
+      sed -i -e 's|/usr/bin/gcc|gcc|' \
+        third_party/WebKit/Source/build/scripts/scripts.gypi \
+        third_party/WebKit/Source/build/scripts/preprocessor.pm
     '' + optionalString useOpenSSL ''
       cat $opensslPatches | patch -p1 -d third_party/openssl/openssl
+    '' + optionalString (!versionOlder version "34.0.0.0") ''
+      sed -i '/import.*depot/d' build/gyp_chromium
     '';
 
     outputs = [ "out" "sandbox" "bundled" "main" ];

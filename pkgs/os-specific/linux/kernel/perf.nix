@@ -1,17 +1,21 @@
-{ stdenv, kernelDev, elfutils, python, perl, newt, slang, asciidoc, xmlto
+{ stdenv, kernel, elfutils, python, perl, newt, slang, asciidoc, xmlto
 , docbook_xsl, docbook_xml_dtd_45, libxslt, flex, bison, pkgconfig
 , withGtk ? false, gtk ? null }:
 
 assert withGtk -> gtk != null;
 
+let optionalString = stdenv.lib.optionalString;
+    versionOlder = stdenv.lib.versionOlder;
+in
 stdenv.mkDerivation {
-  name = "perf-linux-${kernelDev.version}";
+  name = "perf-linux-${kernel.version}";
 
-  inherit (kernelDev) src patches;
+  inherit (kernel) src patches;
 
   preConfigure = ''
     cd tools/perf
     sed -i s,/usr/include/elfutils,$elfutils/include/elfutils, Makefile
+    ${optionalString (versionOlder kernel.version "3.13") "patch -p1 < ${./perf.diff}"}
     [ -f bash_completion ] && sed -i 's,^have perf,_have perf,' bash_completion
     export makeFlags="DESTDIR=$out $makeFlags"
   '';
@@ -31,6 +35,7 @@ stdenv.mkDerivation {
     propagatedBuildInputs = [ elfutils.crossDrv newt.crossDrv ];
     makeFlags = "CROSS_COMPILE=${stdenv.cross.config}-";
     elfutils = elfutils.crossDrv;
+    inherit (kernel.crossDrv) src patches;
   };
 
   meta = {

@@ -72,11 +72,11 @@ let
 
   # Unpack Mediawiki and put the config file in its root directory.
   mediawikiRoot = pkgs.stdenv.mkDerivation rec {
-    name= "mediawiki-1.20.7";
+    name= "mediawiki-1.20.8";
 
     src = pkgs.fetchurl {
       url = "http://download.wikimedia.org/mediawiki/1.20/${name}.tar.gz";
-      sha256 = "0cdl2mq3nw1jymanlxn7pi3qbf5y5003q53kmc8dip73nvrwnfxm";
+      sha256 = "0yfmh5vnfbgpvicfqh7nh4hwdk4qbc6gfniv02vchkg5al0nn7ag";
     };
 
     skins = config.skins;
@@ -93,6 +93,10 @@ let
         ensureDir $out
         cp -r * $out
         cp ${mediawikiConfig} $out/LocalSettings.php
+        sed -i 's|/bin/bash|${pkgs.stdenv.shell}|' \
+          $out/maintenance/fuzz-tester.php \
+          $out/bin/ulimit.sh \
+          $out/includes/GlobalFunctions.php
       '';
   };
 
@@ -290,6 +294,7 @@ in
             echo COMMIT
           ) | ${pkgs.postgresql}/bin/psql -U "${config.dbUser}" "${config.dbName}"
       fi
+      ${php}/bin/php ${mediawikiRoot}/maintenance/update.php
     '');
 
   robotsEntries = optionalString (config.articleUrlPrefix != "")

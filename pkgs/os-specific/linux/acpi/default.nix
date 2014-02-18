@@ -2,14 +2,14 @@
 
 stdenv.mkDerivation rec {
   name = "acpi-${version}";
-  version = "1.6";
+  version = "1.7";
 
   src = fetchurl {
     url = "mirror://sourceforge/acpiclient/${version}/${name}.tar.gz";
-    sha256 = "0cawznhkzb51yxa599d1xkw05nklmjrrmd79vmjkkzf4002d4qgd";
+    sha256 = "01ahldvf0gc29dmbd5zi4rrnrw2i1ajnf30sx2vyaski3jv099fp";
   };
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "Show battery status and other ACPI information";
     longDescription = ''
       Linux ACPI client is a small command-line
@@ -19,5 +19,7 @@ stdenv.mkDerivation rec {
     '';
     homepage = http://sourceforge.net/projects/acpiclient/;
     license = "GPLv2+";
+    platforms = platforms.linux;
+    maintainers = maintainers.mornfall;
   };
 }

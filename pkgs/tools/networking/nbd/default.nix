@@ -1,21 +1,21 @@
 { stdenv, fetchurl, pkgconfig, glib }:
 
 let
-  name = "nbd-3.4";
+  name = "nbd-3.7";
 in
 stdenv.mkDerivation {
   inherit name;
 
   src = fetchurl {
-    url = "mirror://sourceforge/nbd/${name}.tar.bz2";
-    sha256 = "1krj185fagnqsqpcfig7zkqa3cqgyyn956241ix224wssvynsajm";
+    url = "mirror://sourceforge/nbd/${name}.tar.xz";
+    sha256 = "1k4bvg5rg4q6b58y4kd9qwj07sznsfbknlpc6y1bk6c48rgr3d0b";
   };
 
   buildInputs = [ pkgconfig glib ] ++ stdenv.lib.optional (stdenv ? glibc) stdenv.glibc.kernelHeaders;
 
   postInstall = ''
     mkdir -p "$out/share/doc/${name}"
-    cp README "$out/share/doc/${name}/README"
+    cp README.md "$out/share/doc/${name}/"
   '';
 
   # The test suite doesn't succeed in chroot builds.

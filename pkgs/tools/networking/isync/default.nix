@@ -1,4 +1,4 @@
-{ fetchurl, stdenv, openssl, pkgconfig, db4 }:
+{ fetchurl, stdenv, openssl, pkgconfig, db }:
 
 stdenv.mkDerivation rec {
   name = "isync-1.0.6";
@@ -9,12 +9,12 @@ stdenv.mkDerivation rec {
   };
 
   patches = [ ./isync-recursice-imap.patch ]; # usefull patch to enable subfolders listing
-  buildInputs = [ openssl pkgconfig db4 ];
+  buildInputs = [ openssl pkgconfig db ];
 
   meta = {
     homepage = http://isync.sourceforge.net/;
     description = "Free IMAP and MailDir mailbox synchronizer";
-    licenses = [ "GPLv2+" ];
+    license = [ "GPLv2+" ];
 
     maintainers = [ stdenv.lib.maintainers.viric ];
     platforms = stdenv.lib.platforms.linux;

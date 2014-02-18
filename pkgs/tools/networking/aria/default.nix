@@ -1,11 +1,11 @@
 
 args : with args; 
-let version="0.14.0"; in
+let version="1.18.3"; in
 rec {
   src = /* Here a fetchurl expression goes */
   fetchurl {
-    url = "mirror://sourceforge/aria2/aria2c-${version}.tar.bz2";
-    sha256 = "0d6vpy7f4228byahsg4dlhalfkbscx941klhdlxd0y5c3mxxwkfr";
+    url = "mirror://sourceforge/aria2/stable/aria2-${version}.tar.bz2";
+    sha256 = "0y5wv7llq5sdwrsxqkc67wzk8gpb1kl4l1c0zl6l7kr0bkidna9r";
   };
 
   buildInputs = [];

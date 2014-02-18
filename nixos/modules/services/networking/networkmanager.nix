@@ -31,7 +31,7 @@ let
 
     [modem-manager]
     Identity=unix-group:networkmanager
-    Action=org.freedesktop.ModemManager.*
+    Action=org.freedesktop.ModemManager*
     ResultAny=yes
     ResultInactive=no
     ResultActive=yes
@@ -42,7 +42,7 @@ let
         subject.isInGroup("networkmanager")
         && subject.active
         && (action.id.indexOf("org.freedesktop.NetworkManager.") == 0
-            || action.id.indexOf("org.freedesktop.ModemManager.")  == 0
+            || action.id.indexOf("org.freedesktop.ModemManager")  == 0
         ))
           { return polkit.Result.YES; }
     });
@@ -89,7 +89,7 @@ in {
           to change network settings to this group.
         '';
       };
-  
+
       packages = mkOption {
         type = types.listOf types.path;
         default = [ ];
@@ -130,6 +130,8 @@ in {
       message = "You can not use networking.networkmanager with services.networking.wireless";
     }];
 
+    boot.kernelModules = [ "ppp_mppe" ]; # Needed for most (all?) PPTP VPN connections.
+
     environment.etc = [
       { source = ipUpScript;
         target = "NetworkManager/dispatcher.d/01nixos-ip-up";
@@ -146,6 +148,9 @@ in {
       { source = "${networkmanager_openconnect}/etc/NetworkManager/VPN/nm-openconnect-service.name";
         target = "NetworkManager/VPN/nm-openconnect-service.name";
       }
+      { source = "${networkmanager_pptp}/etc/NetworkManager/VPN/nm-pptp-service.name";
+        target = "NetworkManager/VPN/nm-pptp-service.name";
+      }
     ] ++ pkgs.lib.optional (cfg.appendNameservers == [] || cfg.insertNameservers == [])
            { source = overrideNameserversScript;
              target = "NetworkManager/dispatcher.d/02overridedns";
@@ -155,6 +160,8 @@ in {
         networkmanager_openvpn
         networkmanager_vpnc
         networkmanager_openconnect
+        networkmanager_pptp
+        modemmanager
         ];
 
     users.extraGroups = singleton {
@@ -170,16 +177,13 @@ in {
     systemd.services."networkmanager-init" = {
       description = "NetworkManager initialisation";
       wantedBy = [ "network.target" ];
-      partOf = [ "NetworkManager.service" ];
       wants = [ "NetworkManager.service" ];
       before = [ "NetworkManager.service" ];
       script = ''
         mkdir -m 700 -p /etc/NetworkManager/system-connections
         mkdir -m 755 -p ${stateDirs}
       '';
-      serviceConfig = {
-        Type = "oneshot";
-      };
+      serviceConfig.Type = "oneshot";
     };
 
     # Turn off NixOS' network management
@@ -199,6 +203,8 @@ in {
         networkmanager_openvpn
         networkmanager_vpnc
         networkmanager_openconnect
+        networkmanager_pptp
+        modemmanager
         ];
 
     services.udev.packages = cfg.packages;

@@ -1,24 +1,27 @@
-{ cabal, ansiTerminal, ansiWlPprint, binary, boehmgc, Cabal
-, filepath, gmp, happy, haskeline, languageJava, libffi
-, llvmGeneral, llvmGeneralPure, mtl, parsec, parsers, split, text
-, time, transformers, trifecta, unorderedContainers, utf8String
-, vector, vectorBinaryInstances
+{ cabal, annotatedWlPprint, ansiTerminal, ansiWlPprint, binary
+, boehmgc, Cabal, deepseq, filepath, gmp, happy, haskeline
+, languageJava, libffi, llvmGeneral, llvmGeneralPure, mtl, network
+, parsers, split, text, time, transformers, trifecta
+, unorderedContainers, utf8String, vector, vectorBinaryInstances
+, xml, zlib
 }:
 
 cabal.mkDerivation (self: {
   pname = "idris";
-  version = "0.9.9.3";
-  sha256 = "1l19xx0xbcwlnnh2w0rmri7wwixffzfrafpbji64nwyx1awz4iab";
-  isLibrary = false;
+  version = "0.9.11.2";
+  sha256 = "16xgiygn0j3kl3l36lnv6wz422nz2bvn3lk86xkdfvwjpv4630yn";
+  isLibrary = true;
   isExecutable = true;
   buildDepends = [
-    ansiTerminal ansiWlPprint binary Cabal filepath haskeline
-    languageJava libffi llvmGeneral llvmGeneralPure mtl parsec parsers
-    split text time transformers trifecta unorderedContainers
-    utf8String vector vectorBinaryInstances
+    annotatedWlPprint ansiTerminal ansiWlPprint binary Cabal deepseq
+    filepath haskeline languageJava libffi llvmGeneral llvmGeneralPure
+    mtl network parsers split text time transformers trifecta
+    unorderedContainers utf8String vector vectorBinaryInstances xml
+    zlib
   ];
   buildTools = [ happy ];
   extraLibraries = [ boehmgc gmp ];
+  configureFlags = "-fllvm -fgmp -fffi";
   meta = {
     homepage = "http://www.idris-lang.org/";
     description = "Functional Programming Language with Dependent Types";

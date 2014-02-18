@@ -1,7 +1,5 @@
-{ callPackage, self, stdenv, gettext, gvfs, libunique, overrides ? {} }:
-{
-  __overrides = overrides;
-
+{ callPackage, self, stdenv, gettext, gvfs, libunique, bison2, overrides ? {} }:
+let overridden = set // overrides; set = with overridden; {
   # Backward compatibility.
   gtkdoc = self.gtk_doc;
   startupnotification = self.startup_notification;
@@ -21,7 +19,9 @@
 
   libglade = callPackage ./platform/libglade { };
 
-  libgnomeprint = callPackage ./platform/libgnomeprint { };
+  libgnomeprint = callPackage ./platform/libgnomeprint {
+    bison = bison2;
+  };
 
   libgnomeprintui = callPackage ./platform/libgnomeprintui { };
 
@@ -107,8 +107,6 @@
 
   gtksourceview = callPackage ./desktop/gtksourceview { };
 
-  nautilus = callPackage ./desktop/nautilus { };
-
   gnome_icon_theme = callPackage ./desktop/gnome-icon-theme { };
 
   vte = callPackage ./desktop/vte { };
@@ -117,4 +115,4 @@
 
   libglademm = callPackage ./bindings/libglademm { };
 
-}
+}; in overridden

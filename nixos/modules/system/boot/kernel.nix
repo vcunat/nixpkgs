@@ -145,7 +145,7 @@ in
 
   ###### implementation
 
-  config = {
+  config = mkIf (!config.boot.isContainer) {
 
     system.build = { inherit kernel; };
 
@@ -199,7 +199,7 @@ in
         "unix"
 
         # Misc. stuff.
-        "pcips2" "xtkbd"
+        "pcips2" "atkbd"
 
         # To wait for SCSI devices to appear.
         "scsi_wait_scan"
@@ -230,9 +230,10 @@ in
       { description = "Load Kernel Modules";
         wantedBy = [ "sysinit.target" "multi-user.target" ];
         before = [ "sysinit.target" "shutdown.target" ];
+        conflicts = [ "shutdown.target" ];
         unitConfig =
-          { DefaultDependencies = "no";
-            Conflicts = "shutdown.target";
+          { DefaultDependencies = false;
+            ConditionCapability = "CAP_SYS_MODULE";
           };
         serviceConfig =
           { Type = "oneshot";

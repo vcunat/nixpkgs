@@ -1,10 +1,12 @@
-{ cabal, cairo, gtk2hsBuildtools, libc, mtl, pkgconfig, zlib }:
+{ cabal, cairo, gtk2hsBuildtools, libc, mtl, pkgconfig, utf8String
+, zlib
+}:
 
 cabal.mkDerivation (self: {
   pname = "cairo";
-  version = "0.12.4";
-  sha256 = "0gy6nxhxam3yv0caj4psg9dd1a5yazh616fjbmjfh0kbk8vl6fbq";
-  buildDepends = [ mtl ];
+  version = "0.12.5.1";
+  sha256 = "02a57kg7s1bjfvk7cnkppfva5g7akhpwsrsa1qzm0kdld51cs86l";
+  buildDepends = [ mtl utf8String ];
   buildTools = [ gtk2hsBuildtools ];
   extraLibraries = [ cairo libc pkgconfig zlib ];
   pkgconfigDepends = [ cairo ];

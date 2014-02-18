@@ -8,12 +8,16 @@ let
   firmware = gt68xxFirmware { inherit fetchurl; };
 in
 stdenv.mkDerivation rec {
-  version = "1.0.23";
+  version = "1.0.24";
   name = "sane-backends-${version}";
 
   src = fetchurl {
-    url = "https://launchpad.net/ubuntu/+archive/primary/+files/sane-backends_${version}.orig.tar.gz";
-    sha256 = "4d4f5b2881615af7fc0ed75fdde7dc623a749e80e40f3f792fe4010163cbb029";
+    urls = [
+      "http://pkgs.fedoraproject.org/repo/pkgs/sane-backends/sane-backends-1.0.24.tar.gz/1ca68e536cd7c1852322822f5f6ac3a4/${name}.tar.gz"
+      "https://alioth.debian.org/frs/download.php/file/3958/${name}.tar.gz"
+    ];
+    curlOpts = "--insecure";
+    sha256 = "0ba68m6bzni54axjk15i51rya7hfsdliwvqyan5msl7iaid0iir7";
   };
 
   udevSupport = hotplugSupport;

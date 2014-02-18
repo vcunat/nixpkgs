@@ -12,18 +12,20 @@ let
     visible = true;
   };
 
+  # warn option was renamed
   obsolete = from: to: rename {
     inherit from to;
     name = "Obsolete name";
-    use = x: builtins.trace "Obsolete option `${showOption from}' is used instead of `${showOption to}'." x;
-    define = x: builtins.trace "Obsolete option `${showOption from}' is defined instead of `${showOption to}'." x;
+    use = x: builtins.trace "Obsolete option `${showOption from}' is used. It was renamed to `${showOption to}'." x;
+    define = x: builtins.trace "Obsolete option `${showOption from}' is used. It was renamed to  `${showOption to}'." x;
   };
 
+  # abort if deprecated option is used
   deprecated = from: to: rename {
     inherit from to;
     name = "Deprecated name";
-    use = x: abort "Deprecated option `${showOption from}' is used instead of `${showOption to}'.";
-    define = x: abort "Deprecated option `${showOption from}' is defined instead of `${showOption to}'.";
+    use = x: abort "Deprecated option `${showOption from}' is used. It was renamed to `${showOption to}'.";
+    define = x: abort "Deprecated option `${showOption from}' is used. It was renamed to  `${showOption to}'.";
   };
 
   showOption = concatStringsSep ".";
@@ -112,6 +114,15 @@ in zipModules ([]
 # NixOS environment changes
 # !!! this hardcodes bash, could we detect from config which shell is actually used?
 ++ obsolete [ "environment" "promptInit" ] [ "programs" "bash" "promptInit" ]
+
+++ obsolete [ "services" "xserver" "driSupport" ] [ "services" "mesa" "driSupport" ]
+++ obsolete [ "services" "xserver" "driSupport32Bit" ] [ "services" "mesa" "driSupport32Bit" ]
+++ obsolete [ "services" "xserver" "s3tcSupport" ] [ "services" "mesa" "s3tcSupport" ]
+++ obsolete [ "services" "xserver" "videoDrivers" ] [ "services" "mesa" "videoDrivers" ]
+++ obsolete [ "services" "mesa" "driSupport" ] [ "hardware" "opengl" "driSupport" ]
+++ obsolete [ "services" "mesa" "driSupport32Bit" ] [ "hardware" "opengl" "driSupport32Bit" ]
+++ obsolete [ "services" "mesa" "s3tcSupport" ] [ "hardware" "opengl" "s3tcSupport" ]
+++ obsolete [ "services" "mesa" "videoDrivers" ] [ "hardware" "opengl" "videoDrivers" ]
 
 # Options that are obsolete and have no replacement.
 ++ obsolete' [ "boot" "loader" "grub" "bootDevice" ]

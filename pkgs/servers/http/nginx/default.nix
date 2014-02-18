@@ -1,6 +1,22 @@
-{ stdenv, fetchurl, fetchgit, openssl, zlib, pcre, libxml2, libxslt, expat, fullWebDAV ? false, syslog ? false }:
+{ stdenv, fetchurl, fetchgit, openssl, zlib, pcre, libxml2, libxslt, expat
+, rtmp ? false
+, fullWebDAV ? false
+, syslog ? false
+, moreheaders ? false}:
 
 let
+  version = "1.4.5";
+  mainSrc = fetchurl {
+    url = "http://nginx.org/download/nginx-${version}.tar.gz";
+    sha256 = "0zh7w1bz8rcxrs5bwp39m91nzm454mxlf3m5krkv1wm8ar1h5sdd";
+  };
+
+  rtmp-ext = fetchgit {
+    url = git://github.com/arut/nginx-rtmp-module.git;
+    rev = "1cfb7aeb582789f3b15a03da5b662d1811e2a3f1";
+    sha256 = "03ikfd2l8mzsjwx896l07rdrw5jn7jjfdiyl572yb9jfrnk48fwi";
+  };
+
   dav-ext = fetchgit {
     url = git://github.com/arut/nginx-dav-ext-module.git;
     rev = "54cebc1f21fc13391aae692c6cce672fa7986f9d";
@@ -12,31 +28,38 @@ let
     rev = "165affd9741f0e30c4c8225da5e487d33832aca3";
     sha256 = "14dkkafjnbapp6jnvrjg9ip46j00cr8pqc2g7374z9aj7hrvdvhs";
   };
+
+  moreheaders-ext = fetchgit {
+    url = https://github.com/agentzh/headers-more-nginx-module.git;
+    rev = "refs/tags/v0.23";
+    sha256 = "12pbjgsxnvcf2ff2i2qdn39q4cm5czlgrng96j8ml4cgxvnbdh39";
+  };
 in
 
 stdenv.mkDerivation rec {
-  name = "nginx-${meta.version}";
+  name = "nginx-${version}";
+  src = mainSrc;
 
-  src = fetchurl {
-    url = "http://nginx.org/download/${name}.tar.gz";
-    sha256 = "116yfy0k65mwxdkld0w7c3gly77jdqlvga5hpbsw79i3r62kh4mf";
-  };
-
-  buildInputs = [ openssl zlib pcre libxml2 libxslt ] ++ stdenv.lib.optional fullWebDAV expat;
+  buildInputs = [ openssl zlib pcre libxml2 libxslt
+    ] ++ stdenv.lib.optional fullWebDAV expat;
 
   patches = if syslog then [ "${syslog-ext}/syslog_1.4.0.patch" ] else [];
 
   configureFlags = [
     "--with-http_ssl_module"
+    "--with-http_spdy_module"
     "--with-http_xslt_module"
     "--with-http_sub_module"
     "--with-http_dav_module"
     "--with-http_gzip_static_module"
     "--with-http_secure_link_module"
+    "--with-ipv6"
     # Install destination problems
     # "--with-http_perl_module"
-  ] ++ stdenv.lib.optional fullWebDAV "--add-module=${dav-ext}"
-    ++ stdenv.lib.optional syslog "--add-module=${syslog-ext}";
+  ] ++ stdenv.lib.optional rtmp "--add-module=${rtmp-ext}"
+    ++ stdenv.lib.optional fullWebDAV "--add-module=${dav-ext}"
+    ++ stdenv.lib.optional syslog "--add-module=${syslog-ext}"
+    ++ stdenv.lib.optional moreheaders "--add-module=${moreheaders-ext}";
 
   preConfigure = ''
     export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -I${libxml2}/include/libxml2"
@@ -50,6 +73,6 @@ stdenv.mkDerivation rec {
     description = "A reverse proxy and lightweight webserver";
     maintainers = [ stdenv.lib.maintainers.raskin];
     platforms = stdenv.lib.platforms.all;
-    version = "1.4.3";
+    inherit version;
   };
 }

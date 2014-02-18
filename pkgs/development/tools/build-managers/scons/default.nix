@@ -2,7 +2,7 @@
 
 let
   name = "scons";
-  version = "2.1.0";
+  version = "2.3.0";
 in
 
 stdenv.mkDerivation {
@@ -10,7 +10,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "mirror://sourceforge/scons/${name}-${version}.tar.gz";
-    sha256 = "4139ed14f60dd2ebcd47c59984d14705636180eb27b3d1b2949489e514b1921d";
+    sha256 = "0jrv8v5dpdp231n1gsfmirqy27f7qas6m255jjm2qjygk6chchll";
   };
 
   buildInputs = [python makeWrapper];
@@ -22,6 +22,8 @@ stdenv.mkDerivation {
   '';
   buildPhase = "python setup.py install --prefix=$out --install-data=$out/share --install-lib=$(toPythonPath $out) --symlink-scons -O1";
   installPhase = "for n in $out/bin/*-${version}; do wrapProgram $n --suffix PYTHONPATH ':' \"$(toPythonPath $out)\"; done";
+
+  pythonPath = [];
 
   meta = {
     homepage = "http://scons.org/";

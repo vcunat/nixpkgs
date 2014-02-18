@@ -1,10 +1,10 @@
 {stdenv, fetchurl, ucl, zlib}:
 
 stdenv.mkDerivation {
-  name = "upx-3.07";
+  name = "upx-3.91";
   src = fetchurl {
-    url = mirror://sourceforge/upx/upx-3.07-src.tar.bz2;
-    sha256 = "07pcgjn7x0a734mvhgqwz24qkm1rzqrkcp67pmagzz6i765cp7bs";
+    url = mirror://sourceforge/upx/upx-3.91-src.tar.bz2;
+    sha256 = "0g3aiinlcb37z1xhs202h2qrgbf8dygiyarmflbgahcq89byfz2j";
   };
 
   buildInputs = [ ucl zlib ];

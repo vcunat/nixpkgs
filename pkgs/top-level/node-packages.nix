@@ -5,6 +5,7 @@ rec {
     "node-expat" = [ pkgs.expat ];
     "rbytes" = [ pkgs.openssl ];
     "phantomjs" = [ pkgs.phantomjs ];
+    "node-protobuf" = [ pkgs.protobuf ];
   };
 
   buildNodePackage = import ../development/web/nodejs/build-node-package.nix {
@@ -19,7 +20,7 @@ rec {
       unpackFile ${src}
       chmod -R +w */
       mv */ package 2>/dev/null || true
-      sed -i -e "s/:\s*\"latest\"/:  \"*\"/" -e "s/:\s*\"git\(\+\(ssh\|http\|https\)\)\?\:\/\/[^\"]*\"/: \"*\"/" package/package.json
+      sed -i -e "s/:\s*\"latest\"/:  \"*\"/" -e "s/:\s*\"\(https\?\|git\(\+\(ssh\|http\|https\)\)\?\):\/\/[^\"]*\"/: \"*\"/" package/package.json
       mv */ $out
     '';
 

@@ -67,7 +67,7 @@ m.run_command("mkdir -p /mnt/etc/nixos")
 m.run_command("nix-channel --add http://nixos.org/channels/nixos-unstable")
 m.run_command("nix-channel --update")
 m.run_command("nixos-rebuild switch")
-version = m.run_command("nixos-version", capture_stdout=True).replace('"', '').rstrip()
+version = m.run_command("nixos-version", capture_stdout=True).split(' ')[0]
 print >> sys.stderr, "NixOS version is {0}".format(version)
 m.upload_file("./amazon-base-config.nix", "/mnt/etc/nixos/configuration.nix")
 m.run_command("nixos-install")
@@ -203,7 +203,7 @@ f = open("{0}.{1}.ami-id".format(args.region, image_type), "w")
 f.write("{0}".format(ami_id))
 f.close()
 
-for dest in [ 'us-east-1', 'us-west-1', 'us-west-2', 'eu-west-1']:
+for dest in [ 'us-east-1', 'us-west-1', 'us-west-2', 'eu-west-1', 'ap-southeast-1', 'ap-southeast-2', 'ap-northeast-1', 'sa-east-1']:
     if args.region != dest:
         print >> sys.stderr, "copying image from region {0} to {1}".format(args.region, dest)
         conn = boto.ec2.connect_to_region(dest)

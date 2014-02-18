@@ -1,10 +1,15 @@
-{ cabal, mmorph, mtl, transformers, void }:
+{ cabal, mmorph, mtl, QuickCheck, testFramework
+, testFrameworkQuickcheck2, transformers
+}:
 
 cabal.mkDerivation (self: {
   pname = "pipes";
-  version = "4.0.0";
-  sha256 = "0zsz739hjmfirwv9sacibpikwz48l006g95m8da1rqk5p1yyr2lm";
-  buildDepends = [ mmorph mtl transformers void ];
+  version = "4.1.0";
+  sha256 = "1n10plmrjvmkyv502195mkms48y3lfp5gy08lhyhqqr7kn1gzkf0";
+  buildDepends = [ mmorph mtl transformers ];
+  testDepends = [
+    mtl QuickCheck testFramework testFrameworkQuickcheck2 transformers
+  ];
   meta = {
     description = "Compositional pipelines";
     license = self.stdenv.lib.licenses.bsd3;

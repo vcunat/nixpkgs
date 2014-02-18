@@ -2,8 +2,8 @@
 
 cabal.mkDerivation (self: {
   pname = "pipes-network";
-  version = "0.6.0";
-  sha256 = "1jfj5bmpvf9vvq86jz8hbhzzjawchri90vx11fxcbz2ckks673k9";
+  version = "0.6.2";
+  sha256 = "1y64cyi1lq7y5x3b1rv2iixlwqnz4g82nxk2m14x214fmj3np965";
   buildDepends = [
     network networkSimple pipes pipesSafe transformers
   ];

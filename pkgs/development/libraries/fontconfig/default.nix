@@ -1,11 +1,11 @@
 { stdenv, fetchurl, pkgconfig, freetype, expat }:
 
 stdenv.mkDerivation rec {
-  name = "fontconfig-2.10.2";
+  name = "fontconfig-2.11.0";
 
   src = fetchurl {
     url = "http://fontconfig.org/release/${name}.tar.bz2";
-    sha256 = "0llraqw86jmw4vzv7inskp3xxm2gc64my08iwq5mzncgfdbfza4f";
+    sha256 = "0rx4q7wcrz4lkpgcmqkwkp49v1fm0yxl0f35jn75dj1vy3v0w3nb";
   };
 
   infinality_patch = with freetype.infinality; if useInfinality
@@ -16,7 +16,8 @@ stdenv.mkDerivation rec {
       }
     else null;
 
-  buildInputs = [ pkgconfig freetype expat ];
+  propagatedBuildInputs = [ freetype ];
+  buildInputs = [ pkgconfig expat ];
 
   configureFlags = "--sysconfdir=/etc --with-cache-dir=/var/cache/fontconfig --disable-docs --with-default-fonts=";
 
@@ -38,10 +39,11 @@ stdenv.mkDerivation rec {
     cd "$out/etc/fonts" && tar xvf ${infinality_patch}
   '';
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "A library for font customization and configuration";
     homepage = http://fontconfig.org/;
-    license = "bsd";
-    platforms = stdenv.lib.platforms.all;
+    license = licenses.bsd2; # custom but very bsd-like
+    platforms = platforms.all;
+    maintainers = [ maintainers.vcunat ];
   };
 }

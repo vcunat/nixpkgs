@@ -3,7 +3,7 @@
 , freetype, fontconfig, file, alsaLib, nspr, nss, libnotify
 , yasm, mesa, sqlite, unzip, makeWrapper, pysqlite
 , hunspell, libevent, libstartup_notification, libvpx
-, cairo, gstreamer, gst_plugins_base
+, cairo, gstreamer, gst_plugins_base, icu
 , debugBuild ? false
 , # If you want the resulting program to call itself "Firefox" instead
   # of "Shiretoko" or whatever, enable this option.  However, those
@@ -15,12 +15,11 @@
 
 assert stdenv.gcc ? libc && stdenv.gcc.libc != null;
 
-let optional = stdenv.lib.optional;
-in rec {
+rec {
 
-  firefoxVersion = "25.0";
+  firefoxVersion = "27.0";
 
-  xulVersion = "25.0"; # this attribute is used by other packages
+  xulVersion = "27.0"; # this attribute is used by other packages
 
 
   src = fetchurl {
@@ -30,15 +29,11 @@ in rec {
         # Fall back to this url for versions not available at releases.mozilla.org.
         "http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/${firefoxVersion}/source/firefox-${firefoxVersion}.source.tar.bz2"
     ];
-    sha1 = "854722e283659d2b6b2eacd38f757b3c5b63a448";
+    sha1 = "ec2031385237e30be829817ac79caa8e80cc2a14";
   };
 
   commonConfigureFlags =
-    [ "--enable-optimize"
-      #"--enable-profiling"
-      (if debugBuild then "--enable-debug" else "--disable-debug")
-      "--enable-strip"
-      "--with-system-jpeg"
+    [ "--with-system-jpeg"
       "--with-system-zlib"
       "--with-system-bz2"
       "--with-system-nspr"
@@ -46,18 +41,24 @@ in rec {
       "--with-system-libevent"
       "--with-system-libvpx"
       "--with-system-png"
-      "--enable-startup-notification"
+      "--with-system-icu"
       "--enable-system-ffi"
       "--enable-system-hunspell"
       "--enable-system-pixman"
       "--enable-system-sqlite"
       "--enable-system-cairo"
+      "--enable-gstreamer"
+      "--enable-startup-notification"
+      # "--enable-content-sandbox"            # available since 26.0, but not much info available
+      # "--enable-content-sandbox-reporter"   # keeping disabled for now
       "--disable-crashreporter"
       "--disable-tests"
       "--disable-necko-wifi" # maybe we want to enable this at some point
       "--disable-installer"
       "--disable-updater"
-    ];
+    ] ++ (if debugBuild then [ "--enable-debug" "--enable-profiling"]
+                        else [ "--disable-debug" "--enable-release"
+                               "--enable-optimize" "--enable-strip" ]);
 
 
   xulrunner = stdenv.mkDerivation rec {
@@ -73,7 +74,7 @@ in rec {
         xlibs.libXScrnSaver xlibs.scrnsaverproto pysqlite
         xlibs.libXext xlibs.xextproto sqlite unzip makeWrapper
         hunspell libevent libstartup_notification libvpx cairo
-        gstreamer gst_plugins_base
+        gstreamer gst_plugins_base icu
       ];
 
     configureFlags =
@@ -115,6 +116,7 @@ in rec {
       for i in $out/lib/$libDir/{plugin-container,xulrunner,xulrunner-stub}; do
           wrapProgram $i --prefix LD_LIBRARY_PATH ':' "$out/lib/$libDir"
       done
+
       rm -f $out/bin/run-mozilla.sh
     ''; # */
 
@@ -139,11 +141,12 @@ in rec {
         dbus dbus_glib pango freetype fontconfig alsaLib nspr nss libnotify
         xlibs.pixman yasm mesa sqlite file unzip pysqlite
         hunspell libevent libstartup_notification libvpx cairo
-        gstreamer gst_plugins_base
+        gstreamer gst_plugins_base icu
       ];
 
     patches = [
       ./disable-reporter.patch # fixes "search box not working when built on xulrunner"
+      ./xpidl.patch
     ];
 
     propagatedBuildInputs = [xulrunner];
@@ -160,13 +163,20 @@ in rec {
       "SYSTEM_LIBXUL=1"
     ];
 
-    # Hack to work around make's idea of -lbz2 dependency
+    # Because preConfigure runs configure from a subdirectory.
+    configureScript = "../configure";
+
     preConfigure =
       ''
+        # Hack to work around make's idea of -lbz2 dependency
         find . -name Makefile.in -execdir sed -i '{}' -e '1ivpath %.so ${
           stdenv.lib.concatStringsSep ":"
             (map (s : s + "/lib") (buildInputs ++ [stdenv.gcc.libc]))
         }' ';'
+
+        # Building directly in the main source directory is not allowed.
+        mkdir obj_dir
+        cd obj_dir
       '';
 
     postInstall =

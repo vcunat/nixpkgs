@@ -1,5 +1,5 @@
 { stdenv, fetchurl, zlib ? null, zlibSupport ? true, bzip2
-, sqlite, tcl, tk, x11, openssl, readline, db4, ncurses, gdbm, libX11 }:
+, sqlite, tcl, tk, x11, openssl, readline, db, ncurses, gdbm, libX11 }:
 
 assert zlibSupport -> zlib != null;
 
@@ -59,7 +59,7 @@ let
     C_INCLUDE_PATH = concatStringsSep ":" (map (p: "${p}/include") buildInputs);
     LIBRARY_PATH = concatStringsSep ":" (map (p: "${p}/lib") buildInputs);
 
-    configureFlags = "--enable-shared --with-threads --enable-unicode --with-wctype-functions";
+    configureFlags = "--enable-shared --with-threads --enable-unicode";
 
     preConfigure = "${ensurePurity}" + optionalString stdenv.isCygwin
       ''
@@ -156,7 +156,7 @@ let
 
     bsddb = buildInternalPythonModule {
       moduleName = "bsddb";
-      deps = [ db4 ];
+      deps = [ db ];
     };
 
     curses = buildInternalPythonModule {

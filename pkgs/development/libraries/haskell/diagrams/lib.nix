@@ -1,15 +1,18 @@
-{ cabal, active, colour, dataDefaultClass, diagramsCore, fingertree
-, intervals, monoidExtras, newtype, NumInstances, semigroups
-, vectorSpace
+{ cabal, active, colour, dataDefaultClass, diagramsCore, filepath
+, fingertree, hashable, intervals, lens, MemoTrie, monoidExtras
+, NumInstances, optparseApplicative, safe, semigroups, tagged
+, vectorSpace, vectorSpacePoints
 }:
 
 cabal.mkDerivation (self: {
   pname = "diagrams-lib";
-  version = "0.7.1.1";
-  sha256 = "14d557y22dqyjr026vbawa2a2yjh7alh3rpavyidfdlrg48lqgrc";
+  version = "1.0.1";
+  sha256 = "0cjhb6dm0n4a7s8z0lyihql7dz34pdbm3ahm2p0yya4xf9pf0fw4";
   buildDepends = [
-    active colour dataDefaultClass diagramsCore fingertree intervals
-    monoidExtras newtype NumInstances semigroups vectorSpace
+    active colour dataDefaultClass diagramsCore filepath fingertree
+    hashable intervals lens MemoTrie monoidExtras NumInstances
+    optparseApplicative safe semigroups tagged vectorSpace
+    vectorSpacePoints
   ];
   jailbreak = true;
   meta = {

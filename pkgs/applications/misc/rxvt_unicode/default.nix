@@ -24,6 +24,8 @@ stdenv.mkDerivation (rec {
 
   outputs = [ "out" "terminfo" ];
 
+  patches = [ ./rxvt-unicode-9.06-font-width.patch ];
+
   preConfigure =
     ''
       mkdir -p $terminfo/share/terminfo
@@ -38,15 +40,9 @@ stdenv.mkDerivation (rec {
       ln -s $out/{lib/urxvt,lib/perl5/site_perl}
     '';
 
-  # we link the separate terminfo output to the main output
-  # as I don't think there's a usecase for wanting urxvt without its terminfo files
-  # and we don't want users to install them separately
-  postInstall = ''
-    ln -s $terminfo/share/terminfo $out/share
-  '';
-
   meta = {
     description = "A clone of the well-known terminal emulator rxvt";
     homepage = "http://software.schmorp.de/pkg/rxvt-unicode.html";
+    maintainers = stdenv.lib.maintainers.mornfall;
   };
 })

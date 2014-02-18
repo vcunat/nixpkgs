@@ -1,23 +1,26 @@
-{ cabal, cmdtheline, deepseq, Diff, filepath, ghcMod, ghcPaths
-, ghcSybUtils, hslogger, hspec, HUnit, mtl, parsec, QuickCheck
-, rosezipper, silently, StrafunskiStrategyLib, stringbuilder, syb
-, syz, time, transformers
+{ cabal, deepseq, Diff, dualTree, filepath, ghcMod, ghcPaths
+, ghcSybUtils, hslogger, hspec, HUnit, monoidExtras, mtl, parsec
+, QuickCheck, rosezipper, semigroups, silently
+, StrafunskiStrategyLib, stringbuilder, syb, syz, time
+, transformers
 }:
 
 cabal.mkDerivation (self: {
   pname = "HaRe";
-  version = "0.7.0.7";
-  sha256 = "0pgl5mav4sqc453by7nddf5fz7nj231072bklzj6crcph7qw4zy4";
+  version = "0.7.1.2";
+  sha256 = "1bplcjh0rx6m8ja8vpb18cfky349gmi27rlpsg0pw5nr3l4gcwyl";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [
-    cmdtheline filepath ghcMod ghcPaths ghcSybUtils hslogger mtl parsec
-    rosezipper StrafunskiStrategyLib syb syz time transformers
+    dualTree filepath ghcMod ghcPaths ghcSybUtils hslogger monoidExtras
+    mtl parsec rosezipper semigroups StrafunskiStrategyLib syb syz time
+    transformers
   ];
   testDepends = [
-    deepseq Diff filepath ghcMod ghcPaths ghcSybUtils hslogger hspec
-    HUnit mtl QuickCheck rosezipper silently StrafunskiStrategyLib
-    stringbuilder syb syz time transformers
+    deepseq Diff dualTree filepath ghcMod ghcPaths ghcSybUtils hslogger
+    hspec HUnit monoidExtras mtl QuickCheck rosezipper semigroups
+    silently StrafunskiStrategyLib stringbuilder syb syz time
+    transformers
   ];
   jailbreak = true;
   meta = {

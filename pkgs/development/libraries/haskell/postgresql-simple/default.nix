@@ -5,14 +5,14 @@
 
 cabal.mkDerivation (self: {
   pname = "postgresql-simple";
-  version = "0.3.9.1";
-  sha256 = "0byzlmcbwlycvlk35w0gdp5x7860jcc589ypbdx0vm08aq5vz87v";
+  version = "0.4.0.2";
+  sha256 = "0gx9jmmzv6aaa6z88i3j51f5hp153dbwzw3x7jx329c5pjp536g9";
   buildDepends = [
     aeson attoparsec blazeBuilder blazeTextual postgresqlLibpq text
     time transformers uuid vector
   ];
   testDepends = [
-    base16Bytestring cryptohash HUnit text time vector
+    aeson base16Bytestring cryptohash HUnit text time vector
   ];
   doCheck = false;
   meta = {

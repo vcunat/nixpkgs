@@ -10,27 +10,28 @@ assert cupsSupport -> cups != null;
 
 let
   ver_maj = "3.10";
-  ver_min = "4";
+  ver_min = "7";
+  version = "${ver_maj}.${ver_min}";
 in
 stdenv.mkDerivation rec {
-  name = "gtk+-${ver_maj}.${ver_min}";
+  name = "gtk+3-${version}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/gtk+/${ver_maj}/${name}.tar.xz";
-    sha256 = "0ax5qk9a6mp4k7i7nh8ajjz8sbl2g3819779z3bnknbpcgy13m2g";
+    url = "mirror://gnome/sources/gtk+/${ver_maj}/gtk+-${version}.tar.xz";
+    sha256 = "09wlsim4immrws0fyvpk03sspsljcsgybrwp73scycah70axxsdp";
   };
 
   enableParallelBuilding = true;
 
   nativeBuildInputs = [ pkgconfig gettext gobjectIntrospection perl ];
 
-  buildInputs = [ wayland libxkbcommon ];
+  buildInputs = [ libxkbcommon ];
   propagatedBuildInputs = with xlibs; with stdenv.lib;
     [ expat glib cairo pango gdk_pixbuf atk at_spi2_atk ]
-    ++ optionals stdenv.isLinux [ libXrandr libXrender libXcomposite libXi libXcursor ]
+    ++ optionals stdenv.isLinux [ libXrandr libXrender libXcomposite libXi libXcursor wayland ]
     ++ optional stdenv.isDarwin x11
-    ++ stdenv.lib.optional xineramaSupport libXinerama
-    ++ stdenv.lib.optionals cupsSupport [ cups ];
+    ++ optional xineramaSupport libXinerama
+    ++ optional cupsSupport cups;
 
   postInstall = "rm -rf $out/share/gtk-doc";
 

@@ -1,9 +1,8 @@
-{ stdenv, fetchurl, pkgconfig, intltool, flex, bison, autoconf, automake, libtool
+{ stdenv, fetchurl, pkgconfig, intltool, flex, bison, autoreconfHook
 , python, libxml2Python, file, expat, makedepend
 , libdrm, xorg, wayland, udev, llvm, libffi
-, libvdpau
+, libvdpau, libelf
 , enableTextureFloats ? false # Texture floats are patented, see docs/patents.txt
-, enableR600LlvmCompiler ? true, libelf
 , enableExtraFeatures ? false # not maintained
 }:
 
@@ -13,19 +12,19 @@ else
 
 /** Packaging design:
   - The basic mesa ($out) contains headers and libraries (GLU is in mesa_glu now).
-    This or the mesa attribute (which also contains GLU) are small (~ 2.2 MB, mostly headers)
+    This or the mesa attribute (which also contains GLU) are small (~ 2 MB, mostly headers)
     and are designed to be the buildInput of other packages.
   - DRI and EGL drivers are compiled into $drivers output,
-    which is bigger (~13 MB) and depends on LLVM (~44 MB).
+    which is much bigger and depends on LLVM.
     These should be searched at runtime in "/run/opengl-driver{,-32}/lib/*"
     and so are kind-of impure (given by NixOS).
     (I suppose on non-NixOS one would create the appropriate symlinks from there.)
-  - libOSMesa is in $osmesa (~4.2 MB)
+  - libOSMesa is in $osmesa (~4 MB)
 */
 
 let
-  version = "9.2.3";
-  # this is the default search path for DRI drivers (note: X server introduces an overriding env var)
+  version = "9.2.5";
+  # this is the default search path for DRI drivers (note: X server no longer introduces an overriding env var)
   driverLink = "/run/opengl-driver" + stdenv.lib.optionalString stdenv.isi686 "-32";
 in
 with { inherit (stdenv.lib) optional optionals optionalString; };
@@ -35,7 +34,7 @@ stdenv.mkDerivation {
 
   src =  fetchurl {
     url = "ftp://ftp.freedesktop.org/pub/mesa/${version}/MesaLib-${version}.tar.bz2";
-    sha256 = "0p8p35bwvrifc3v4z4wplxrs49h2qwzhcpsfjkkinfckkw6lqvg0";
+    sha256 = "1w3bxclgwl2hwyxk3za7dbdakb8jsya7afck35cz0v8pxppvjsml";
   };
 
   prePatch = "patchShebangs .";
@@ -54,8 +53,6 @@ stdenv.mkDerivation {
 
   outputs = ["out" "drivers" "osmesa"];
 
-  preConfigure = "./autogen.sh";
-
   configureFlags = [
     "--with-dri-driverdir=$(drivers)/lib/dri"
     "--with-egl-driver-dir=$(drivers)/lib/egl"
@@ -72,11 +69,9 @@ stdenv.mkDerivation {
     "--enable-osmesa" # used by wine
 
     "--with-dri-drivers=i965,r200,radeon"
-    ("--with-gallium-drivers=i915,nouveau,r300,r600,svga,swrast"
-      + optionalString enableR600LlvmCompiler ",radeonsi")
+    "--with-gallium-drivers=i915,nouveau,r300,r600,svga,swrast,radeonsi"
     "--with-egl-platforms=x11,wayland,drm" "--enable-gbm" "--enable-shared-glapi"
   ]
-    ++ optional enableR600LlvmCompiler "--enable-r600-llvm-compiler"
     ++ optional enableTextureFloats "--enable-texture-float"
     ++ optionals enableExtraFeatures [
       "--enable-openvg" "--enable-gallium-egl" # not needed for EGL in Gallium, but OpenVG might be useful
@@ -90,17 +85,16 @@ stdenv.mkDerivation {
     ++ optionals stdenv.isLinux [libdrm]
     ;
   buildInputs = with xorg; [
-    autoconf automake libtool intltool expat libxml2Python llvm
+    autoreconfHook intltool expat libxml2Python llvm
     libXfixes glproto dri2proto libX11 libXext libxcb libXt
-    libffi wayland libvdpau
+    libffi wayland libvdpau libelf
   ] ++ optionals enableExtraFeatures [ /*libXvMC*/ ]
     ++ optional stdenv.isLinux udev
-    ++ optional enableR600LlvmCompiler libelf
     ;
 
   enableParallelBuilding = true;
-  #doCheck = true; # https://bugs.freedesktop.org/show_bug.cgi?id=67672
-  # TODO: best fix this before merging >=9.2 to master
+  #doCheck = true; # https://bugs.freedesktop.org/show_bug.cgi?id=67672,
+    # also, 10.* links bad due to some RTTI problem
 
   # move gallium-related stuff to $drivers, so $out doesn't depend on LLVM;
   #   also move libOSMesa to $osmesa, as it's relatively big
@@ -154,6 +148,8 @@ stdenv.mkDerivation {
     done
   '' + /* set the default search path for DRI drivers; used e.g. by X server */ ''
     substituteInPlace "$out/lib/pkgconfig/dri.pc" --replace '$(drivers)' "${driverLink}"
+  '' + /* move vdpau drivers to $drivers/lib, so they are found */ ''
+    mv "$drivers"/lib/vdpau/* "$drivers"/lib/ && rmdir "$drivers"/lib/vdpau
   '';
   #ToDo: @vcunat isn't sure if drirc will be found when in $out/etc/, but it doesn't seem important ATM
 
@@ -164,6 +160,6 @@ stdenv.mkDerivation {
     homepage = http://www.mesa3d.org/;
     license = "bsd";
     platforms = stdenv.lib.platforms.mesaPlatforms;
-    maintainers = [ stdenv.lib.maintainers.simons ];
+    maintainers = with stdenv.lib.maintainers; [ simons vcunat ];
   };
 }

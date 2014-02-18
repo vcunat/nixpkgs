@@ -12,7 +12,7 @@
 { nixpkgs ? { outPath = (import ./all-packages.nix {}).lib.cleanSource ../..; revCount = 1234; shortRev = "abcdef"; }
 , officialRelease ? false
 , # The platforms for which we build Nixpkgs.
-  supportedSystems ? [ "x86_64-linux" "i686-linux" "x86_64-darwin" "x86_64-freebsd" "i686-freebsd" ]
+  supportedSystems ? [ "x86_64-linux" "i686-linux" "x86_64-darwin" ]
 }:
 
 with import ./release-lib.nix { inherit supportedSystems; };
@@ -48,8 +48,7 @@ let
       atlas = linux;
       audacious = linux;
       autoconf = all;
-      automake110x = all;
-      automake111x = all;
+      automake = all;
       avahi = allBut "i686-cygwin";  # Cygwin builds fail
       bash = all;
       bashInteractive = all;
@@ -106,7 +105,6 @@ let
       file = all;
       findutils = all;
       flex = all;
-      flex2535 = all;
       fontforge = linux;
       fuse = linux;
       gajim = linux;
@@ -116,6 +114,7 @@ let
       gcc34 = linux;
       gcc42 = linux;
       gcc44 = linux;
+      gcj = linux;
       ghdl = linux;
       ghostscript = linux;
       ghostscriptX = linux;
@@ -126,7 +125,7 @@ let
       glibcLocales = linux;
       glxinfo = linux;
       gnash = linux;
-      gnat44 = linux;
+      gnat = linux;
       gnugrep = all;
       gnum4 = all;
       gnumake = all;
@@ -309,7 +308,6 @@ let
       vim = linux;
       vimHugeX = linux;
       VisualBoyAdvance = linux;
-      vlc = linux;
       vncrec = linux;
       vorbisTools = linux;
       vpnc = linux;
@@ -369,6 +367,10 @@ let
       };
 
       haskellPackages_ghc704 = {
+        ghc = ghcSupported;
+      };
+
+      haskellPackages_ghc722 = {
         ghc = ghcSupported;
       };
 

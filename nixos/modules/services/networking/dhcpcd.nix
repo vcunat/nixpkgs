@@ -11,6 +11,7 @@ let
   ignoredInterfaces =
     map (i: i.name) (filter (i: i.ipAddress != null) (attrValues config.networking.interfaces))
     ++ concatLists (attrValues (mapAttrs (n: v: v.interfaces) config.networking.bridges))
+    ++ concatLists (attrValues (mapAttrs (n: v: v.interfaces) config.networking.bonds))
     ++ config.networking.dhcpcd.denyInterfaces;
 
   # Config file adapted from the one that ships with dhcpcd.
@@ -105,7 +106,6 @@ in
       { description = "DHCP Client";
 
         wantedBy = [ "network.target" ];
-        after = [ "systemd-udev-settle.service" ];
 
         # Stopping dhcpcd during a reconfiguration is undesirable
         # because it brings down the network interfaces configured by
@@ -113,6 +113,8 @@ in
         stopIfChanged = false;
 
         path = [ dhcpcd pkgs.nettools pkgs.openresolv ];
+
+        unitConfig.ConditionCapability = "CAP_NET_ADMIN";
 
         serviceConfig =
           { Type = "forking";

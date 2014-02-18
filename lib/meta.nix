@@ -1,6 +1,9 @@
 /* Some functions for manipulating meta attributes, as well as the
    name attribute. */
 
+let lib = import ./default.nix;
+in
+
 rec {
 
 
@@ -11,7 +14,7 @@ rec {
        addMetaAttrs {description = "Bla blah";} somePkg
   */
   addMetaAttrs = newAttrs: drv:
-    drv // { meta = (if drv ? meta then drv.meta else {}) // newAttrs; };
+    drv // { meta = (drv.meta or {}) // newAttrs; };
 
 
   /* Change the symbolic name of a package for presentation purposes
@@ -35,14 +38,30 @@ rec {
   appendToName = suffix: updateName (name: "${name}-${suffix}");
 
 
+  /* Apply a function to each derivation and only to derivations in an attrset
+  */
+  mapDerivationAttrset = f: set: lib.mapAttrs (name: pkg: if lib.isDerivation pkg then (f pkg) else pkg) set;
+
+
   /* Decrease the nix-env priority of the package, i.e., other
      versions/variants of the package will be preferred.
   */
   lowPrio = drv: addMetaAttrs { priority = "10"; } drv;
 
+
+  /* Apply lowPrio to an attrset with derivations
+  */
+  lowPrioSet = set: mapDerivationAttrset lowPrio set;
+
+
   /* Increase the nix-env priority of the package, i.e., this
      version/variant of the package will be preferred.
   */
   hiPrio = drv: addMetaAttrs { priority = "-10"; } drv;
-  
+
+
+  /* Apply hiPrio to an attrset with derivations
+  */
+  hiPrioSet = set: mapDerivationAttrset hiPrio set;
+
 }

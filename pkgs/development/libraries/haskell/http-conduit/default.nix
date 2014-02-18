@@ -1,32 +1,32 @@
 { cabal, asn1Data, base64Bytestring, blazeBuilder
 , blazeBuilderConduit, caseInsensitive, certificate, conduit
-, cookie, cprngAes, dataDefault, deepseq, failure, filepath, hspec
-, httpTypes, HUnit, liftedBase, mimeTypes, monadControl, mtl
-, network, networkConduit, publicsuffixlist, random, regexCompat
-, resourcet, socks, text, time, tls, tlsExtra, transformers
-, transformersBase, utf8String, void, wai, warp, zlibConduit
+, connection, cookie, cprngAes, dataDefaultClass, deepseq, failure
+, filepath, hspec, httpClient, httpClientConduit
+, httpClientMultipart, httpClientTls, httpTypes, HUnit, liftedBase
+, mimeTypes, monadControl, mtl, network, networkConduit
+, publicsuffixlist, random, regexCompat, resourcet, socks, text
+, time, transformers, transformersBase, utf8String, void, wai, warp
+, warpTls, zlibConduit
 }:
 
 cabal.mkDerivation (self: {
   pname = "http-conduit";
-  version = "1.9.5.1";
-  sha256 = "1a53s5f9p0xnd33midi4pfj6i3nvckb9khn0p3l3v3xvqn5rrgf2";
+  version = "2.0.0.5";
+  sha256 = "1vgfg2jgr7gavfbys33rd2l0dxyqk7ig7v357jhy8imxsm0xykp9";
   buildDepends = [
-    asn1Data base64Bytestring blazeBuilder blazeBuilderConduit
-    caseInsensitive certificate conduit cookie cprngAes dataDefault
-    deepseq failure filepath httpTypes liftedBase mimeTypes
-    monadControl mtl network publicsuffixlist random regexCompat
-    resourcet socks text time tls tlsExtra transformers
-    transformersBase utf8String void zlibConduit
+    conduit httpClient httpClientConduit httpClientTls httpTypes
+    liftedBase resourcet transformers
   ];
   testDepends = [
     asn1Data base64Bytestring blazeBuilder blazeBuilderConduit
-    caseInsensitive certificate conduit cookie cprngAes dataDefault
-    deepseq failure filepath hspec httpTypes HUnit liftedBase mimeTypes
+    caseInsensitive certificate conduit connection cookie cprngAes
+    dataDefaultClass deepseq failure filepath hspec httpClient
+    httpClientMultipart httpTypes HUnit liftedBase mimeTypes
     monadControl mtl network networkConduit publicsuffixlist random
-    regexCompat resourcet socks text time tls tlsExtra transformers
-    transformersBase utf8String void wai warp zlibConduit
+    regexCompat resourcet socks text time transformers transformersBase
+    utf8String void wai warp warpTls zlibConduit
   ];
+  doCheck = false;
   meta = {
     homepage = "http://www.yesodweb.com/book/http-conduit";
     description = "HTTP client package with conduit interface and HTTPS support";

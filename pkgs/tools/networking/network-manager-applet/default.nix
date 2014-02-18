@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, intltool, pkgconfig, gtk, libglade, networkmanager, GConf
-, libnotify, libsecret, dbus_glib, polkit, isocodes, libgnome_keyring, gnome_keyring
+{ stdenv, fetchurl, intltool, pkgconfig, libglade, networkmanager, gnome3
+, libnotify, libsecret, dbus_glib, polkit, isocodes, libgnome_keyring 
 , mobile_broadband_provider_info, glib_networking, gsettings_desktop_schemas
 , makeWrapper, networkmanager_openvpn, networkmanager_vpnc
 , networkmanager_openconnect, udev, hicolor_icon_theme }:
@@ -15,19 +15,17 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "mirror://gnome/sources/${pn}/${major}/${name}.tar.xz";
-    sha256 = "130rdin3wh9vlwhscbgh3lsssi89p5n4maws4y3l9ja720llk27n";
+    sha256 = "1sx97cp9nb5p82kg2dl6dmqri7wichpjqchhx7bk77limngby7jq";
   };
 
   buildInputs = [
-    gtk libglade networkmanager libnotify libsecret dbus_glib
-    polkit isocodes makeWrapper udev GConf libgnome_keyring
+    gnome3.gtk libglade networkmanager libnotify libsecret dbus_glib
+    polkit isocodes makeWrapper udev gnome3.gconf gnome3.libgnome_keyring
   ];
 
   nativeBuildInputs = [ intltool pkgconfig ];
 
-  propagatedUserEnvPkgs = [ GConf gnome_keyring hicolor_icon_theme ];
-
-  configureFlags = [ "--disable-introspection" ]; # not needed anywhere AFAIK
+  propagatedUserEnvPkgs = [ gnome3.gconf gnome3.gnome_keyring hicolor_icon_theme ];
 
   makeFlags = [
     ''CFLAGS=-DMOBILE_BROADBAND_PROVIDER_INFO=\"${mobile_broadband_provider_info}/share/mobile-broadband-provider-info/serviceproviders.xml\"''
@@ -50,7 +48,7 @@ stdenv.mkDerivation rec {
       --prefix GIO_EXTRA_MODULES : "${glib_networking}/lib/gio/modules" \
       --prefix XDG_DATA_DIRS : "${gsettings_desktop_schemas}/share:$out/share" \
       --set GCONF_CONFIG_SOURCE "xml::~/.gconf" \
-      --prefix PATH ":" "${GConf}/bin"
+      --prefix PATH ":" "${gnome3.gconf}/bin"
   '';
 
   meta = with stdenv.lib; {
@@ -59,5 +57,9 @@ stdenv.mkDerivation rec {
     license = licenses.gpl2;
     maintainers = with maintainers; [ phreedom urkud rickynils ];
     platforms = platforms.linux;
+
+    # resolve collision between evince and nm-applet for
+    # gschemas.compiled
+    priority = 6;
   };
 }

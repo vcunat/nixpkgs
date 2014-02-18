@@ -4,16 +4,16 @@
 
 cabal.mkDerivation (self: {
   pname = "zeromq3-haskell";
-  version = "0.5";
-  sha256 = "16qh3q5rshaxzl79aiivrysl3dhilnd2mw2p45ifgbgv87m277gq";
+  version = "0.5.2";
+  sha256 = "1ky92qwyk27qsxnvaj0mc9yyhk7g19ry2nq55666ayahc899z213";
   buildDepends = [
     async MonadCatchIOTransformers semigroups transformers
   ];
   testDepends = [
-    ansiTerminal checkers MonadCatchIOTransformers QuickCheck
+    ansiTerminal async checkers MonadCatchIOTransformers QuickCheck
     transformers
   ];
-  extraLibraries = [ zeromq ];
+  pkgconfigDepends = [ zeromq ];
   doCheck = false;
   meta = {
     homepage = "http://github.com/twittner/zeromq-haskell/";

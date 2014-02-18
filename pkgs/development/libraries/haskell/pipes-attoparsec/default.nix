@@ -1,16 +1,15 @@
-{ cabal, attoparsec, HUnit, mmorph, pipes, pipesParse, QuickCheck
-, testFramework, testFrameworkHunit, testFrameworkQuickcheck2, text
-, transformers
+{ cabal, attoparsec, HUnit, mmorph, pipes, pipesParse, tasty
+, tastyHunit, text, transformers
 }:
 
 cabal.mkDerivation (self: {
   pname = "pipes-attoparsec";
-  version = "0.3.0";
-  sha256 = "1jsgssfs0ndn8aayc0rxyb4vlp2fny8npmnvym7v1yhp2qv84c7b";
+  version = "0.4.0";
+  sha256 = "0xffqxsh8yvfdk39mdgkf0l2v284fr31nz5k16dq752p63fnczkw";
   buildDepends = [ attoparsec pipes pipesParse text transformers ];
   testDepends = [
-    attoparsec HUnit mmorph pipes pipesParse QuickCheck testFramework
-    testFrameworkHunit testFrameworkQuickcheck2 text transformers
+    attoparsec HUnit mmorph pipes pipesParse tasty tastyHunit text
+    transformers
   ];
   meta = {
     homepage = "https://github.com/k0001/pipes-attoparsec";

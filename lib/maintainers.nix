@@ -18,6 +18,7 @@
   bjornfor = "Bjørn Forsman <bjorn.forsman@gmail.com>";
   bluescreen303 = "Mathijs Kwik <mathijs@bluescreen303.nl>";
   bodil = "Bodil Stokke <nix@bodil.org>";
+  calrama = "Moritz Maxeiner <moritz@ucworks.org>";
   chaoflow = "Florian Friesdorf <flo@chaoflow.net>";
   coconnor = "Corey O'Connor <coreyoconnor@gmail.com>";
   coroa = "Jonas Hörsch <jonas@chaoflow.net>";
@@ -27,13 +28,19 @@
   garbas = "Rok Garbas <rok@garbas.si>";
   goibhniu = "Cillian de Róiste <cillian.deroiste@gmail.com>";
   guibert = "David Guibert <david.guibert@gmail.com>";
+  ianwookim = "Ian-Woo Kim <ianwookim@gmail.com>";
   iElectric = "Domen Kozar <domen@dev.si>";
   iyzsong = "Song Wenwu <iyzsong@gmail.com>";
   jcumming = "Jack Cummings <jack@mudshark.org>";
   kkallio = "Karn Kallio <tierpluspluslists@gmail.com>";
+  ktosiek = "Tomasz Kontusz <tomasz.kontusz@gmail.com>";
+  lethalman = "Luca Bruno <lucabru@src.gnome.org>";
+  linquize = "Linquize <linquize@yahoo.com.hk>";
   lovek323 = "Jason O'Conal <jason@oconal.id.au>";
   ludo = "Ludovic Courtès <ludo@gnu.org>";
+  madjar = "Georges Dubus <georges.dubus@compiletoi.net>";
   marcweber = "Marc Weber <marco-oweber@gmx.de>";
+  matejc = "Matej Cotman <cotman.matej@gmail.com>";
   modulistic = "Pablo Costa <modulistic@gmail.com>";
   mornfall = "Petr Ročkai <me@mornfall.net>";
   ocharles = "Oliver Charles <ollie@ocharles.org.uk>";
@@ -49,12 +56,16 @@
   rickynils = "Rickard Nilsson <rickynils@gmail.com>";
   rob = "Rob Vermaas <rob.vermaas@gmail.com>";
   roconnor = "Russell O'Connor <roconnor@theorem.ca>";
+  roelof = "Roelof Wobben <rwobben@hotmail.com>";
+  rszibele = "Richard Szibele <richard_szibele@hotmail.com>";
   sander = "Sander van der Burg <s.vanderburg@tudelft.nl>";
   shlevy = "Shea Levy <shea@shealevy.com>";
   simons = "Peter Simons <simons@cryp.to>";
   smironov = "Sergey Mironov <ierton@gmail.com>";
+  sprock = "Roger Mason <rmason@mun.ca>";
   thammers = "Tobias Hammerschmidt <jawr@gmx.de>";
   the-kenny = "Moritz Ulrich <moritz@tarn-vedra.de>";
+  tomberek = "Thomas Bereknyei <tomberek@gmail.com>";
   urkud = "Yury G. Kudryashov <urkud+nix@ya.ru>";
   vcunat = "Vladimír Čunát <vcunat@gmail.com>";
   viric = "Lluís Batlle i Rossell <viric@viric.name>";
@@ -63,5 +74,6 @@
   winden = "Antonio Vargas Gonzalez <windenntw@gmail.com>";
   z77z = "Marco Maggesi <maggesi@math.unifi.it>";
   zef = "Zef Hemel <zef@zef.me>";
+  zimbatm = "zimbatm <zimbatm@zimbatm.com>";
   zoomulator = "Kim Simmons <zoomulator@gmail.com>";
 }
