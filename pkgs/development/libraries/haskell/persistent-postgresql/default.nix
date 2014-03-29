@@ -4,12 +4,13 @@
 
 cabal.mkDerivation (self: {
   pname = "persistent-postgresql";
-  version = "1.3.0.1";
-  sha256 = "00m78hdrnk367ymlgbi49p2zq2gkwskax1ng2h3ljskf3ic4jahf";
+  version = "1.3.0.3";
+  sha256 = "00frqpv7wbksbjl714nhrian45p61kggxhpin9hawbwn2siwsg2m";
   buildDepends = [
     aeson blazeBuilder conduit monadControl persistent postgresqlLibpq
     postgresqlSimple text time transformers
   ];
+  jailbreak = true;
   meta = {
     homepage = "http://www.yesodweb.com/book/persistent";
     description = "Backend for the persistent library using postgresql";

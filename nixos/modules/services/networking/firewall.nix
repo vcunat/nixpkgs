@@ -128,6 +128,17 @@ in
         '';
     };
 
+    networking.firewall.allowedTCPPortRanges = mkOption {
+      default = [];
+      example = [ { from = 8999; to = 9003; } ];
+      type = types.listOf (types.attrsOf types.int);
+      description =
+        ''
+          A range of TCP ports on which incoming connections are
+          accepted.
+        '';
+    };
+
     networking.firewall.allowedUDPPorts = mkOption {
       default = [];
       example = [ 53 ];
@@ -135,6 +146,16 @@ in
       description =
         ''
           List of open UDP ports.
+        '';
+    };
+
+    networking.firewall.allowedUDPPortRanges = mkOption {
+      default = [];
+      example = [ { from = 60000; to = 61000; } ];
+      type = types.listOf (types.attrsOf types.int);
+      description =
+        ''
+          Range of open UDP ports.
         '';
     };
 
@@ -147,6 +168,17 @@ in
           ("pings").  ICMPv6 pings are always allowed because the
           larger address space of IPv6 makes network scanning much
           less effective.
+        '';
+    };
+
+    networking.firewall.pingLimit = mkOption {
+      default = null;
+      type = types.nullOr (types.separatedString " ");
+      description =
+        ''
+          If pings are allowed, this allows setting rate limits
+          on them. If non-null, this option should be in the form
+          of flags like "-limit 1/minute -limit-burst 5"
         '';
     };
 
@@ -322,6 +354,15 @@ in
               ) cfg.allowedTCPPorts
             }
 
+            # Accept connections to the allowed TCP port ranges.
+            ${concatMapStrings (rangeAttr:
+                let range = toString rangeAttr.from + ":" + toString rangeAttr.to; in
+                ''
+                  ip46tables -A nixos-fw -p tcp --dport ${range} -j nixos-fw-accept
+                ''
+              ) cfg.allowedTCPPortRanges
+            }
+
             # Accept packets on the allowed UDP ports.
             ${concatMapStrings (port:
                 ''
@@ -330,13 +371,24 @@ in
               ) cfg.allowedUDPPorts
             }
 
+            # Accept packets on the allowed UDP port ranges.
+            ${concatMapStrings (rangeAttr:
+                let range = toString rangeAttr.from + ":" + toString rangeAttr.to; in
+                ''
+                  ip46tables -A nixos-fw -p udp --dport ${range} -j nixos-fw-accept
+                ''
+              ) cfg.allowedUDPPortRanges
+            }
+
             # Accept IPv4 multicast.  Not a big security risk since
             # probably nobody is listening anyway.
             #iptables -A nixos-fw -d 224.0.0.0/4 -j nixos-fw-accept
 
             # Optionally respond to ICMPv4 pings.
             ${optionalString cfg.allowPing ''
-              iptables -A nixos-fw -p icmp --icmp-type echo-request -j nixos-fw-accept
+              iptables -A nixos-fw -p icmp --icmp-type echo-request ${optionalString (cfg.pingLimit != null)
+                "-m limit ${cfg.pingLimit} "
+              }-j nixos-fw-accept
             ''}
 
             # Accept all ICMPv6 messages except redirects and node

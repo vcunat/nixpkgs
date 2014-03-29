@@ -10,11 +10,11 @@
 
 stdenv.mkDerivation rec {
   name = "vlc-${version}";
-  version = "2.1.2";
+  version = "2.1.4";
 
   src = fetchurl {
     url = "http://download.videolan.org/pub/videolan/vlc/${version}/${name}.tar.xz";
-    sha256 = "1i4fzjv2x8mzx0bg52mgh1rrlircmb81jr58z90blbmww4mq36r1";
+    sha256 = "1lymhbb2bns73qivdaqanhggjjhyc9fwfgf5ikhng0a74msnqmiy";
   };
 
   buildInputs =
@@ -33,6 +33,7 @@ stdenv.mkDerivation rec {
     [ "--enable-alsa"
       "--with-kde-solid=$out/share/apps/solid/actions"
       "--enable-dc1394"
+      "--enable-ncurses"
     ];
 
   preConfigure = ''sed -e "s@/bin/echo@echo@g" -i configure'';
@@ -49,5 +50,6 @@ stdenv.mkDerivation rec {
     description = "Cross-platform media player and streaming server";
     homepage = http://www.videolan.org/vlc/;
     platforms = platforms.linux;
+    license = licenses.lgpl21Plus;
   };
 }

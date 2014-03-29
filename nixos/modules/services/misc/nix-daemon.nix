@@ -58,7 +58,7 @@ in
     nix = {
 
       package = mkOption {
-        type = types.path;
+        type = types.package;
         default = pkgs.nix;
         description = ''
           This option specifies the Nix package instance to use throughout the system.
@@ -286,8 +286,8 @@ in
     systemd.services."nix-daemon" =
       { description = "Nix Daemon";
 
-        path = [ nix pkgs.openssl pkgs.utillinux ]
-          ++ optionals cfg.distributedBuilds [ pkgs.openssh pkgs.gzip ];
+        path = [ nix pkgs.openssl pkgs.utillinux pkgs.openssh ]
+          ++ optionals cfg.distributedBuilds [ pkgs.gzip ];
 
         environment = cfg.envVars // { CURL_CA_BUNDLE = "/etc/ssl/certs/ca-bundle.crt"; };
 

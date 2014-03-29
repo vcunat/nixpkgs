@@ -304,6 +304,19 @@ let self = _self // overrides; _self = with self; {
     };
   };
 
+  autovivification = buildPerlPackage {
+    name = "autovivification-0.12";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/V/VP/VPIT/autovivification-0.12.tar.gz;
+      sha256 = "6ef8686766c63571389880e5d87a0ca1d46f7d127982e8ef38aca7568c44840c";
+    };
+    meta = {
+      homepage = http://search.cpan.org/dist/autovivification/;
+      description = "Lexically disable autovivification";
+      license = "perl";
+    };
+  };
+
   BerkeleyDB = import ../development/perl-modules/BerkeleyDB {
     inherit buildPerlPackage fetchurl;
     inherit (pkgs) db;
@@ -383,6 +396,56 @@ let self = _self // overrides; _self = with self; {
       sha256 = "1pywbxjf05qpcixshblhd2cham601zwa9w7c3k5waz4cdild6g1m";
     };
     propagatedBuildInputs = [ ModuleBuildWithXSpp ExtUtilsTypemapsDefault ];
+  };
+
+  BusinessISBN = buildPerlPackage {
+    name = "Business-ISBN-2.07";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/B/BD/BDFOY/Business-ISBN-2.07.tar.gz;
+      sha256 = "4c11279580872bf3cc7176bb75c25b165d4b59a2828fc43d9a355cec3d0a45ff";
+    };
+    propagatedBuildInputs = [ BusinessISBNData URI ];
+    meta = {
+      description = "Parse and validate ISBNs";
+      license = "perl";
+    };
+  };
+
+  BusinessISBNData = buildPerlPackage {
+    name = "Business-ISBN-Data-20120719.001";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/B/BD/BDFOY/Business-ISBN-Data-20120719.001.tar.gz;
+      sha256 = "745f6bf8f7bd912c0a1865aa5f7e49343804de27783f544b2e2c714e14a704a3";
+    };
+    meta = {
+      description = "Data pack for Business::ISBN";
+      license = "perl";
+    };
+  };
+
+  BusinessISMN = buildPerlPackage {
+    name = "Business-ISMN-1.11";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/B/BD/BDFOY/Business-ISMN-1.11.tar.gz;
+      sha256 = "76d5240a5672c7a8b1ba9e9ea8238a5c8882139911acbb67b7059b5ee3da342d";
+    };
+    propagatedBuildInputs = [ TieCycle ];
+    meta = {
+      description = "Work with International Standard Music Numbers";
+      license = "perl";
+    };
+  };
+
+  BusinessISSN = buildPerlPackage {
+    name = "Business-ISSN-0.91";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/B/BD/BDFOY/Business-ISSN-0.91.tar.gz;
+      sha256 = "f15b192c0f547bb2967811072b3d343b94bc5ea58d02704c19122f7ae0a9d6b5";
+    };
+    meta = {
+      description = "Work with International Standard Serial Numbers";
+      license = "perl";
+    };
   };
 
   CacheCache = buildPerlPackage rec {
@@ -1935,6 +1998,17 @@ let self = _self // overrides; _self = with self; {
     };
   };
 
+  DateSimple = buildPerlPackage {
+    name = "Date-Simple-3.03";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/I/IZ/IZUT/Date-Simple-3.03.tar.gz;
+      sha256 = "29a1926314ce1681a312d6155c29590c771ddacf91b7485873ce449ef209dd04";
+    };
+    meta = {
+      license = "unknown";
+    };
+  };
+
   DateTime = buildPerlModule {
     name = "DateTime-1.07";
     src = fetchurl {
@@ -2996,6 +3070,40 @@ let self = _self // overrides; _self = with self; {
     };
   };
 
+  EncodeEUCJPASCII = buildPerlPackage {
+    name = "Encode-EUCJPASCII-0.03";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/N/NE/NEZUMI/Encode-EUCJPASCII-0.03.tar.gz;
+      sha256 = "f998d34d55fd9c82cf910786a0448d1edfa60bf68e2c2306724ca67c629de861";
+    };
+    meta = {
+      description = "EucJP-ascii - An eucJP-open mapping";
+      license = "perl";
+    };
+  };
+
+  EncodeHanExtra = buildPerlPackage {
+    name = "Encode-HanExtra-0.23";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/A/AU/AUDREYT/Encode-HanExtra-0.23.tar.gz;
+      sha256 = "1fd4b06cada70858003af153f94c863b3b95f2e3d03ba18d0451a81d51db443a";
+    };
+    meta = {
+      description = "Extra sets of Chinese encodings";
+      license = "mit";
+    };
+  };
+
+  EncodeJIS2K = buildPerlPackage {
+    name = "Encode-JIS2K-0.02";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/D/DA/DANKOGAI/Encode-JIS2K-0.02.tar.gz;
+      sha256 = "5d718add5857f37fc270f24360bc9d100b72e0e13a11ca3149fe4e4d7c7cc4bf";
+    };
+    meta = {
+    };
+  };
+
   EncodeLocale = buildPerlPackage rec {
     name = "Encode-Locale-1.03";
     src = fetchurl {
@@ -3053,10 +3161,10 @@ let self = _self // overrides; _self = with self; {
   };
 
   ExceptionClass = buildPerlPackage rec {
-    name = "Exception-Class-1.30";
+    name = "Exception-Class-1.37";
     src = fetchurl {
       url = "mirror://cpan/authors/id/D/DR/DROLSKY/${name}.tar.gz";
-      sha256 = "54e256fdb317c1736c2c257fa63d5b87cfb382870711b24937c36eb5171b3154";
+      sha256 = "1p6f20fi82mr5bz7d2c7nqh0322r8n2kszfw37c77g8b1b4r72w3";
     };
     propagatedBuildInputs = [ ClassDataInheritable DevelStackTrace ];
   };
@@ -3552,13 +3660,12 @@ let self = _self // overrides; _self = with self; {
   };
 
   FinanceQuote = buildPerlPackage {
-    name = "Finance-Quote-1.18";
+    name = "Finance-Quote-1.19";
     src = fetchurl {
-      url = mirror://cpan/authors/id/E/EC/ECOCODE/Finance-Quote-1.18.tar.gz;
-      sha256 = "4240faabe0646defd4ec76ca9e111977b9e8060eaec41adeb284eb422a428393";
+      url = mirror://sourceforge/finance-quote/1.19/Finance-Quote-1.19.tar.gz;
+      sha256 = "0z1dqxw4by7rkwm113qp2mlhl5r0znr22kzinvr1p82svn0zvm2d";
     };
-    propagatedBuildInputs = [ CryptSSLeay HTMLTableExtract HTMLTree HTTPMessage LWP ];
-    patches = [ ../development/perl-modules/finance-quote-yahoo.patch ];
+    propagatedBuildInputs = [ CryptSSLeay HTMLTableExtract HTMLTree HTTPMessage LWP DateCalc JSON ];
     meta = {
       homepage = http://finance-quote.sourceforge.net/;
       description = "Get stock and mutual fund quotes from various exchanges";
@@ -5028,6 +5135,18 @@ let self = _self // overrides; _self = with self; {
     };
   };
 
+  MIMECharset = buildPerlPackage {
+    name = "MIME-Charset-1.011.1";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/N/NE/NEZUMI/MIME-Charset-1.011.1.tar.gz;
+      sha256 = "2955a3b617fe12654efc2a13ae1dc7d32aad81d35cfae21f74337213cf2435d5";
+    };
+    meta = {
+      description = "Charset Information for MIME";
+      license = "perl";
+    };
+  };
+
   mimeConstruct = buildPerlPackage rec {
     name = "mime-construct-1.11";
     src = fetchurl {
@@ -5136,6 +5255,19 @@ let self = _self // overrides; _self = with self; {
       homepage = http://search.cpan.org/perldoc?CPAN::Meta::Spec;
       description = "Loads one of several alternate underlying implementations for a module";
       license = "artistic_2";
+    };
+  };
+
+  ModuleInfo = buildPerlPackage rec {
+    name = "Module-Info-0.35";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/M/MB/MBARBON/Module-Info-0.35.tar.gz";
+      sha256 = "0r7vxg1iy3lam0jgb2sk8ghgpmp3x5fskvzqlgkb09bssq83s1xb";
+    };
+    buildInputs = [ TestPod TestPodCoverage ];
+    meta = {
+      description = "Information about Perl modules";
+      license = "perl";
     };
   };
 
@@ -5900,6 +6032,18 @@ let self = _self // overrides; _self = with self; {
     };
     propagatedBuildInputs = [TestException];
     doCheck = false; # check can't find its own Mouse::Tiny module
+  };
+
+  MozillaCA = buildPerlPackage {
+    name = "Mozilla-CA-20130114";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/A/AB/ABH/Mozilla-CA-20130114.tar.gz;
+      sha256 = "82342614add1dbca8a00daa1ee55af3e0036245aed7d445537918c045008ccd7";
+    };
+    meta = {
+      description = "Mozilla's CA cert bundle in PEM format";
+      license = "unknown";
+    };
   };
 
   MROCompat = buildPerlPackage {
@@ -8886,6 +9030,18 @@ let self = _self // overrides; _self = with self; {
     propagatedBuildInputs = [ DevelStackTrace Moose ];
   };
 
+  TieCycle = buildPerlPackage {
+    name = "Tie-Cycle-1.19";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/B/BD/BDFOY/Tie-Cycle-1.19.tar.gz;
+      sha256 = "bd315874c85feaf8948eeb2f40fe2768a6ca00f089e35b32bfe88f3f384f9ca1";
+    };
+    meta = {
+      description = "Cycle through a list of values via a scalar";
+      license = "perl";
+    };
+  };
+
   TieIxHash = buildPerlPackage {
     name = "Tie-IxHash-1.22";
     src = fetchurl {
@@ -9038,6 +9194,18 @@ let self = _self // overrides; _self = with self; {
     };
   };
 
+  UnicodeCollate = buildPerlPackage {
+    name = "Unicode-Collate-1.04";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/S/SA/SADAHIRO/Unicode-Collate-1.04.tar.gz;
+      sha256 = "4e3a2300b961d3aaf3789cdbfb95601edaaffb4109ed6cdb912a664d5c7bd706";
+    };
+    meta = {
+      description = "Unicode Collation Algorithm";
+      license = "perl";
+    };
+  };
+
   UnicodeICUCollator = buildPerlPackage {
     name = "Unicode-ICU-Collator-0.002";
     src = fetchurl {
@@ -9051,6 +9219,19 @@ let self = _self // overrides; _self = with self; {
       platforms   = stdenv.lib.platforms.unix;
     };
     buildInputs = [ pkgs.icu ];
+  };
+
+  UnicodeLineBreak = buildPerlPackage {
+    name = "Unicode-LineBreak-2013.11";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/N/NE/NEZUMI/Unicode-LineBreak-2013.11.tar.gz;
+      sha256 = "8946b883ae687ff652e93d6185e23a936c7f337f2e115851fdfed72e1f73c7f9";
+    };
+    propagatedBuildInputs = [ MIMECharset ];
+    meta = {
+      description = "UAX #14 Unicode Line Breaking Algorithm";
+      license = "perl";
+    };
   };
 
   UnixGetrusage = buildPerlPackage {
@@ -9234,6 +9415,17 @@ let self = _self // overrides; _self = with self; {
     doCheck = false;
   };
 
+  X11Protocol = buildPerlPackage rec {
+    name = "X11-Protocol-0.56";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/S/SM/SMCCAM/${name}.tar.gz";
+      sha256 = "1dq89bh6fqv7l5mbffqcismcljpq5f869bx7g8lg698zgindv5ny";
+    };
+    buildInputs = [pkgs.x11];
+    NIX_CFLAGS_LINK = "-lX11";
+    doCheck = false; # requires an X server
+  };
+
   X11GUITest = buildPerlPackage rec {
     name = "X11-GUITest-0.21";
     src = fetchurl {
@@ -9263,6 +9455,19 @@ let self = _self // overrides; _self = with self; {
     SKIP_SAX_INSTALL = 1;
     buildInputs = [ pkgs.libxml2 ];
     propagatedBuildInputs = [ XMLSAX ];
+  };
+
+  XMLLibXMLSimple = buildPerlPackage {
+    name = "XML-LibXML-Simple-0.93";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/M/MA/MARKOV/XML-LibXML-Simple-0.93.tar.gz;
+      sha256 = "f2eb1c1523d6414cf2a646a289b0325b489954382c862928d165a03a7cce767c";
+    };
+    propagatedBuildInputs = [ FileSlurp XMLLibXML ];
+    meta = {
+      description = "XML::LibXML based XML::Simple clone";
+      license = "perl";
+    };
   };
 
   XMLLibXSLT = buildPerlPackage rec {

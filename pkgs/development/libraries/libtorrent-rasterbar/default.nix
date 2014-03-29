@@ -2,11 +2,11 @@
 
 stdenv.mkDerivation rec {
   name = "libtorrent-rasterbar-${version}";
-  version = "0.16.14";
+  version = "0.16.16";
   
   src = fetchurl {
-    url = mirror://sourceforge/libtorrent/libtorrent-rasterbar-0.16.14.tar.gz;
-    sha256 = "0s4f36f28cgq55pgx4h99q18a0p566bhifxmqxjhlb63a1w20m2c";
+    url = mirror://sourceforge/libtorrent/libtorrent-rasterbar-0.16.16.tar.gz;
+    sha256 = "1a3yxwjs4qb0rwx6cfpvar0a8jmavb6ik580b27md08jhvq80if7";
   };
 
   buildInputs = [ boost pkgconfig openssl zlib python libiconvOrNull geoip ];

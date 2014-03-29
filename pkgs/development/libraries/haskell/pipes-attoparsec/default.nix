@@ -4,8 +4,8 @@
 
 cabal.mkDerivation (self: {
   pname = "pipes-attoparsec";
-  version = "0.4.0";
-  sha256 = "0xffqxsh8yvfdk39mdgkf0l2v284fr31nz5k16dq752p63fnczkw";
+  version = "0.5.0";
+  sha256 = "1xpqna850lxawx0m84lzaxwrwfw4vccr7jjf199ir7bmwwhqlr5h";
   buildDepends = [ attoparsec pipes pipesParse text transformers ];
   testDepends = [
     attoparsec HUnit mmorph pipes pipesParse tasty tastyHunit text

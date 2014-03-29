@@ -1,15 +1,15 @@
 { cabal, aeson, attoparsec, blazeBuilder, blazeHtml, blazeMarkup
-, cryptoApi, dataDefault, emailValidate, hamlet, hspec, network
+, byteable, dataDefault, emailValidate, hamlet, hspec, network
 , persistent, resourcet, shakespeareCss, shakespeareJs, text, time
 , transformers, wai, xssSanitize, yesodCore, yesodPersistent
 }:
 
 cabal.mkDerivation (self: {
   pname = "yesod-form";
-  version = "1.3.5.1";
-  sha256 = "0jvza4ly3kjfsbayjcggf8fq0lcb8n9f6cp0q6fcif1xkwkkhmdh";
+  version = "1.3.8";
+  sha256 = "0cdpdgclhasdmynp9fhf9yhl33nwh71bmg344x51xkp5347w614b";
   buildDepends = [
-    aeson attoparsec blazeBuilder blazeHtml blazeMarkup cryptoApi
+    aeson attoparsec blazeBuilder blazeHtml blazeMarkup byteable
     dataDefault emailValidate hamlet network persistent resourcet
     shakespeareCss shakespeareJs text time transformers wai xssSanitize
     yesodCore yesodPersistent

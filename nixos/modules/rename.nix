@@ -56,7 +56,7 @@ let
             inherit visible;
           });
         }
-        { config = setTo (mkIf (fromOf options).isDefined (define (mkMerge (fromOf options).definitions)));
+        { config = setTo (mkMerge (if (fromOf options).isDefined then [ (define (mkMerge (fromOf options).definitions)) ] else []));
         }
       ];
 
@@ -103,6 +103,7 @@ in zipModules ([]
 ++ obsolete [ "services" "sshd" "gatewayPorts" ] [ "services" "openssh" "gatewayPorts" ]
 ++ obsolete [ "services" "sshd" "permitRootLogin" ] [ "services" "openssh" "permitRootLogin" ]
 ++ obsolete [ "services" "xserver" "startSSHAgent" ] [ "services" "xserver" "startOpenSSHAgent" ]
+++ obsolete [ "services" "xserver" "windowManager" "xbmc" ] [ "services" "xserver" "desktopManager" "xbmc" ]
 
 # KDE
 ++ deprecated [ "kde" "extraPackages" ] [ "environment" "kdePackages" ]
@@ -115,14 +116,12 @@ in zipModules ([]
 # !!! this hardcodes bash, could we detect from config which shell is actually used?
 ++ obsolete [ "environment" "promptInit" ] [ "programs" "bash" "promptInit" ]
 
-++ obsolete [ "services" "xserver" "driSupport" ] [ "services" "mesa" "driSupport" ]
-++ obsolete [ "services" "xserver" "driSupport32Bit" ] [ "services" "mesa" "driSupport32Bit" ]
-++ obsolete [ "services" "xserver" "s3tcSupport" ] [ "services" "mesa" "s3tcSupport" ]
-++ obsolete [ "services" "xserver" "videoDrivers" ] [ "services" "mesa" "videoDrivers" ]
-++ obsolete [ "services" "mesa" "driSupport" ] [ "hardware" "opengl" "driSupport" ]
-++ obsolete [ "services" "mesa" "driSupport32Bit" ] [ "hardware" "opengl" "driSupport32Bit" ]
-++ obsolete [ "services" "mesa" "s3tcSupport" ] [ "hardware" "opengl" "s3tcSupport" ]
-++ obsolete [ "services" "mesa" "videoDrivers" ] [ "hardware" "opengl" "videoDrivers" ]
+++ obsolete [ "services" "xserver" "driSupport" ] [ "hardware" "opengl" "driSupport" ]
+++ obsolete [ "services" "xserver" "driSupport32Bit" ] [ "hardware" "opengl" "driSupport32Bit" ]
+++ obsolete [ "services" "xserver" "s3tcSupport" ] [ "hardware" "opengl" "s3tcSupport" ]
+++ obsolete [ "services" "xserver" "videoDrivers" ] [ "hardware" "opengl" "videoDrivers" ]
+
+++ obsolete [ "services" "mysql55" ] [ "services" "mysql" ]
 
 # Options that are obsolete and have no replacement.
 ++ obsolete' [ "boot" "loader" "grub" "bootDevice" ]
