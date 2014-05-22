@@ -1,27 +1,27 @@
 { cabal, attoparsec, base64Bytestring, blazeBuilder, Cabal, conduit
-, dataDefaultClass, fileEmbed, filepath, fsnotify, ghcPaths
-, httpConduit, httpReverseProxy, httpTypes, liftedBase, network
-, networkConduit, optparseApplicative, parsec, projectTemplate
-, resourcet, shakespeare, shakespeareCss, shakespeareJs
-, shakespeareText, split, systemFileio, systemFilepath, tar, text
-, time, transformers, unixCompat, unorderedContainers, wai, warp
-, yaml, zlib
+, conduitExtra, dataDefaultClass, fileEmbed, filepath, fsnotify
+, ghcPaths, httpConduit, httpReverseProxy, httpTypes, liftedBase
+, network, networkConduit, optparseApplicative, parsec
+, projectTemplate, resourcet, shakespeare, shakespeareCss
+, shakespeareJs, shakespeareText, split, streamingCommons
+, systemFileio, systemFilepath, tar, text, time, transformers
+, unixCompat, unorderedContainers, wai, waiExtra, warp, yaml, zlib
 }:
 
 cabal.mkDerivation (self: {
   pname = "yesod-bin";
-  version = "1.2.7.3";
-  sha256 = "05kbfnkigk4p1vjw0h1pkp7jfczjq99vgrsaz45faajadnhffnpz";
+  version = "1.2.9.3";
+  sha256 = "1gjcg798d7xpd8hgz8s1napgxm9dnbsks1g1s5hgx8ml5xkp2la7";
   isLibrary = false;
   isExecutable = true;
   buildDepends = [
-    attoparsec base64Bytestring blazeBuilder Cabal conduit
+    attoparsec base64Bytestring blazeBuilder Cabal conduit conduitExtra
     dataDefaultClass fileEmbed filepath fsnotify ghcPaths httpConduit
     httpReverseProxy httpTypes liftedBase network networkConduit
     optparseApplicative parsec projectTemplate resourcet shakespeare
-    shakespeareCss shakespeareJs shakespeareText split systemFileio
-    systemFilepath tar text time transformers unixCompat
-    unorderedContainers wai warp yaml zlib
+    shakespeareCss shakespeareJs shakespeareText split streamingCommons
+    systemFileio systemFilepath tar text time transformers unixCompat
+    unorderedContainers wai waiExtra warp yaml zlib
   ];
   meta = {
     homepage = "http://www.yesodweb.com/";

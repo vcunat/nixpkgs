@@ -1,26 +1,27 @@
-{ cabal, base64Bytestring, byteable, conduit, cryptohash
-, cryptohashConduit, dataDefault, fileEmbed, filepath, hjsmin
-, hspec, httpTypes, HUnit, mimeTypes, processConduit, resourcet
-, shakespeareCss, systemFileio, systemFilepath, text, transformers
-, unixCompat, unorderedContainers, wai, waiAppStatic, waiTest
-, yesodCore, yesodTest
+{ cabal, async, attoparsec, base64Bytestring, blazeBuilder
+, byteable, conduit, conduitExtra, cryptohash, cryptohashConduit
+, cssText, dataDefault, fileEmbed, filepath, hashable, hjsmin
+, hspec, httpTypes, HUnit, mimeTypes, resourcet, shakespeareCss
+, systemFileio, systemFilepath, text, transformers, unixCompat
+, unorderedContainers, wai, waiAppStatic, waiTest, yesodCore
+, yesodTest
 }:
 
 cabal.mkDerivation (self: {
   pname = "yesod-static";
-  version = "1.2.2.2";
-  sha256 = "156qqd2v3z7wv75jsfscs9cvbg1cl1riqcrhycrqcmapjprr2r12";
+  version = "1.2.3";
+  sha256 = "093lvg7pl71dfnr7qyfmp9r1m3bs64849k0dw4w2qb618y8wb9jh";
   buildDepends = [
-    base64Bytestring byteable conduit cryptohash cryptohashConduit
-    dataDefault fileEmbed filepath hjsmin httpTypes mimeTypes
-    processConduit resourcet shakespeareCss systemFileio systemFilepath
-    text transformers unixCompat unorderedContainers wai waiAppStatic
-    yesodCore
+    async attoparsec base64Bytestring blazeBuilder byteable conduit
+    conduitExtra cryptohash cryptohashConduit cssText dataDefault
+    fileEmbed filepath hashable hjsmin httpTypes mimeTypes resourcet
+    shakespeareCss systemFileio systemFilepath text transformers
+    unixCompat unorderedContainers wai waiAppStatic yesodCore
   ];
   testDepends = [
-    base64Bytestring byteable conduit cryptohash cryptohashConduit
-    dataDefault fileEmbed filepath hjsmin hspec httpTypes HUnit
-    mimeTypes processConduit resourcet shakespeareCss systemFileio
+    async base64Bytestring byteable conduit conduitExtra cryptohash
+    cryptohashConduit dataDefault fileEmbed filepath hjsmin hspec
+    httpTypes HUnit mimeTypes resourcet shakespeareCss systemFileio
     systemFilepath text transformers unixCompat unorderedContainers wai
     waiAppStatic waiTest yesodCore yesodTest
   ];

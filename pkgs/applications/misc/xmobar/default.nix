@@ -1,6 +1,6 @@
-{ cabal, alsaCore, alsaMixer, filepath, HTTP, libXrandr, mtl
-, parsec, regexCompat, stm, time, utf8String, wirelesstools, X11
-, X11Xft
+{ cabal, alsaCore, alsaMixer, filepath, HTTP, libmpd, libXrandr
+, mtl, parsec, regexCompat, stm, time, utf8String, wirelesstools
+, X11, X11Xft
 }:
 
 cabal.mkDerivation (self: {
@@ -10,11 +10,11 @@ cabal.mkDerivation (self: {
   isLibrary = false;
   isExecutable = true;
   buildDepends = [
-    alsaCore alsaMixer filepath HTTP mtl parsec regexCompat stm time
-    utf8String X11 X11Xft
+    alsaCore alsaMixer filepath HTTP libmpd mtl parsec regexCompat stm
+    time utf8String X11 X11Xft
   ];
   extraLibraries = [ libXrandr wirelesstools ];
-  configureFlags = "-fwith_xft -fwith_iwlib -fwith_alsa";
+  configureFlags = "-fwith_xft -fwith_iwlib -fwith_alsa -fwith_mpd";
   meta = {
     homepage = "http://projects.haskell.org/xmobar/";
     description = "A Minimalistic Text Based Status Bar";

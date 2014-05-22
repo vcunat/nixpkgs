@@ -1,6 +1,6 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
-with pkgs.lib;
+with lib;
 
 let
 
@@ -190,7 +190,7 @@ in
                 mkdir -m 0700 -p ${cfg.dataDir}
                 if [ "$(id -u)" = 0 ]; then
                   chown -R postgres ${cfg.dataDir}
-                  su -s ${pkgs.stdenv.shell} postgres -c initdb
+                  su -s ${pkgs.stdenv.shell} postgres -c 'initdb -U root'
                 else
                   # For non-root operation.
                   initdb
@@ -215,7 +215,7 @@ in
             # Shut down Postgres using SIGINT ("Fast Shutdown mode").  See
             # http://www.postgresql.org/docs/current/static/server-shutdown.html
             KillSignal = "SIGINT";
-            KillMode = "process"; # FIXME: this may cause processes to be left behind in the cgroup even after the final SIGKILL
+            KillMode = "mixed";
 
             # Give Postgres a decent amount of time to clean up after
             # receiving systemd's SIGINT.

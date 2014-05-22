@@ -23,7 +23,7 @@ else
 */
 
 let
-  version = "10.0.4";
+  version = "10.1.3";
   # this is the default search path for DRI drivers
   driverLink = "/run/opengl-driver" + stdenv.lib.optionalString stdenv.isi686 "-32";
 in
@@ -34,7 +34,7 @@ stdenv.mkDerivation {
 
   src =  fetchurl {
     url = "ftp://ftp.freedesktop.org/pub/mesa/${version}/MesaLib-${version}.tar.bz2";
-    sha256 = "0h2sq8h0l7415vsqfkb7mn1rxm62m2anpi9swlca69fbpr9bavpz";
+    sha256 = "1hzcmpa7ykqm0qrvkm52bkfvf855wb9bs8449fwhypgjdqimwqdj";
   };
 
   prePatch = "patchShebangs .";
@@ -88,15 +88,15 @@ stdenv.mkDerivation {
     ;
   buildInputs = with xorg; [
     autoreconfHook intltool expat libxml2Python llvm
-    libXfixes glproto dri2proto libX11 libXext libxcb libXt
+    glproto dri2proto dri3proto presentproto
+    libX11 libXext libxcb libXt libXfixes libxshmfence
     libffi wayland libvdpau libelf
   ] ++ optionals enableExtraFeatures [ /*libXvMC*/ ]
     ++ optional stdenv.isLinux udev
     ;
 
   enableParallelBuilding = true;
-  #doCheck = true; # https://bugs.freedesktop.org/show_bug.cgi?id=67672,
-    #tests for 10.* fail to link due to some RTTI problem
+  #doCheck = true; # https://bugs.freedesktop.org/show_bug.cgi?id=67672
 
   # move gallium-related stuff to $drivers, so $out doesn't depend on LLVM;
   #   also move libOSMesa to $osmesa, as it's relatively big
@@ -152,11 +152,6 @@ stdenv.mkDerivation {
     substituteInPlace "$out/lib/pkgconfig/dri.pc" --replace '$(drivers)' "${driverLink}"
   '' + /* move vdpau drivers to $drivers/lib, so they are found */ ''
     mv "$drivers"/lib/vdpau/* "$drivers"/lib/ && rmdir "$drivers"/lib/vdpau
-  '' + /* add libGL* links from /run/opengl-driver */ ''
-    (
-      cd "$drivers/lib"
-      cp -s "$out"/lib/*.so .
-    )
   '';
   #ToDo: @vcunat isn't sure if drirc will be found when in $out/etc/, but it doesn't seem important ATM
 

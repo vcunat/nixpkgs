@@ -1,11 +1,14 @@
-{pkgs, config, ...}:
+{ config, lib, pkgs, ... }:
 
-with pkgs.lib;
+with lib;
 
 let
 
   ids = config.ids;
   cfg = config.users;
+
+  nonUidUsers = filterAttrs (n: u: u.createUser && u.uid == null) cfg.extraUsers;
+  nonGidGroups = filterAttrs (n: g: g.gid == null) cfg.extraGroups;
 
   passwordDescription = ''
     The options <literal>hashedPassword</literal>,
@@ -31,7 +34,10 @@ let
 
       name = mkOption {
         type = types.str;
-        description = "The name of the user account. If undefined, the name of the attribute set will be used.";
+        description = ''
+          The name of the user account. If undefined, the name of the
+          attribute set will be used.
+        '';
       };
 
       description = mkOption {
@@ -46,8 +52,28 @@ let
       };
 
       uid = mkOption {
-        type = with types; uniq int;
-        description = "The account UID.";
+        type = with types; nullOr int;
+        default = null;
+        description = ''
+          The account UID. If the <option>mutableUsers</option> option
+          is false, the UID cannot be null. Otherwise, the UID might be
+          null, in which case a free UID is picked on activation (by the
+          useradd command).
+        '';
+      };
+
+      isSystemUser = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Indicates if the user is a system user or not. This option
+          only has an effect if <option>mutableUsers</option> is
+          <literal>true</literal> and <option>uid</option> is
+          <option>null</option>, in which case it determines whether
+          the user's UID is allocated in the range for system users
+          (below 500) or in the range for normal users (starting at
+          1000).
+        '';
       };
 
       group = mkOption {
@@ -151,12 +177,21 @@ let
 
       name = mkOption {
         type = types.str;
-        description = "The name of the group. If undefined, the name of the attribute set will be used.";
+        description = ''
+          The name of the group. If undefined, the name of the attribute set
+          will be used.
+        '';
       };
 
       gid = mkOption {
-        type = with types; uniq int;
-        description = "The GID of the group.";
+        type = with types; nullOr int;
+        default = null;
+        description = ''
+          The group GID. If the <literal>mutableUsers</literal> option
+          is false, the GID cannot be null. Otherwise, the GID might be
+          null, in which case a free GID is picked on activation (by the
+          groupadd command).
+        '';
       };
 
       members = mkOption {
@@ -218,13 +253,15 @@ let
 
   groupFile = pkgs.writeText "group" (
     concatStringsSep "\n" (map (g: mkGroupEntry g.name) (
-      sortOn "gid" (attrValues cfg.extraGroups)
+      let f = g: g.gid != null; in
+        sortOn "gid" (filter f (attrValues cfg.extraGroups))
     ))
   );
 
   passwdFile = pkgs.writeText "passwd" (
     concatStringsSep "\n" (map (u: mkPasswdEntry u.name) (
-      sortOn "uid" (filter (u: u.createUser) (attrValues cfg.extraUsers))
+      let f = u: u.createUser && (u.uid != null); in
+        sortOn "uid" (filter f (attrValues cfg.extraUsers))
     ))
   );
 
@@ -261,11 +298,11 @@ let
       then builtins.trace "Duplicate ${idAttr} ${id}" { dup = true; acc = null; }
       else { dup = false; acc = newAcc; }
     ) { dup = false; acc = {}; } (builtins.attrNames set)).dup;
-  uidsAreUnique = idsAreUnique cfg.extraUsers "uid";
-  gidsAreUnique = idsAreUnique cfg.extraGroups "gid";
-in
 
-{
+  uidsAreUnique = idsAreUnique (filterAttrs (n: u: u.uid != null) cfg.extraUsers) "uid";
+  gidsAreUnique = idsAreUnique (filterAttrs (n: g: g.gid != null) cfg.extraGroups) "gid";
+
+in {
 
   ###### interface
 
@@ -337,8 +374,8 @@ in
 
     security.initialRootPassword = mkOption {
       type = types.str;
-      default = "";
-      example = "!";
+      default = "!";
+      example = "";
       description = ''
         The (hashed) password for the root account set on initial
         installation. The empty string denotes that root can login
@@ -346,9 +383,9 @@ in
         as SSH, or indirectly via <command>su</command> or
         <command>sudo</command>). The string <literal>!</literal>
         prevents root from logging in using a password.
-        Note, setting this option sets
+        Note that setting this option sets
         <literal>users.extraUsers.root.hashedPassword</literal>.
-        Note, if <literal>users.mutableUsers</literal> is false
+        Also, if <literal>users.mutableUsers</literal> is false
         you cannot change the root password manually, so in that case
         the name of this option is a bit misleading, since it will define
         the root password beyond the user initialisation phase.
@@ -369,6 +406,7 @@ in
         home = "/root";
         shell = cfg.defaultUserShell;
         group = "root";
+        extraGroups = [ "grsecurity" ];
         hashedPassword = mkDefault config.security.initialRootPassword;
       };
       nobody = {
@@ -397,6 +435,7 @@ in
       nixbld.gid = ids.gids.nixbld;
       utmp.gid = ids.gids.utmp;
       adm.gid = ids.gids.adm;
+      grsecurity.gid = ids.gids.grsecurity;
     };
 
     system.activationScripts.users =
@@ -424,16 +463,31 @@ in
             }
           fi
         '';
-        mkhome = n: u:
-         let
-            uid = toString u.uid;
-            gid = toString ((getGroup u.group).gid);
-            h = u.home;
-          in ''
-            test -a "${h}" || mkdir -p "${h}" || true
-            test "$(stat -c %u "${h}")" = ${uid} || chown ${uid} "${h}" || true
-            test "$(stat -c %g "${h}")" = ${gid} || chgrp ${gid} "${h}" || true
-          '';
+        mkhome = n: u: ''
+          uid="$(id -u ${u.name})"
+          gid="$(id -g ${u.name})"
+          h="${u.home}"
+          test -a "$h" || mkdir -p "$h" || true
+          test "$(stat -c %u "$h")" = $uid || chown $uid "$h" || true
+          test "$(stat -c %g "$h")" = $gid || chgrp $gid "$h" || true
+        '';
+        groupadd = n: g: ''
+          if [ -z "$(getent group "${g.name}")" ]; then
+            ${pkgs.shadow}/sbin/groupadd "${g.name}"
+          fi
+        '';
+        useradd = n: u: ''
+          if ! id "${u.name}" &>/dev/null; then
+            ${pkgs.shadow}/sbin/useradd \
+              -g "${u.group}" \
+              -G "${concatStringsSep "," u.extraGroups}" \
+              -s "${u.shell}" \
+              -d "${u.home}" \
+              ${optionalString u.isSystemUser "--system"} \
+              "${u.name}"
+            echo "${u.name}:x" | ${pkgs.shadow}/sbin/chpasswd -e
+          fi
+        '';
       in stringAfter [ "etc" ] ''
         touch /etc/group
         touch /etc/passwd
@@ -441,6 +495,8 @@ in
         VISUAL=${merger passwdFile} ${pkgs.shadow}/sbin/vipw &>/dev/null
         ${pkgs.shadow}/sbin/grpconv
         ${pkgs.shadow}/sbin/pwconv
+        ${concatStrings (mapAttrsToList groupadd nonGidGroups)}
+        ${concatStrings (mapAttrsToList useradd nonUidUsers)}
         ${concatStrings (mapAttrsToList mkhome mkhomeUsers)}
         ${concatStrings (mapAttrsToList setpw setpwUsers)}
       '';
@@ -448,7 +504,17 @@ in
     # for backwards compatibility
     system.activationScripts.groups = stringAfter [ "users" ] "";
 
-    assertions = [ { assertion = !cfg.enforceIdUniqueness || (uidsAreUnique && gidsAreUnique); message = "uids and gids must be unique!"; } ];
+    assertions = [
+      { assertion = !cfg.enforceIdUniqueness || (uidsAreUnique && gidsAreUnique);
+        message = "uids and gids must be unique!";
+      }
+      { assertion = cfg.mutableUsers || (nonUidUsers == {});
+        message = "When mutableUsers is false, no uid can be null";
+      }
+      { assertion = cfg.mutableUsers || (nonGidGroups == {});
+        message = "When mutableUsers is false, no gid can be null";
+      }
+    ];
 
   };
 

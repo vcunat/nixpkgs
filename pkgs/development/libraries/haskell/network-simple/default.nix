@@ -2,9 +2,10 @@
 
 cabal.mkDerivation (self: {
   pname = "network-simple";
-  version = "0.3.0";
-  sha256 = "046nbgdwazbqffcim1gxry1mf35yg41g52zdk86h9whhiwjzlywz";
+  version = "0.4";
+  sha256 = "1jw0xd53c0mydh6jm6627c0d8w014r1s46fycdhavnimh7bb77cp";
   buildDepends = [ exceptions network transformers ];
+  jailbreak = true;
   meta = {
     homepage = "https://github.com/k0001/network-simple";
     description = "Simple network sockets usage patterns";

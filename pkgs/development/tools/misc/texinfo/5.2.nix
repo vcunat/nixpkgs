@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, ncurses, perl, xz }:
+{ stdenv, fetchurl, ncurses, perl, xz, interactive ? false }:
 
 stdenv.mkDerivation rec {
   name = "texinfo-5.2";
@@ -8,14 +8,15 @@ stdenv.mkDerivation rec {
     sha256 = "1njfwh2z34r2c4r0iqa7v24wmjzvsfyz4vplzry8ln3479lfywal";
   };
 
-  buildInputs = [ ncurses perl xz ];
+  buildInputs = [ perl xz ]
+    ++ stdenv.lib.optional interactive ncurses;
 
   preInstall = ''
     installFlags="TEXMF=$out/texmf-dist";
     installTargets="install install-tex";
   '';
 
-  doCheck = true;
+  doCheck = !stdenv.isDarwin;
 
   meta = {
     homepage = "http://www.gnu.org/software/texinfo/";

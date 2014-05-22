@@ -1,28 +1,27 @@
 { cabal, aeson, async, attoparsec, blazeBuilder, caseInsensitive
-, conduit, dataDefault, filepath, fsnotify, httpClient
-, httpClientConduit, httpConduit, httpReverseProxy, httpTypes
-, liftedBase, mtl, network, networkConduit, networkConduitTls
-, random, regexTdfa, stm, systemFileio, systemFilepath, tar, text
-, time, transformers, unixCompat, unixProcessConduit
+, conduit, conduitExtra, dataDefault, filepath, fsnotify, hspec
+, httpConduit, httpReverseProxy, httpTypes, liftedBase, mtl
+, network, networkConduitTls, random, regexTdfa, stm, systemFileio
+, systemFilepath, tar, text, time, transformers, unixCompat
 , unorderedContainers, vector, wai, waiAppStatic, waiExtra, warp
 , warpTls, yaml, zlib
 }:
 
 cabal.mkDerivation (self: {
   pname = "keter";
-  version = "1.2.0";
-  sha256 = "06iz01ci1mcxjqs7dknxgjlkl783sdf680b54schxxirg268cxh3";
+  version = "1.3.0";
+  sha256 = "1fvb93iga4c0kfv29ksrmn9bjznl7wfspg1v9a5d3svwrszl4is3";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [
     aeson async attoparsec blazeBuilder caseInsensitive conduit
-    dataDefault filepath fsnotify httpClient httpClientConduit
-    httpConduit httpReverseProxy httpTypes liftedBase mtl network
-    networkConduit networkConduitTls random regexTdfa stm systemFileio
-    systemFilepath tar text time transformers unixCompat
-    unixProcessConduit unorderedContainers vector wai waiAppStatic
+    conduitExtra dataDefault filepath fsnotify httpConduit
+    httpReverseProxy httpTypes liftedBase mtl network networkConduitTls
+    random regexTdfa stm systemFileio systemFilepath tar text time
+    transformers unixCompat unorderedContainers vector wai waiAppStatic
     waiExtra warp warpTls yaml zlib
   ];
+  testDepends = [ conduit hspec transformers ];
   meta = {
     homepage = "http://www.yesodweb.com/";
     description = "Web application deployment manager, focusing on Haskell web frameworks";

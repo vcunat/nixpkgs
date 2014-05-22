@@ -2,7 +2,7 @@
 , libnotify, libsecret, dbus_glib, polkit, isocodes, libgnome_keyring 
 , mobile_broadband_provider_info, glib_networking, gsettings_desktop_schemas
 , makeWrapper, networkmanager_openvpn, networkmanager_vpnc
-, networkmanager_openconnect, udev, hicolor_icon_theme }:
+, networkmanager_openconnect, networkmanager_pptp, udev, hicolor_icon_theme }:
 
 let
   pn = "network-manager-applet";
@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [
-    gnome3.gtk libglade networkmanager libnotify libsecret dbus_glib
+    gnome3.gtk libglade networkmanager libnotify libsecret dbus_glib gsettings_desktop_schemas
     polkit isocodes makeWrapper udev gnome3.gconf gnome3.libgnome_keyring
   ];
 
@@ -36,19 +36,27 @@ stdenv.mkDerivation rec {
     ln -s ${networkmanager_openvpn}/etc/NetworkManager/VPN/nm-openvpn-service.name $out/etc/NetworkManager/VPN/nm-openvpn-service.name
     ln -s ${networkmanager_vpnc}/etc/NetworkManager/VPN/nm-vpnc-service.name $out/etc/NetworkManager/VPN/nm-vpnc-service.name
     ln -s ${networkmanager_openconnect}/etc/NetworkManager/VPN/nm-openconnect-service.name $out/etc/NetworkManager/VPN/nm-openconnect-service.name
+    ln -s ${networkmanager_pptp}/etc/NetworkManager/VPN/nm-pptp-service.name $out/etc/NetworkManager/VPN/nm-pptp-service.name
     mkdir -p $out/lib/NetworkManager
     ln -s ${networkmanager_openvpn}/lib/NetworkManager/* $out/lib/NetworkManager/
     ln -s ${networkmanager_vpnc}/lib/NetworkManager/* $out/lib/NetworkManager/
     ln -s ${networkmanager_openconnect}/lib/NetworkManager/* $out/lib/NetworkManager/
+    ln -s ${networkmanager_pptp}/lib/NetworkManager/* $out/lib/NetworkManager/
     mkdir -p $out/libexec
     ln -s ${networkmanager_openvpn}/libexec/* $out/libexec/
     ln -s ${networkmanager_vpnc}/libexec/* $out/libexec/
     ln -s ${networkmanager_openconnect}/libexec/* $out/libexec/
+    ln -s ${networkmanager_pptp}/libexec/* $out/libexec/
+  '';
+
+  preFixup = ''
     wrapProgram "$out/bin/nm-applet" \
       --prefix GIO_EXTRA_MODULES : "${glib_networking}/lib/gio/modules" \
-      --prefix XDG_DATA_DIRS : "${gsettings_desktop_schemas}/share:${gnome3.gtk}/share:$out/share" \
+      --prefix XDG_DATA_DIRS : "${gnome3.gtk}/share:$out/share:$GSETTINGS_SCHEMAS_PATH" \
       --set GCONF_CONFIG_SOURCE "xml::~/.gconf" \
       --prefix PATH ":" "${gnome3.gconf}/bin"
+    wrapProgram "$out/bin/nm-connection-editor" \
+      --prefix XDG_DATA_DIRS : "${gnome3.gtk}/share:$out/share:$GSETTINGS_SCHEMAS_PATH"
   '';
 
   meta = with stdenv.lib; {
@@ -57,9 +65,5 @@ stdenv.mkDerivation rec {
     license = licenses.gpl2;
     maintainers = with maintainers; [ phreedom urkud rickynils ];
     platforms = platforms.linux;
-
-    # resolve collision between evince and nm-applet for
-    # gschemas.compiled
-    priority = 6;
   };
 }

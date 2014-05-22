@@ -52,13 +52,13 @@
       osgi = 34;
       tor = 35;
       cups = 36;
-      foldingAtHome = 37;
+      foldingathome = 37;
       sabnzbd = 38;
       kdm = 39;
-      ghostOne = 40;
+      ghostone = 40;
       git = 41;
-      fourStore = 42;
-      fourStoreEndpoint = 43;
+      fourstore = 42;
+      fourstorehttp = 43;
       virtuoso = 44;
       rtkit = 45;
       dovecot2 = 46;
@@ -84,7 +84,7 @@
       postgres = 71;
       smbguest = 74;
       varnish = 75;
-      dd-agent = 76;
+      datadog = 76;
       lighttpd = 77;
       lightdm = 78;
       freenet = 79;
@@ -122,8 +122,17 @@
       notbit = 111;
       ngircd = 112;
       btsync = 113;
+      minecraft = 114;
+      monetdb = 115;
+      rippled = 116;
+      murmur = 117;
+      foundationdb = 118;
+      newrelic = 119;
+      starbound = 120;
+      hydra = 122;
+      spiped = 123;
 
-      # When adding a uid, make sure it doesn't match an existing gid.
+      # When adding a uid, make sure it doesn't match an existing gid. And don't use uids above 399!
 
       nixbld = 30000; # start of range of uids
       nobody = 65534;
@@ -164,8 +173,8 @@
       osgi = 34;
       ghostOne = 40;
       git = 41;
-      fourStore = 42;
-      fourStoreEndpoint = 43;
+      fourstore = 42;
+      fourstorehttpd = 43;
       virtuoso = 44;
       dovecot2 = 46;
       prayer = 49;
@@ -192,7 +201,7 @@
       vboxsf = 73;
       smbguest = 74;
       varnish = 75;
-      dd-agent = 76;
+      datadog = 76;
       lighttpd = 77;
       lightdm = 78;
       freenet = 79;
@@ -220,8 +229,15 @@
       jenkins = 109;
       systemd-journal-gateway = 110;
       notbit = 111;
+      monetdb = 115;
+      foundationdb = 118;
+      newrelic = 119;
+      starbound = 120;
+      grsecurity = 121;
+      hydra = 122;
+      spiped = 123;
 
-      # When adding a gid, make sure it doesn't match an existing uid.
+      # When adding a gid, make sure it doesn't match an existing uid. And don't use gids above 399!
 
       users = 100;
       nixbld = 30000;

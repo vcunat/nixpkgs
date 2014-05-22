@@ -6,8 +6,8 @@
 
 cabal.mkDerivation (self: {
   pname = "websockets";
-  version = "0.8.2.0";
-  sha256 = "1gphlil7n0g9y6vqwyn9fc4sl2ccninznc59p11052j8q6yb34ia";
+  version = "0.8.2.2";
+  sha256 = "16q4znki5f4133cgwcs8wqgx6ljl8x59khrsdsi646nclb3lyl0a";
   buildDepends = [
     attoparsec base64Bytestring binary blazeBuilder caseInsensitive
     entropy ioStreams mtl network random SHA text

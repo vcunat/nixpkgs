@@ -5,8 +5,8 @@
 
 cabal.mkDerivation (self: {
   pname = "hspec";
-  version = "1.9.0";
-  sha256 = "01nwxx63l9cl1smld7pwm59k6shs865iiy1jqwi97lkhzhy9cvhl";
+  version = "1.9.5";
+  sha256 = "0y9gbm5rwwn80yzdllh1amaih4vxa61i9dzym88jr2kkwjrhxay4";
   isLibrary = true;
   isExecutable = true;
   buildDepends = [

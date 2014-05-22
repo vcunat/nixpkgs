@@ -7,6 +7,7 @@
 , enableSharedExecutables ? false
 , enableStaticLibraries ? true
 , enableCheckPhase ? stdenv.lib.versionOlder "7.4" ghc.version
+, extension ? (self : super : {})
 }:
 
 let
@@ -133,9 +134,7 @@ assert !enableStaticLibraries -> versionOlder "7.7" ghc.version;
             jailbreak = false;
 
             # pass the '--enable-split-objs' flag to cabal in the configure stage
-            enableSplitObjs = !(  stdenv.isDarwin                       # http://hackage.haskell.org/trac/ghc/ticket/4013
-                               || versionOlder "7.6.99" ghc.version     # -fsplit-ojbs is broken in 7.7 snapshot
-                               );
+            enableSplitObjs = !stdenv.isDarwin;         # http://hackage.haskell.org/trac/ghc/ticket/4013
 
             # pass the '--enable-tests' flag to cabal in the configure stage
             # and run any regression test suites the package might have
@@ -195,7 +194,7 @@ assert !enableStaticLibraries -> versionOlder "7.7" ghc.version;
                 done
               done
 
-              ${optionalString self.enableSharedExecutables ''
+              ${optionalString (self.enableSharedExecutables && self.stdenv.isLinux) ''
                 configureFlags+=" --ghc-option=-optl=-Wl,-rpath=$out/lib/${ghc.ghc.name}/${self.pname}-${self.version}";
               ''}
 
@@ -264,5 +263,8 @@ assert !enableStaticLibraries -> versionOlder "7.7" ghc.version;
             # in Cabal derivations.
             inherit stdenv ghc;
           };
-    in  stdenv.mkDerivation (postprocess ((rec { f = defaults f // args f; }).f)) ;
+    in
+    stdenv.mkDerivation (postprocess (let super = defaults self // args self;
+                                          self  = super // extension self super;
+                                      in self));
 }

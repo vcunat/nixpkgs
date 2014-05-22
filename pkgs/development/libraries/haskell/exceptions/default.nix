@@ -4,8 +4,8 @@
 
 cabal.mkDerivation (self: {
   pname = "exceptions";
-  version = "0.3.3.1";
-  sha256 = "091frx3hmx7lq10z7f8q98pz0sa1lj23i7z4z98gh1980r525fah";
+  version = "0.6.1";
+  sha256 = "09jv5jskv48fd5la1pdvafwc9j2jxj1ncf6yxzkwcjddynbkyszm";
   buildDepends = [ mtl transformers ];
   testDepends = [
     mtl QuickCheck testFramework testFrameworkQuickcheck2 transformers

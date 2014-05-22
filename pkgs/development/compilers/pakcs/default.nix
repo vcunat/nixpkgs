@@ -6,7 +6,7 @@ let
 
   fsrc = fetchurl {
     url = "http://www.informatik.uni-kiel.de/~pakcs/download/${fname}-src.tar.gz";
-    sha256 = "006bq6cmycq2f4xb3zmnmxyngj64hppk3a083hy0qzj7gl77zvfw";
+    sha256 = "0m9s6693svr57in8rhkvq9h2j0hiphki6jn0syzrzzs4ahb7i1gb";
   };
 
 in

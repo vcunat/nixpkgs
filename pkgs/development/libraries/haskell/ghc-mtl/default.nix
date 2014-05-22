@@ -2,8 +2,8 @@
 
 cabal.mkDerivation (self: {
   pname = "ghc-mtl";
-  version = "1.1.0.0";
-  sha256 = "1vmiy00fsdp1jzmpjrz8wzxbv3185h27aspw412pmcr4v1n29kxc";
+  version = "1.2.1.0";
+  sha256 = "0h6r6gip9nsjlsq88wj105hhqliy7ac2dmmndsfzbjz07b03cklk";
   buildDepends = [ exceptions extensibleExceptions mtl ];
   meta = {
     homepage = "http://hub.darcs.net/jcpetruzza/ghc-mtl";
