@@ -17,7 +17,7 @@ browser:
 , desktopName ? # browserName with first letter capitalized
   (lib.toUpper (lib.substring 0 1 browserName) + lib.substring 1 (-1) browserName)
 , nameSuffix ? ""
-, icon ? browserName, libtrick ? true
+, icon ? browserName
 }:
 
 let
@@ -52,13 +52,9 @@ let
   gst-plugins = with gst_all; [ gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-ffmpeg ];
   gtk_modules = [ libcanberra_gtk2 ];
 
-in
-stdenv.mkDerivation {
-  inherit name;
-
   desktopItem = makeDesktopItem {
     name = browserName;
-    exec = browserName + " %U";
+    exec = "$script_location";
     inherit icon;
     comment = "";
     desktopName = desktopName;
@@ -75,6 +71,10 @@ stdenv.mkDerivation {
     ];
   };
 
+in
+stdenv.mkDerivation {
+  inherit name;
+
   buildInputs = [makeWrapper] ++ lib.optionals (!ffmpegSupport) gst-plugins;
 
   buildCommand = ''
@@ -84,7 +84,7 @@ stdenv.mkDerivation {
         exit 1
     fi
 
-    makeWrapper "${browser}/bin/${browserName}" \
+    makeWrapper "$(readlink "${browser}/bin/${browserName}")" \
         "$out/bin/${browserName}${nameSuffix}" \
         --argv0 "$out/bin/${browserName}${nameSuffix}" \
         --suffix-each MOZ_PLUGIN_PATH ':' "$plugins" \
@@ -95,17 +95,13 @@ stdenv.mkDerivation {
         --set MOZ_OBJDIR "$(ls -d "${browser}/lib/${browserName}"*)" \
         ${lib.optionalString (!ffmpegSupport) ''--prefix GST_PLUGIN_SYSTEM_PATH : "$GST_PLUGIN_SYSTEM_PATH"''}
 
-    ${ lib.optionalString libtrick
-    ''
     libdirname="$(echo "${browser}/lib/${browserName}"*)"
     libdirbasename="$(basename "$libdirname")"
     mkdir -p "$out/lib/$libdirbasename"
     ln -s "$libdirname"/* "$out/lib/$libdirbasename"
-    script_location="$(mktemp "$out/lib/$libdirbasename/${browserName}${nameSuffix}.XXXXXX")"
+    script_location="$out/lib/$libdirbasename/${browserName}${nameSuffix}.wrapper"
     mv "$out/bin/${browserName}${nameSuffix}" "$script_location"
     ln -s "$script_location" "$out/bin/${browserName}${nameSuffix}"
-    ''
-    }
 
     if [ -e "${browser}/share/icons" ]; then
         mkdir -p "$out/share"
@@ -116,8 +112,7 @@ stdenv.mkDerivation {
             "$out/share/icons/hicolor/128x128/apps/${browserName}.png"
     fi
 
-    mkdir -p $out/share/applications
-    cp $desktopItem/share/applications/* $out/share/applications
+    ${desktopItem.buildCommand /* uses $script_location; see above */}
 
     # For manpages, in case the program supplies them
     mkdir -p $out/nix-support
