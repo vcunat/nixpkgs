@@ -6,6 +6,8 @@ dontStrip=1
 fixupOutputHooks+=(_separateDebugInfo)
 
 _separateDebugInfo() {
+	mkdir -p "$debug"
+	[ -n "$OBJCOPY" ] || return 0
     [ -e "$prefix" ] || return 0
 
     local dst="${debug:-$out}"

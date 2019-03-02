@@ -68,7 +68,7 @@ rec {
           else if attrs.version or null != null
           then builtins.unsafeGetAttrPos "version" attrs
           else builtins.unsafeGetAttrPos "name" attrs)
-    , separateDebugInfo ? false
+    , separateDebugInfo ? ! (attrs ? outputHashAlgo || attrs ? buildCommand)
     , outputs ? [ "out" ]
     , __darwinAllowLocalNetworking ? false
     , __impureHostDeps ? []
