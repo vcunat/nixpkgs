@@ -29,6 +29,7 @@ stdenv.mkDerivation {
     inherit (s) url sha256;
   };
   patches = [ ./darwin.patch ];
+  separateDebugInfo = false;
   preConfigure = ''
     lua -e "" || {
         luajit -e "" && {

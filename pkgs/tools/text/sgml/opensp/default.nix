@@ -19,6 +19,7 @@ stdenv.mkDerivation {
   ];
 
   setupHook = ./setup-hook.sh;
+  separateDebugInfo = false;
 
   postFixup = ''
     # Remove random ids in the release notes

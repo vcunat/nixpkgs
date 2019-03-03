@@ -423,7 +423,7 @@ self: super:
 
     #TODO: resurrect patches for US_intl?
     patches = [ ./xkeyboard-config-eo.patch ];
-
+    separateDebugInfo = false;
     configureFlags = [ "--with-xkb-rules-symlink=xorg" ];
 
     # 1: compatibility for X11/xkb location

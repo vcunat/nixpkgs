@@ -9,4 +9,5 @@ stdenvNoCC.mkDerivation ({
   inherit (args) src;
   preferLocalBuild = true;
   allowSubstitutes = false;
+  separateDebugInfo = false;
 } // args)

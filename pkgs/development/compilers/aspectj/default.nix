@@ -8,6 +8,7 @@ stdenv.mkDerivation rec {
     url = "http://archive.eclipse.org/tools/aspectj/${name}.jar";
     sha256 = "1b3mx248dc1xka1vgsl0jj4sm0nfjsqdcj9r9036mvixj1zj3nmh";
   };
+  separateDebugInfo = false; # we have it in sample-set, but apparently it wouldn't produce anything
 
   inherit jre;
   buildInputs = [jre];

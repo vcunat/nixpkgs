@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
     url = "http://www.mr511.de/software/${name}.tar.gz";
     sha256 = "0vf7s9dwk2xkmhb79aigqm0x0yfbw1j0b9ksm51207qwr179n6jr";
   };
-
+  separateDebugInfo = false;
   patches = [
     ./dont-hardcode-ar.patch
   ];

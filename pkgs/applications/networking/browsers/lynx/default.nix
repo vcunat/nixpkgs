@@ -21,6 +21,7 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
 
   hardeningEnable = [ "pie" ];
+  separateDebugInfo = false;
 
   configureFlags = [
     "--enable-widec"

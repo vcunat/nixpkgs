@@ -28,6 +28,7 @@ stdenv.mkDerivation rec {
   ];
 
   hardeningDisable = [ "format" ];
+  separateDebugInfo = false;
 
   preConfigure = "unset CC" + stdenv.lib.optionalString stdenv.isAarch64 ''\n
     cp ${gnu-config}/config.sub configure.sub

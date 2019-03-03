@@ -9,4 +9,5 @@ stdenv.mkDerivation {
   name = "nuke-references";
   builder = ./builder.sh;
   inherit perl;
+  separateDebugInfo = false;
 }

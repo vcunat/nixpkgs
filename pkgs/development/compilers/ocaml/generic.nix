@@ -39,6 +39,7 @@ stdenv.mkDerivation (args // rec {
     url = real_url;
     inherit sha256;
   };
+  separateDebugInfo = false;
 
   prefixKey = "-prefix ";
   configureFlags = optionals useX11 (

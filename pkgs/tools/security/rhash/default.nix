@@ -17,6 +17,7 @@ stdenv.mkDerivation rec {
   configurePlatforms = [ ];
 
   doCheck = true;
+  separateDebugInfo = false;
 
   checkTarget = "test-full";
 

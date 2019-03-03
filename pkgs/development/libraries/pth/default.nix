@@ -11,6 +11,7 @@ stdenv.mkDerivation rec {
   preConfigure = stdenv.lib.optionalString stdenv.isAarch32 ''
     configureFlagsArray=("CFLAGS=-DJB_SP=8 -DJB_PC=9")
   '';
+  separateDebugInfo = false;
 
   meta = with stdenv.lib; {
     description = "The GNU Portable Threads library";

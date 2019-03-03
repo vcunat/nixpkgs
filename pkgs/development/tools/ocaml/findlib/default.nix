@@ -30,6 +30,7 @@ stdenv.mkDerivation rec {
   ++ (param.patches or []);
 
   dontAddPrefix=true;
+  separateDebugInfo = false;
 
   preConfigure=''
     configureFlagsArray=(

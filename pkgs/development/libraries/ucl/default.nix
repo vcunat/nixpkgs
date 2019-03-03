@@ -9,6 +9,7 @@ stdenv.mkDerivation {
 
   # needed to successfully compile with gcc 6
   NIX_CFLAGS_COMPILE = stdenv.lib.optionalString stdenv.cc.isGNU "-std=c90";
+  separateDebugInfo = false;
 
   meta = {
     homepage = http://www.oberhumer.com/opensource/ucl/;

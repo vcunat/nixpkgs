@@ -19,6 +19,7 @@ stdenv.mkDerivation rec {
       patch -p1 < "${debPatch}/patches/$patch"
     done
   '';
+  separateDebugInfo = false;
 
   buildInputs = [ giblib xlibsWrapper ];
 

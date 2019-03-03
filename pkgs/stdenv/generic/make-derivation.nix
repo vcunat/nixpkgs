@@ -69,6 +69,13 @@ rec {
           then builtins.unsafeGetAttrPos "version" attrs
           else builtins.unsafeGetAttrPos "name" attrs)
     , separateDebugInfo ? ! (attrs ? outputHashAlgo || attrs ? buildCommand)
+    /*
+    - dontAddPrefix: problem with multi-out configure flags;
+    perhaps we shouldn't add those just for the $debug output.
+    - dontBuild: suspicious
+    - perhaps modify the multi-hook to assume setOutputFlags = false
+      if only debug output is added
+    */
     , outputs ? [ "out" ]
     , __darwinAllowLocalNetworking ? false
     , __impureHostDeps ? []

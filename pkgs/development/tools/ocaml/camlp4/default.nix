@@ -34,6 +34,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ which ocaml ocamlbuild ];
 
   dontAddPrefix = true;
+  separateDebugInfo = false;
 
   preConfigure = ''
     configureFlagsArray=(

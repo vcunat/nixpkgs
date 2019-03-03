@@ -64,6 +64,10 @@ let
     sourceRoot = ".";
 
     outputs = [ "out" "jre" ];
+    # It built but aspectj was showing a weird error:
+    # /nix/store/*-openjdk-8u202bga-jre/bin/java:
+    #   error while loading shared libraries: libjli.so: object file has no dynamic section
+    separateDebugInfo = false;
 
     nativeBuildInputs = [ pkgconfig ];
     buildInputs = [
