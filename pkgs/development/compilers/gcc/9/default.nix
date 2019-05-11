@@ -1,5 +1,6 @@
 { stdenv, targetPackages, fetchurl, noSysDirs
 , langC ? true, langCC ? true, langFortran ? false
+, langAda ? false
 , langObjC ? stdenv.targetPlatform.isDarwin
 , langObjCpp ? stdenv.targetPlatform.isDarwin
 , langGo ? false
@@ -12,6 +13,7 @@
 , libelf                      # optional, for link-time optimizations (LTO)
 , isl ? null # optional, for the Graphite optimization framework.
 , zlib ? null
+, gnatboot ? null
 , enableMultilib ? false
 , enablePlugin ? stdenv.hostPlatform == stdenv.buildPlatform # Whether to support user-supplied plug-ins
 , name ? "gcc"
@@ -33,6 +35,7 @@ assert stdenv.hostPlatform.isDarwin -> gnused != null;
 
 # The go frontend is written in c++
 assert langGo -> langCC;
+assert langAda -> gnatboot != null;
 
 with stdenv.lib;
 with builtins;
@@ -210,6 +213,7 @@ stdenv.mkDerivation ({
     # The builder relies on GNU sed (for instance, Darwin's `sed' fails with
     # "-i may not be used with stdin"), and `stdenvNative' doesn't provide it.
     ++ (optional hostPlatform.isDarwin gnused)
+    ++ (optional langAda gnatboot)
     ;
 
   NIX_LDFLAGS = stdenv.lib.optionalString  hostPlatform.isSunOS "-lm -ldl";
@@ -250,6 +254,7 @@ stdenv.mkDerivation ({
         concatStrings (intersperse ","
           (  optional langC        "c"
           ++ optional langCC       "c++"
+          ++ optional langAda      "ada"
           ++ optional langFortran  "fortran"
           ++ optional langGo       "go"
           ++ optional langObjC     "objc"
@@ -270,6 +275,7 @@ stdenv.mkDerivation ({
 
     # Optional features
     optional (isl != null) "--with-isl=${isl}" ++
+    optional langAda "--enable-libada" ++
 
     (import ../common/platform-flags.nix { inherit (stdenv) lib targetPlatform; }) ++
     optional (targetPlatform != hostPlatform) crossConfigureFlags ++
@@ -341,7 +347,7 @@ stdenv.mkDerivation ({
     ]));
 
   passthru = {
-    inherit langC langCC langObjC langObjCpp langFortran langGo version;
+    inherit langC langCC langObjC langObjCpp langAda langFortran langGo version;
     isGNU = true;
   };
 
