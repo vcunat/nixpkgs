@@ -7338,6 +7338,14 @@ in
     profiledCompiler = false;
     inherit gnatboot;
   });
+  gnat6 = wrapCC (gcc6.cc.override {
+    name = "gnat";
+    langC = true;
+    langCC = false;
+    langAda = true;
+    profiledCompiler = false;
+    inherit gnatboot;
+  });
 
   gnatboot = wrapCC (callPackage ../development/compilers/gnatboot { });
 

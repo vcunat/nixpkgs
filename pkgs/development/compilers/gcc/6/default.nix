@@ -1,5 +1,6 @@
 { stdenv, targetPackages, fetchurl, noSysDirs
 , langC ? true, langCC ? true, langFortran ? false
+, langAda ? false
 , langObjC ? stdenv.targetPlatform.isDarwin
 , langObjCpp ? stdenv.targetPlatform.isDarwin
 , langJava ? false
@@ -13,6 +14,7 @@
 , libelf                      # optional, for link-time optimizations (LTO)
 , isl ? null # optional, for the Graphite optimization framework.
 , zlib ? null, boehmgc ? null
+, gnatboot ? null
 , zip ? null, unzip ? null, pkgconfig ? null
 , gtk2 ? null, libart_lgpl ? null
 , libX11 ? null, libXt ? null, libSM ? null, libICE ? null, libXtst ? null
@@ -44,6 +46,8 @@ assert stdenv.hostPlatform.isDarwin -> gnused != null;
 
 # The go frontend is written in c++
 assert langGo -> langCC;
+
+assert langAda -> gnatboot != null;
 
 with stdenv.lib;
 with builtins;
@@ -249,6 +253,7 @@ stdenv.mkDerivation ({
     # The builder relies on GNU sed (for instance, Darwin's `sed' fails with
     # "-i may not be used with stdin"), and `stdenvNative' doesn't provide it.
     ++ (optional hostPlatform.isDarwin gnused)
+    ++ (optional langAda gnatboot)
     ;
 
   NIX_LDFLAGS = stdenv.lib.optionalString  hostPlatform.isSunOS "-lm -ldl";
@@ -258,6 +263,9 @@ stdenv.mkDerivation ({
     export LDFLAGS_FOR_TARGET="-Wl,-rpath,$prefix/lib/amd64 $LDFLAGS_FOR_TARGET"
     export CXXFLAGS_FOR_TARGET="-Wl,-rpath,$prefix/lib/amd64 $CXXFLAGS_FOR_TARGET"
     export CFLAGS_FOR_TARGET="-Wl,-rpath,$prefix/lib/amd64 $CFLAGS_FOR_TARGET"
+  ''
+  + stdenv.lib.optionalString langAda ''
+    export PATH=${gnatboot}/bin:$PATH
   ''
   + stdenv.lib.optionalString (langJava || langGo) ''
     export lib=$out;
@@ -292,6 +300,7 @@ stdenv.mkDerivation ({
         concatStrings (intersperse ","
           (  optional langC        "c"
           ++ optional langCC       "c++"
+          ++ optional langAda      "ada"
           ++ optional langFortran  "fortran"
           ++ optional langJava     "java"
           ++ optional langGo       "go"
@@ -313,6 +322,7 @@ stdenv.mkDerivation ({
 
     # Optional features
     optional (isl != null) "--with-isl=${isl}" ++
+    optional langAda "--enable-libada" ++
 
     # Java options
     optionals langJava [
@@ -411,7 +421,7 @@ stdenv.mkDerivation ({
     ]));
 
   passthru = {
-    inherit langC langCC langObjC langObjCpp langFortran langGo version;
+    inherit langC langCC langObjC langObjCpp langFortran langAda langGo version;
     isGNU = true;
   };
 
