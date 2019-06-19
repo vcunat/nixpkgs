@@ -11,7 +11,7 @@
 , hunspell, libXdamage, libevent, libstartup_notification, libvpx
 , icu, libpng, jemalloc, glib
 , autoconf213, which, gnused, cargo, rustc, llvmPackages
-, rust-cbindgen, nodejs, nasm, fetchpatch
+, rust-cbindgen, nodejs-12_x, nasm, fetchpatch
 , debugBuild ? false
 
 ### optionals
@@ -105,6 +105,13 @@ let
     })
   ] ++ patches;
 
+  nodejs_patched = nodejs-12_x.overrideAttrs (attrs: {
+    patches = attrs.patches ++ [
+      # https://bugzilla.mozilla.org/show_bug.cgi?id=1500436#c16
+      ./nodejs-12.4.0_restore-stdio.patch
+    ];
+  });
+
 in
 
 stdenv.mkDerivation rec {
@@ -163,7 +170,7 @@ stdenv.mkDerivation rec {
     [ autoconf213 which gnused pkgconfig perl python2 cargo rustc ]
     ++ lib.optional gtk3Support wrapGAppsHook
     ++ lib.optionals stdenv.isDarwin [ xcbuild rsync ]
-    ++ lib.optionals (lib.versionAtLeast ffversion "63.0") [ rust-cbindgen nodejs ]
+    ++ lib.optionals (lib.versionAtLeast ffversion "63.0") [ rust-cbindgen nodejs_patched ]
     ++ lib.optionals (lib.versionAtLeast ffversion "67.0") [ llvmPackages.llvm ] # llvm-objdump is required in version >=67.0
     ++ extraNativeBuildInputs;
 

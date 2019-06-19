@@ -1,0 +1,221 @@
+commit 05d4df4eb7f4872f9fe0a0e5c492b6e111051aaa (HEAD)
+Author: Ben Noordhuis <info@bnoordhuis.nl>
+Date:   Fri May 24 16:11:19 2019 +0200
+
+    src: restore stdio on program exit
+    
+    Record the state of the stdio file descriptors on start-up and restore
+    them to that state on exit.  This should prevent issues where node.js
+    sometimes leaves stdio in raw or non-blocking mode.
+    
+    This is a reworked version of commit c2c9c0c3d3 from May 2018 that was
+    reverted in commit 14dc17df38 from June 2018. The revert was a little
+    light on details but I infer that the problem was caused by a missing
+    call to `uv_tty_reset_mode()`.
+    
+    Apropos the NOLINT comments: cpplint doesn't understand do/while
+    statements, it thinks they're while statements without a body.
+    
+    Fixes: https://github.com/nodejs/node/issues/14752
+    Fixes: https://github.com/nodejs/node/issues/21020
+    Original-PR-URL: https://github.com/nodejs/node/pull/20592
+    
+    PR-URL: https://github.com/nodejs/node/pull/24260
+    Reviewed-By: Colin Ihrig <cjihrig@gmail.com>
+    Reviewed-By: James M Snell <jasnell@gmail.com>
+    Reviewed-By: Refael Ackermann (רפאל פלחי) <refack@gmail.com>
+    Reviewed-By: Anna Henningsen <anna@addaleax.net>
+    
+    (cherry picked from commit 5872705796d89d48bc4bf5f0b35678b0bd148ec2)
+    vcunat: seems relatively safe on a quick glance, but...
+
+diff --git a/src/node.cc b/src/node.cc
+index f8b6fa6f..6ab241ba 100644
+--- a/src/node.cc
++++ b/src/node.cc
+@@ -92,6 +92,7 @@
+ #else
+ #include <pthread.h>
+ #include <sys/resource.h>  // getrlimit, setrlimit
++#include <termios.h>       // tcgetattr, tcsetattr
+ #include <unistd.h>        // STDIN_FILENO, STDERR_FILENO
+ #endif
+ 
+@@ -179,7 +180,7 @@ void WaitForInspectorDisconnect(Environment* env) {
+ }
+ 
+ void SignalExit(int signo) {
+-  uv_tty_reset_mode();
++  ResetStdio();
+ #ifdef __FreeBSD__
+   // FreeBSD has a nasty bug, see RegisterSignalHandler for details
+   struct sigaction sa;
+@@ -455,6 +456,16 @@ void RegisterSignalHandler(int signal,
+ 
+ #endif  // __POSIX__
+ 
++#ifdef __POSIX__
++static struct {
++  int flags;
++  bool isatty;
++  struct stat stat;
++  struct termios termios;
++} stdio[1 + STDERR_FILENO];
++#endif  // __POSIX__
++
++
+ inline void PlatformInit() {
+ #ifdef __POSIX__
+ #if HAVE_INSPECTOR
+@@ -465,9 +476,9 @@ inline void PlatformInit() {
+ #endif  // HAVE_INSPECTOR
+ 
+   // Make sure file descriptors 0-2 are valid before we start logging anything.
+-  for (int fd = STDIN_FILENO; fd <= STDERR_FILENO; fd += 1) {
+-    struct stat ignored;
+-    if (fstat(fd, &ignored) == 0)
++  for (auto& s : stdio) {
++    const int fd = &s - stdio;
++    if (fstat(fd, &s.stat) == 0)
+       continue;
+     // Anything but EBADF means something is seriously wrong.  We don't
+     // have to special-case EINTR, fstat() is not interruptible.
+@@ -475,6 +486,8 @@ inline void PlatformInit() {
+       ABORT();
+     if (fd != open("/dev/null", O_RDWR))
+       ABORT();
++    if (fstat(fd, &s.stat) != 0)
++      ABORT();
+   }
+ 
+ #if HAVE_INSPECTOR
+@@ -497,6 +510,27 @@ inline void PlatformInit() {
+   }
+ #endif  // !NODE_SHARED_MODE
+ 
++  // Record the state of the stdio file descriptors so we can restore it
++  // on exit.  Needs to happen before installing signal handlers because
++  // they make use of that information.
++  for (auto& s : stdio) {
++    const int fd = &s - stdio;
++    int err;
++
++    do
++      s.flags = fcntl(fd, F_GETFL);
++    while (s.flags == -1 && errno == EINTR);  // NOLINT
++    CHECK_NE(s.flags, -1);
++
++    if (!isatty(fd)) continue;
++    s.isatty = true;
++
++    do
++      err = tcgetattr(fd, &s.termios);
++    while (err == -1 && errno == EINTR);  // NOLINT
++    CHECK_EQ(err, 0);
++  }
++
+   RegisterSignalHandler(SIGINT, SignalExit, true);
+   RegisterSignalHandler(SIGTERM, SignalExit, true);
+ 
+@@ -536,6 +570,54 @@ inline void PlatformInit() {
+ #endif  // _WIN32
+ }
+ 
++
++// Safe to call more than once and from signal handlers.
++void ResetStdio() {
++  uv_tty_reset_mode();
++#ifdef __POSIX__
++  for (auto& s : stdio) {
++    const int fd = &s - stdio;
++
++    struct stat tmp;
++    if (-1 == fstat(fd, &tmp)) {
++      CHECK_EQ(errno, EBADF);  // Program closed file descriptor.
++      continue;
++    }
++
++    bool is_same_file =
++        (s.stat.st_dev == tmp.st_dev && s.stat.st_ino == tmp.st_ino);
++    if (!is_same_file) continue;  // Program reopened file descriptor.
++
++    int flags;
++    do
++      flags = fcntl(fd, F_GETFL);
++    while (flags == -1 && errno == EINTR);  // NOLINT
++    CHECK_NE(flags, -1);
++
++    // Restore the O_NONBLOCK flag if it changed.
++    if (O_NONBLOCK & (flags ^ s.flags)) {
++      flags &= ~O_NONBLOCK;
++      flags |= s.flags & O_NONBLOCK;
++
++      int err;
++      do
++        err = fcntl(fd, F_SETFL, flags);
++      while (err == -1 && errno == EINTR);  // NOLINT
++      CHECK_NE(err, -1);
++    }
++
++    if (s.isatty) {
++      int err;
++      do
++        err = tcsetattr(fd, TCSANOW, &s.termios);
++      while (err == -1 && errno == EINTR);  // NOLINT
++      CHECK_NE(err, -1);
++    }
++  }
++#endif  // __POSIX__
++}
++
++
+ int ProcessGlobalArgs(std::vector<std::string>* args,
+                       std::vector<std::string>* exec_args,
+                       std::vector<std::string>* errors,
+@@ -791,7 +873,7 @@ void Init(int* argc,
+ }
+ 
+ InitializationResult InitializeOncePerProcess(int argc, char** argv) {
+-  atexit([] () { uv_tty_reset_mode(); });
++  atexit(ResetStdio);
+   PlatformInit();
+   per_process::node_start_time = uv_hrtime();
+ 
+diff --git a/src/node_errors.cc b/src/node_errors.cc
+index 603c9e41..534809b5 100644
+--- a/src/node_errors.cc
++++ b/src/node_errors.cc
+@@ -229,7 +229,7 @@ void AppendExceptionLine(Environment* env,
+     Mutex::ScopedLock lock(per_process::tty_mutex);
+     env->set_printed_error(true);
+ 
+-    uv_tty_reset_mode();
++    ResetStdio();
+     PrintErrorString("\n%s", source.c_str());
+     return;
+   }
+diff --git a/src/node_internals.h b/src/node_internals.h
+index 21625e60..c9d0b05f 100644
+--- a/src/node_internals.h
++++ b/src/node_internals.h
+@@ -91,6 +91,7 @@ void PrintCaughtException(v8::Isolate* isolate,
+                           const v8::TryCatch& try_catch);
+ 
+ void WaitForInspectorDisconnect(Environment* env);
++void ResetStdio();  // Safe to call more than once and from signal handlers.
+ void SignalExit(int signo);
+ #ifdef __POSIX__
+ void RegisterSignalHandler(int signal,
+diff --git a/src/node_main_instance.cc b/src/node_main_instance.cc
+index f4f20f43..ac58f93e 100644
+--- a/src/node_main_instance.cc
++++ b/src/node_main_instance.cc
+@@ -145,7 +145,7 @@ int NodeMainInstance::Run() {
+ 
+   env->set_can_call_into_js(false);
+   env->stop_sub_worker_contexts();
+-  uv_tty_reset_mode();
++  ResetStdio();
+   env->RunCleanup();
+   RunAtExit(env.get());
+ 
