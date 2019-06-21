@@ -94,6 +94,7 @@ let
 
   browserPatches = [
     ./env_var_for_system_dir.patch
+    ./parallel-build-hack.diff
   ] ++ lib.optionals (stdenv.isAarch64 && lib.versionAtLeast ffversion "66" && lib.versionOlder ffversion "67") [
     (fetchpatch {
       url = "https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/09c7fa0dc1d87922e3b464c0fa084df1227fca79/extra/firefox/arm.patch";
