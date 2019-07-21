@@ -25,45 +25,24 @@ with super;
     '';
   });
 
-  cqueues = super.cqueues.override(rec {
+  cqueues = buildLuaPackage rec {
     # Parse out a version number without the Lua version inserted
-    version = with pkgs.lib; let
-      version' = super.cqueues.version;
-      rel = splitString "." version';
-      date = head rel;
-      rev = last (splitString "-" (last rel));
-    in "${date}-${rev}";
-    nativeBuildInputs = [
-      pkgs.gnum4
-    ];
-    externalDeps = [
-      { name = "CRYPTO"; dep = pkgs.openssl; }
-      { name = "OPENSSL"; dep = pkgs.openssl; }
-    ];
-    patches = [
-      # https://github.com/wahern/cqueues/issues/216 &
-      # https://github.com/wahern/cqueues/issues/217
-      (pkgs.fetchpatch {
-        name = "find-version-fix.patch";
-        url = "https://github.com/wahern/cqueues/pull/217.patch";
-        sha256 = "0068ql0jlxmjkvhzydyy52sjd0k4vad6b8w4y5szpbv4vb2lzcsc";
-      })
-    ];
+    name = "cqueues-git";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "wahern";
+      repo = "cqueues";
+      rev = "refs/pull/225/head";
+      sha256 = "1ndzrrl14vnpd5zlxi3la5im36x1hxzkwnzxdf0gl5g945m087l4";
+    };
+
+    preConfigure = ''export prefix=$out'';
+    nativeBuildInputs = [ pkgs.gnum4 ];
+    buildInputs = [ pkgs.openssl ];
     disabled = luaOlder "5.1" || luaAtLeast "5.4";
     # Upstream rockspec is pointlessly broken into separate rockspecs, per Lua
     # version, which doesn't work well for us, so modify it
-    postConfigure = let inherit (super.cqueues) pname; in ''
-      # 'all' target auto-detects correct Lua version, which is fine for us as
-      # we only have the right one available :)
-      sed -Ei ''${rockspecFilename} \
-        -e 's|lua == 5.[[:digit:]]|lua >= 5.1, <= 5.3|' \
-        -e 's|build_target = "[^"]+"|build_target = "all"|' \
-        -e 's|version = "[^"]+"|version = "${version}"|'
-      specDir=$(dirname ''${rockspecFilename})
-      cp ''${rockspecFilename} "$specDir/${pname}-${version}.rockspec"
-      rockspecFilename="$specDir/${pname}-${version}.rockspec"
-    '';
-  });
+  };
 
   cyrussasl = super.cyrussasl.override({
     externalDeps = [
