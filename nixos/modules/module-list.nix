@@ -11,6 +11,7 @@
   ./config/xdg/icons.nix
   ./config/xdg/menus.nix
   ./config/xdg/mime.nix
+  ./config/xdg/portal.nix
   ./config/appstream.nix
   ./config/xdg/sounds.nix
   ./config/gtk/gtk-icon-cache.nix
@@ -197,6 +198,7 @@
   ./services/audio/slimserver.nix
   ./services/audio/snapserver.nix
   ./services/audio/squeezelite.nix
+  ./services/audio/spotifyd.nix
   ./services/audio/ympd.nix
   ./services/backup/automysqlbackup.nix
   ./services/backup/bacula.nix
@@ -421,6 +423,7 @@
   ./services/misc/gollum.nix
   ./services/misc/gpsd.nix
   ./services/misc/headphones.nix
+  ./services/misc/greenclip.nix
   ./services/misc/home-assistant.nix
   ./services/misc/ihaskell.nix
   ./services/misc/irkerd.nix
@@ -472,6 +475,7 @@
   ./services/misc/synergy.nix
   ./services/misc/sysprof.nix
   ./services/misc/taskserver
+  ./services/misc/tiddlywiki.nix
   ./services/misc/tzupdate.nix
   ./services/misc/uhub.nix
   ./services/misc/weechat.nix
@@ -689,6 +693,7 @@
   ./services/networking/tcpcrypt.nix
   ./services/networking/teamspeak3.nix
   ./services/networking/tedicross.nix
+  ./services/networking/thelounge.nix
   ./services/networking/tinc.nix
   ./services/networking/tinydns.nix
   ./services/networking/tftpd.nix
@@ -810,6 +815,7 @@
   ./services/web-servers/uwsgi.nix
   ./services/web-servers/varnish/default.nix
   ./services/web-servers/zope2.nix
+  ./services/x11/extra-layouts.nix
   ./services/x11/colord.nix
   ./services/x11/compton.nix
   ./services/x11/unclutter.nix

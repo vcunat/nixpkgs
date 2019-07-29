@@ -1,5 +1,7 @@
 [
   "@angular/cli"
+, "@antora/cli"
+, "@antora/site-generator-default" 
 , "asar"
 , "aws-azure-login"
 , "azure-functions-core-tools"
@@ -84,7 +86,6 @@
 , "nodemon"
 , "node-red"
 , "npm"
-, { "npm2nix": "git://github.com/NixOS/npm2nix.git#5.12.0" }
 , "npm-check-updates"
 , "ocaml-language-server"
 , "peerflix"
@@ -125,6 +126,7 @@
 , "textlint-rule-terminology"
 , "textlint-rule-unexpanded-acronym"
 , "textlint-rule-write-good"
+, "thelounge"
 , "three"
 , "tiddlywiki"
 , "triton"
