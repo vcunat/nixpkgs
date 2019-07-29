@@ -35,7 +35,7 @@ unwrapped = stdenv.mkDerivation rec {
   preConfigure = ''
     patchShebangs scripts/
   ''
-    + stdenv.lib.optionalString doInstallCheck (exportLuaPathsFor [ lua.cqueues lua.basexx ]);
+    + stdenv.lib.optionalString doInstallCheck (exportLuaPathsFor [ lua.cqueues_testing lua.basexx ]);
 
   nativeBuildInputs = [ pkgconfig meson ninja ];
 
@@ -86,7 +86,7 @@ wrapped-full =
       luasec luasocket # trust anchor bootstrap, prefill module
       luafilesystem # prefill module
       http # for http module; brings lots of deps; some are useful elsewhere
-      cqueues fifo lpeg lpeg_patterns luaossl compat53 basexx binaryheap
+      cqueues_testing fifo lpeg lpeg_patterns luaossl compat53 basexx binaryheap
     ];
   in runCommand unwrapped.name
   {
