@@ -27,20 +27,14 @@ with super;
 
   cqueues_testing = buildLuaPackage rec {
     # Parse out a version number without the Lua version inserted
-    name = "cqueues-git";
+    name = "cqueues-20190725";
 
     src = pkgs.fetchFromGitHub {
       owner = "wahern";
       repo = "cqueues";
-      rev = "refs/pull/225/head";
-      sha256 = "1ndzrrl14vnpd5zlxi3la5im36x1hxzkwnzxdf0gl5g945m087l4";
+      rev = "7702dc0c5af90e0145b8c4ac93a28c0ee18ded59";
+      sha256 = "1yzxzr4kb9i3fbp7vvkk1q9h92vjpch9yvx2naxyrrvj5k1mgznh";
     };
-
-    postPatch = ''
-      substituteInPlace src/cqueues.h --replace __arch64__ __aarch64__
-      sed '$i#if CQS_USE_47BIT_LIGHTUSERDATA_HACK\n#warning XXX 1\n#else\n#warning XXX 0\n#endif' -i src/cqueues.c
-      sed '/#define CQS_UNIQUE_LIGHTUSERDATA_MASK/s/48/47/' -i src/cqueues.h
-    '';
 
     dontStrip = true;
 
