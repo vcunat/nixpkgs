@@ -212,6 +212,11 @@ with super;
   });
 
   luaossl = super.luaossl.override({
+    patches = [(pkgs.fetchpatch {
+      name = "luaossl-light-userdata.diff";
+      url = "https://patch-diff.githubusercontent.com/raw/wahern/luaossl/pull/173.diff";
+      sha256 = "0b0y36gmsym99zzdr8l3k9144avxxldm7k1s7i8w1g2734n5xmfy";
+    })];
     externalDeps = [
       { name = "CRYPTO"; dep = pkgs.openssl; }
       { name = "OPENSSL"; dep = pkgs.openssl; }
