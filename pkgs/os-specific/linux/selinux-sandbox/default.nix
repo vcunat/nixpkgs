@@ -9,12 +9,12 @@ with python3.pkgs;
 
 stdenv.mkDerivation rec {
   name = "selinux-sandbox-${version}";
-  version = "2.7";
-  se_release = "20170804";
+  version = "2.9";
+  se_release = "20190315";
 
   src = fetchurl {
-    url = "https://raw.githubusercontent.com/wiki/SELinuxProject/selinux/files/releases/${se_release}/selinux-sandbox-${version}.tar.gz";
-    sha256 = "0hf5chm90iapb42njaps6p5460ys3ajh5446ja544vdbh01n544l";
+    url = "https://github.com/SELinuxProject/selinux/releases/download/${se_release}/selinux-sandbox-${version}.tar.gz";
+    sha256 = "0hf5chm90iapb42njaps6p5460ys3ajh5446ja544v1bh01n544l";
   };
 
   nativeBuildInputs = [ wrapPython ];
