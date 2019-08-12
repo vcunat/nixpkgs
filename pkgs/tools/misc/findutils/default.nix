@@ -1,25 +1,19 @@
 { stdenv, fetchurl
-, coreutils
+, coreutils, automake, autoconf
 }:
 
 stdenv.mkDerivation rec {
-  name = "findutils-4.6.0";
+  pname = "findutils";
+  version = "20190510";
 
   src = fetchurl {
-    url = "mirror://gnu/findutils/${name}.tar.gz";
-    sha256 = "178nn4dl7wbcw499czikirnkniwnx36argdnqgz4ik9i6zvwkm6y";
-  };
+    url = "http://deb.debian.org/debian/pool/main/f/findutils/findutils_4.6.0+git+20190510.orig.tar.xz";
+    sha256 = "0pdgdy904jm1zh2fzlcg7b4v0lzcn0qjxq6a4kndc1g68nfwj027";
+   };
 
-  patches = [
-    ./memory-leak.patch
-    ./no-install-statedir.patch
+  patches = [ ./no-install-statedir.patch ];
 
-    # Prevent tests from failing on old kernels (2.6x)
-    # getdtablesize reports incorrect values if getrlimit() fails
-    ./disable-getdtablesize-test.patch
-  ];
-
-  buildInputs = [ coreutils ]; # bin/updatedb script needs to call sort
+  buildInputs = [ coreutils automake autoconf ]; # bin/updatedb script needs to call sort
 
   # Since glibc-2.25 the i686 tests hang reliably right after test-sleep.
   doCheck
