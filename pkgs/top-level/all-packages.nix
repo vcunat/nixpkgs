@@ -12866,6 +12866,8 @@ in
 
   ameba = callPackage ../development/tools/ameba { };
 
+  apkg = callPackage ../tools/package-management/apkg { };
+
   augeas = callPackage ../tools/system/augeas { };
 
   inherit (callPackage ../tools/admin/ansible { })
