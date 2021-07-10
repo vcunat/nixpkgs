@@ -27,7 +27,7 @@ in with src; {
   wineWow = callPackage ./base.nix {
     name = "wine-wow-${version}";
     inherit src version supportFlags patches;
-    stdenv = stdenv_32bit;
+    stdenv = stdenv_32bit.override { setupScript = ../../../stdenv/generic/setup-master.sh; };
     pkgArches = [ pkgs pkgsi686Linux ];
     geckos = [ gecko32 gecko64 ];
     mingwGccs = with pkgsCross; [ mingw32.buildPackages.gcc mingwW64.buildPackages.gcc ];
