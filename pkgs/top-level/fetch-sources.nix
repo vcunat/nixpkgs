@@ -2,6 +2,7 @@
 }:
 
 # Some stuff is problematic to fetch due to builtins.fetchurl being broken ATM.
+# Typically it's updates from staging branch of packages involved in stdenv bootstrapping.
 
 {
   coreutils = fetchurl {
@@ -16,4 +17,19 @@
     url = "mirror://gnu/gzip/gzip-1.11.tar.xz";
     sha256 = "01vrly90rvc98af6rcmrb3gwv1l6pylasvsdka23dffwizb9b6lv";
   };
+  python =
+    let
+      sourceVersion = {
+        major = "3";
+        minor = "9";
+        patch = "7";
+        suffix = "";
+      };
+      sha256 = "0mrwbsdrdfrj8k1ap0cm6pw8h0rrhxivg6b338fh804cwqb5c57q";
+      version = with sourceVersion; "${major}.${minor}.${patch}${suffix}";
+    in
+      fetchurl {
+        url = with sourceVersion; "https://www.python.org/ftp/python/${major}.${minor}.${patch}/Python-${version}.tar.xz";
+        inherit sha256;
+      };
 }
