@@ -9,6 +9,10 @@
     url = "mirror://gnu/coreutils/coreutils-9.0.tar.xz";
     sha256 = "sha256-zjCs30pBvFuzDdlV6eqnX6IWtOPesIiJ7TJDPHs7l84=";
   };
+  curl = fetchurl {
+    url = "https://curl.haxx.se/download/curl-7.79.1.tar.bz2";
+    sha256 = "0lbq73wz44p4fm2gp05mzrqrzfvhlmvlgfg8c8wkj5lkkamw8qny";
+  };
   gnugrep = fetchurl {
     url = "mirror://gnu/grep/grep-3.7.tar.xz";
     sha256 = "0g42svbc1nq5bamxfj6x7320wli4dlj86padk0hwgbk04hqxl42w";
