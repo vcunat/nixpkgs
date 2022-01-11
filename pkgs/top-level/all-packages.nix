@@ -21072,6 +21072,7 @@ with pkgs;
 
   knot-dns = callPackage ../servers/dns/knot-dns { };
   knot-resolver = callPackage ../servers/dns/knot-resolver { };
+  knot-resolver-manager = callPackage ../servers/dns/knot-resolver/manager.nix { };
 
   rdkafka = callPackage ../development/libraries/rdkafka { };
 
