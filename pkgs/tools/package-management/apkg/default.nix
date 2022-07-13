@@ -4,16 +4,21 @@
 
 python3Packages.buildPythonApplication rec {
   pname = "apkg";
-  version = "0.3.1.p1";
+  version = "0.3.1-67";
 
   src = fetchFromGitLab {
     domain = "gitlab.nic.cz";
     owner = "packaging";
     repo = pname;
     #rev = "v${version}";
-    rev = "bb68ed7";
-    sha256 = "kyVLpfSG8NjhgbAej0ubhCxDfWgrHssrZoQQZeFNvwo=";
+    rev = "7e47653152f9fb70d3e2f823cd907a4b7f2514d7";
+    sha256 = "QmTnoMpfRsTmD9EHPpZNIkMapjHfxSm5oMN0mIyJHaw=";
   };
+
+  # Old jinja2 isn't in nixpkgs anymore.
+  postPatch = ''
+    substituteInPlace setup.cfg --replace 'jinja2<3.1' 'jinja2'
+  '';
 
   propagatedBuildInputs = with python3Packages; [
     # copy&pasted requirements.txt (almost exactly)
