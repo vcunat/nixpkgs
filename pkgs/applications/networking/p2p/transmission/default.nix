@@ -21,6 +21,7 @@
 , enableGTK3 ? false
 , gtk3
 , xorg
+, python3
 , wrapGAppsHook
 , enableQt ? false
 , qt5
@@ -33,7 +34,8 @@
 }:
 
 let
-  version = "3.00";
+
+  version = "4.0.0-beta.3";
 
 in stdenv.mkDerivation {
   pname = "transmission";
@@ -43,17 +45,9 @@ in stdenv.mkDerivation {
     owner = "transmission";
     repo = "transmission";
     rev = version;
-    sha256 = "0ccg0km54f700x9p0jsnncnwvfnxfnxf7kcm7pcx1cj0vw78924z";
+    sha256 = "sha256-v0bwatipt8M5kiYl5+RzthWuwHW6pvXMTcKp+g3sll0=";
     fetchSubmodules = true;
   };
-
-  patches = [
-    # fix build with openssl 3.0
-    (fetchurl {
-      url = "https://salsa.debian.org/debian/transmission/-/raw/debian/3.00-2.1/debian/patches/openssl3-compat.patch";
-      hash = "sha256-v+SDTW/lCtc8B3TuhQB1pmjW/QRAGLtYncaImNNwpes=";
-    })
-  ];
 
   outputs = [ "out" "apparmor" ];
 
@@ -73,6 +67,7 @@ in stdenv.mkDerivation {
   nativeBuildInputs = [
     pkg-config
     cmake
+    python3
   ]
   ++ lib.optionals enableGTK3 [ wrapGAppsHook ]
   ++ lib.optionals enableQt [ qt5.wrapQtAppsHook ]
@@ -95,6 +90,8 @@ in stdenv.mkDerivation {
   ++ lib.optionals enableSystemd [ systemd ]
   ++ lib.optionals stdenv.isLinux [ inotify-tools ]
   ++ lib.optionals stdenv.isDarwin [ libiconv ];
+
+  NIX_CFLAGS_COMPILE = [ "-fpermissive" ];
 
   postInstall = ''
     mkdir $apparmor
