@@ -16383,6 +16383,39 @@ with pkgs;
     inherit cc bintools libc libcxx extraPackages nixSupport zlib;
   } // extraArgs; in self);
 
+  wrapCCWith-tmp =
+    { cc
+    , # This should be the only bintools runtime dep with this sort of logic. The
+      # Others should instead delegate to the next stage's choice with
+      # `targetPackages.stdenv.cc.bintools`. This one is different just to
+      # provide the default choice, avoiding infinite recursion.
+      # See the bintools attribute for the logic and reasoning. We need to provide
+      # a default here, since eval will hit this function when bootstrapping
+      # stdenv where the bintools attribute doesn't exist, but will never actually
+      # be evaluated -- callPackage ends up being too eager.
+      bintools ? pkgs.bintools
+    , libc ? bintools.libc
+    , # libc++ from the default LLVM version is bound at the top level, but we
+      # want the C++ library to be explicitly chosen by the caller, and null by
+      # default.
+      libcxx ? null
+    , extraPackages ? lib.optional (cc.isGNU or false && stdenv.targetPlatform.isMinGW) threadsCross.package
+    , nixSupport ? {}
+    , ...
+    } @ extraArgs:
+      callPackage ../build-support/cc-wrapper/tmp.nix (let self = {
+    nativeTools = stdenv.targetPlatform == stdenv.hostPlatform && stdenv.cc.nativeTools or false;
+    nativeLibc = stdenv.targetPlatform == stdenv.hostPlatform && stdenv.cc.nativeLibc or false;
+    nativePrefix = stdenv.cc.nativePrefix or "";
+    noLibc = !self.nativeLibc && (self.libc == null);
+
+    isGNU = cc.isGNU or false;
+    isClang = cc.isClang or false;
+
+    inherit cc bintools libc libcxx extraPackages nixSupport zlib;
+  } // extraArgs; in self);
+  stdenv-tmp = overrideCC stdenv (wrapCCWith-tmp { inherit (stdenv.cc) cc; });
+
   wrapCC = cc: wrapCCWith {
     inherit cc;
   };

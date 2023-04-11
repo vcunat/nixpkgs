@@ -1,5 +1,6 @@
 { lib
 , stdenv
+, stdenv-tmp
 , callPackage
 , overrideCC
 , wrapCCWith
@@ -78,6 +79,8 @@ let
 
   # Runtimes
   runtimes = callPackage ./llvm.nix {
+    stdenv = stdenv-tmp;
+
     buildDocs = false;
     buildMan = false;
     buildTests = false;
