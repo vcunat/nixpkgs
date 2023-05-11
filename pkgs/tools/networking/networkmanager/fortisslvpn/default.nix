@@ -1,6 +1,6 @@
 { stdenv
 , lib
-, fetchurl
+, fetchFromGitLab
 , substituteAll
 , openfortivpn
 , autoreconfHook
@@ -21,12 +21,15 @@
 
 stdenv.mkDerivation rec {
   pname = "NetworkManager-fortisslvpn";
-  version = "1.4.0";
+  version = "unstable-2023-03-07"; # to support ppp-2.5.0
   name = "${pname}${lib.optionalString withGnome "-gnome"}-${version}";
 
-  src = fetchurl {
-    url = "mirror://gnome/sources/${pname}/${lib.versions.majorMinor version}/${pname}-${version}.tar.xz";
-    sha256 = "sFXiY0m1FrI1hXmKs+9XtDawFIAOkqiscyz8jnbF2vo=";
+  src = fetchFromGitLab {
+    domain = "gitlab.gnome.org";
+    owner = "GNOME";
+    repo = pname;
+    rev = "90ba69671b93c4946f6facba5d64fd9855d644fc";
+    hash = "sha256-jELaFtycDm7aHhr7qT4TCBu4bm9WYY6SWEu76FJgnmg=";
   };
 
   patches = [
@@ -34,7 +37,6 @@ stdenv.mkDerivation rec {
       src = ./fix-paths.patch;
       inherit openfortivpn;
     })
-    ./support-ppp-2.5.0.patch
   ];
 
   nativeBuildInputs = [
