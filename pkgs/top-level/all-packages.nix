@@ -959,7 +959,7 @@ with pkgs;
     else makeOverridable (import ../build-support/fetchurl) {
       inherit lib stdenvNoCC buildPackages;
       inherit cacert;
-      curl = buildPackages.curlMinimal.override (old: rec {
+      curl = buildPackages.curlMinimalInvulnerable.override (old: rec {
         # break dependency cycles
         fetchurl = stdenv.fetchurlBoot;
         zlib = buildPackages.zlib.override { fetchurl = stdenv.fetchurlBoot; };
@@ -6717,6 +6717,7 @@ with pkgs;
   });
 
   curlMinimal = callPackage ../tools/networking/curl { };
+  curlMinimalInvulnerable = callPackage ../tools/networking/curl/invulnerable.nix { };
 
   curlWithGnuTls = curl.override { gnutlsSupport = true; opensslSupport = false; };
 

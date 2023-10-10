@@ -202,6 +202,5 @@ stdenv.mkDerivation (finalAttrs: {
     # Fails to link against static brotli or gss
     broken = stdenv.hostPlatform.isStatic && (brotliSupport || gssSupport);
     pkgConfigModules = [ "libcurl" ];
-    knownVulnerabilities = [ "to be published 2023-10-11" ];
   };
 })
