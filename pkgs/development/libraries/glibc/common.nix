@@ -62,6 +62,8 @@ stdenv.mkDerivation ({
           glibc-2.39-5-ge0910f1d32
           $ git show --minimal --reverse glibc-2.39.. > 2.39-master.patch
 
+          2.39-specific: please keep the amendment of the first patch from upstream (git add -p).
+
          To compare the archive contents zdiff can be used.
           $ diff -u 2.39-master.patch ../nixpkgs/pkgs/development/libraries/glibc/2.39-master.patch
        */
