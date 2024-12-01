@@ -22,8 +22,6 @@ use JSON;
 use Net::Amazon::S3;
 use Nix::Store;
 
-isValidPath("/nix/store/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-foo"); # FIXME: forces Nix::Store initialisation
-
 sub usage {
     die "Syntax: $0 [--dry-run] [--exclude REGEXP] [--expr EXPR | --file FILES...]\n";
 }
@@ -160,6 +158,7 @@ elsif (defined $expr) {
     print STDERR "evaluation returned ", scalar(@{$fetches}), " tarballs\n";
 
     # Check every fetchurl call discovered by find-tarballs.nix.
+    my $store = Nix::Store->new();
     my $mirrored = 0;
     my $have = 0;
     foreach my $fetch (sort { $a->{urls}->[0] cmp $b->{urls}->[0] } @{$fetches}) {
@@ -176,19 +175,19 @@ elsif (defined $expr) {
 
         if ($hash =~ /^([a-z0-9]+)-([A-Za-z0-9+\/=]+)$/) {
             $algo = $1;
-            $hash = `nix hash to-base16 $hash` or die;
+            $hash = `nix hash convert --from sri --to base16 $hash` or die;
             chomp $hash;
         }
 
-        next unless $algo =~ /^[a-z0-9]+$/;
+        next unless $algo =~ /^[a-z0-9]+$/;  # FIXME: sometimes $algo is uninitialized here
 
         # Convert non-SRI base-64 to base-16.
         if ($hash =~ /^[A-Za-z0-9+\/=]+$/) {
-            $hash = `nix hash to-base16 --type '$algo' $hash` or die;
+            $hash = `nix hash convert --to base16 --hash-algo '$algo' $hash` or die;
             chomp $hash;
         }
 
-        my $storePath = makeFixedOutputPath(0, $algo, $hash, $name);
+        my $storePath = $store->makeFixedOutputPath(0, $algo, $hash, $name);
 
         for my $url (@$urls) {
             if (defined $ENV{DEBUG}) {
@@ -216,12 +215,12 @@ elsif (defined $expr) {
             }
 
             # Substitute the output.
-            if (!isValidPath($storePath)) {
+            if (!$store->isValidPath($storePath)) {
                 system("nix-store", "-r", $storePath);
             }
 
             # Otherwise download the file using nix-prefetch-url.
-            if (!isValidPath($storePath)) {
+            if (!$store->isValidPath($storePath)) {
                 $ENV{QUIET} = 1;
                 $ENV{PRINT_PATH} = 1;
                 my $fh;
