@@ -18,23 +18,15 @@ lua = luajitPackages;
 
 unwrapped = stdenv.mkDerivation rec {
   pname = "knot-resolver-core";
-  version = "6.0.8-" + src.rev;
+  version = /*"6.0.10-" +*/ src.rev;
 
   src = fetchFromGitLab {
     domain = "gitlab.nic.cz";
     owner = "knot";
     repo = "knot-resolver";
     fetchSubmodules = true; # yes, unfortunately hard to work around
-    #rev = "7ef1a7ce0d4"; hash = "sha256-uWoXBgZV42DoBLTZ27gAuIXw7c6iJlAYsOsGhu0Gz+Y=";
-    rev = "b8ec0127"; hash = "sha256-16xFNMsSg+6cZLhtk9BlW5skwP7IDKrFEYZNpoxbJMY="; # !1613 @ 2024-09-24
+    rev = "v6.0.10"; hash = "sha256-V7K7QTNdVG4tjUZfWdCn0JB9JhlJJLmhCdudO06EASc=";
   };
-  patches = [
-    (fetchpatch {
-      name = "local-data-dname.patch";
-      url = "https://gitlab.nic.cz/knot/knot-resolver/-/commit/bc783277aa0575325d298944cef7b57b596265a0.diff";
-      hash = "sha256-HuZqos0Qcy3onUD1BfizYkbWSTxj0dpQIlU4QOXDBTA=";
-    })
-  ];
 
   #dontStrip = true; # FIXME: TMP
 
