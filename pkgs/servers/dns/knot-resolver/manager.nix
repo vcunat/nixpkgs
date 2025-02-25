@@ -25,8 +25,10 @@ python3Packages.buildPythonPackage {
   ];
 
   # Propagate meson config from the C part to the python part.
+  # But the install-time etc differs from a sensible run-time etc.
   postPatch = ''
-    cp '${knot-resolver.config_py}'/knot_resolver/constants.py ./python/knot_resolver/constants.py
+    substitute '${knot-resolver.config_py}'/knot_resolver/constants.py ./python/knot_resolver/constants.py \
+      --replace-fail '${knot-resolver.out}/etc' '/etc'
   '';
 
   # Deps can be seen in ${src}/pyproject.toml
