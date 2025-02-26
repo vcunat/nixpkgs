@@ -25,7 +25,7 @@ unwrapped = stdenv.mkDerivation rec {
     owner = "knot";
     repo = "knot-resolver";
     fetchSubmodules = true; # yes, unfortunately hard to work around
-    rev = "v6.0.10"; hash = "sha256-V7K7QTNdVG4tjUZfWdCn0JB9JhlJJLmhCdudO06EASc=";
+    rev = "v6.0.11"; hash = "sha256-bkkcrRkaFkndVmDU7AOgbb5H7RqH+fSHufDUscFVIhM=";
   };
 
   #dontStrip = true; # FIXME: TMP
@@ -41,13 +41,6 @@ unwrapped = stdenv.mkDerivation rec {
     +systemd_work_dir  = '/var/lib/knot-resolver'
     +systemd_cache_dir = '/var/cache/knot-resolver'
     +run_dir = '/run/knot-resolver'
-    EOF
-  ''
-    # https://gitlab.nic.cz/knot/knot-resolver/-/issues/925
-  + ''
-    patch modules/http/meson.build <<EOF
-    @@ -22 +21,0 @@
-    -  ['http', files('http.test.lua')],
     EOF
   ''
     # some tests have issues with network sandboxing, apparently
