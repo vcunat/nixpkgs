@@ -1,7 +1,8 @@
 {
   lib,
   stdenv,
-  fetchurl,
+  fetchFromGitLab,
+  fetchpatch,
   # native deps.
   runCommand,
   pkg-config,
@@ -34,40 +35,38 @@ let
   lua = luajitPackages;
 
   unwrapped = stdenv.mkDerivation rec {
-    pname = "knot-resolver";
-    version = "5.7.5";
+    pname = "knot-resolver-core";
+    version = # "6.0.10-" +
+      src.rev;
 
-    src = fetchurl {
-      url = "https://secure.nic.cz/files/knot-resolver/${pname}-${version}.tar.xz";
-      sha256 = "80239cf9aa92599d9cbad4642dea5520b2ccfbc9c6f968886ea46179cb3cdf66";
+    src = fetchFromGitLab {
+      domain = "gitlab.nic.cz";
+      owner = "knot";
+      repo = "knot-resolver";
+      fetchSubmodules = true; # yes, unfortunately hard to work around
+      rev = "v6.0.14";
+      hash = "sha256-Ip02dIBj/bPb2qbRxaLnYTlmHeX/BnYteZYPYyB/yjE=";
     };
+
+    #dontStrip = true; # FIXME: TMP
 
     outputs = [
       "out"
       "dev"
+      "config_py"
     ];
 
     # Path fixups for the NixOS service.
     postPatch =
       ''
         patch meson.build <<EOF
-        @@ -50,2 +50,2 @@
+        @@ -50,2 +50,3 @@
         -systemd_work_dir = prefix / get_option('localstatedir') / 'lib' / 'knot-resolver'
         -systemd_cache_dir = prefix / get_option('localstatedir') / 'cache' / 'knot-resolver'
         +systemd_work_dir  = '/var/lib/knot-resolver'
         +systemd_cache_dir = '/var/cache/knot-resolver'
+        +run_dir = '/run/knot-resolver'
         EOF
-
-        # ExecStart can't be overwritten in overrides.
-        # We need that to use wrapped executable and correct config file.
-        sed '/^ExecStart=/d' -i systemd/kresd@.service.in
-
-        # On x86_64-darwin loading by soname fails to find the libs, surprisingly.
-        # Even though they should already be loaded and they're in RPATH, too.
-        for f in daemon/lua/{kres,zonefile}.lua; do
-          substituteInPlace "$f" \
-            --replace-fail "ffi.load(" "ffi.load('${lib.getLib knot-dns}/lib/' .. "
-        done
       ''
       # some tests have issues with network sandboxing, apparently
       + optionalString doInstallCheck ''
@@ -113,6 +112,7 @@ let
 
     mesonFlags =
       [
+        #"--buildtype=debug" # FIXME: TMP
         "-Dkeyfile_default=${dns-root-data}/root.ds"
         "-Droot_hints=${dns-root-data}/root.hints"
         "-Dinstall_kresd_conf=disabled" # not really useful; examples are inside share/doc/
@@ -127,8 +127,8 @@ let
 
     postInstall =
       ''
+        cp -r ./python "$config_py"
         rm "$out"/lib/libkres.a
-        rm "$out"/lib/knot-resolver/upgrade-4-to-5.lua # not meaningful on NixOS
       ''
       + optionalString stdenv.hostPlatform.isLinux ''
         rm -r "$out"/lib/sysusers.d/ # ATM more likely to harm than help
@@ -180,6 +180,7 @@ let
           makeWrapper '${unwrapped}/bin/kresd' "$out"/bin/kresd \
             --set LUA_PATH  "$LUA_PATH" \
             --set LUA_CPATH "$LUA_CPATH"
+          ln -sr '${unwrapped}/bin/kres-cache-gc' "$out"/bin/
 
           ln -sr '${unwrapped}/share' "$out"/
           ln -sr '${unwrapped}/lib'   "$out"/ # useful in NixOS service
