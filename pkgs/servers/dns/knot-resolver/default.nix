@@ -25,7 +25,7 @@ unwrapped = stdenv.mkDerivation rec {
     owner = "knot";
     repo = "knot-resolver";
     fetchSubmodules = true; # yes, unfortunately hard to work around
-    rev = "v6.0.11"; hash = "sha256-bkkcrRkaFkndVmDU7AOgbb5H7RqH+fSHufDUscFVIhM=";
+    rev = "v6.0.14"; hash = "sha256-Ip02dIBj/bPb2qbRxaLnYTlmHeX/BnYteZYPYyB/yjE=";
   };
 
   #dontStrip = true; # FIXME: TMP
