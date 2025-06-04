@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.kresd;
 
@@ -12,55 +17,72 @@ let
   # Convert systemd-style address specification to kresd config line(s).
   # On Nix level we don't attempt to precisely validate the address specifications.
   # The optional IPv6 scope spec comes *after* port, perhaps surprisingly.
-  mkListen = kind: addr: let
-    al_v4 = builtins.match "([0-9.]+):([0-9]+)($)" addr;
-    al_v6 = builtins.match "\\[(.+)]:([0-9]+)(%.*|$)" addr;
-    al_portOnly = builtins.match "(^)([0-9]+)" addr;
-    al = lib.findFirst (a: a != null)
-      (throw "services.kresd.*: incorrect address specification '${addr}'")
-      [ al_v4 al_v6 al_portOnly ];
-    port = lib.elemAt al 1;
-    addrSpec = if al_portOnly == null then "'${lib.head al}${lib.elemAt al 2}'" else "{'::', '0.0.0.0'}";
-    in # freebind is set for compatibility with earlier kresd services;
-       # it could be configurable, for example.
-      ''
-        net.listen(${addrSpec}, ${port}, { kind = '${kind}', freebind = true })
-      '';
-
-    json-oneline = pkgs.writeTextFile {
-      name = "kresd-oneline.json";
-      text = builtins.toJSON cfg.settings;
-    };
-    # - use jq to get a pretty JSON
-    # - then validate it, so that most errors get found during OS build (not activation)
-    json = pkgs.runCommandLocal "kresd.json" {} ''
-      '${pkgs.jq}/bin/jq' < '${json-oneline}' > "$out"
-      '${manager}/bin/kresctl' validate --no-strict "$out"
+  mkListen =
+    kind: addr:
+    let
+      al_v4 = builtins.match "([0-9.]+):([0-9]+)($)" addr;
+      al_v6 = builtins.match "\\[(.+)]:([0-9]+)(%.*|$)" addr;
+      al_portOnly = builtins.match "(^)([0-9]+)" addr;
+      al =
+        lib.findFirst (a: a != null) (throw "services.kresd.*: incorrect address specification '${addr}'")
+          [
+            al_v4
+            al_v6
+            al_portOnly
+          ];
+      port = lib.elemAt al 1;
+      addrSpec =
+        if al_portOnly == null then "'${lib.head al}${lib.elemAt al 2}'" else "{'::', '0.0.0.0'}";
+    in
+    # freebind is set for compatibility with earlier kresd services;
+    # it could be configurable, for example.
+    ''
+      net.listen(${addrSpec}, ${port}, { kind = '${kind}', freebind = true })
     '';
-    #*/
 
-  configFile = if cfg.settings == settings_default
-    then pkgs.writeText "kresd.lua" (
-      ""
-      + lib.concatMapStrings (mkListen "dns") cfg.listenPlain
-      + lib.concatMapStrings (mkListen "tls") cfg.listenTLS
-      + lib.concatMapStrings (mkListen "doh2") cfg.listenDoH
-      + cfg.extraConfig
-    )
-    else let
-      checks = cfg.extraConfig == ""; # FIXME: cfg.instances + cfg.listen*
-      in assert checks; pkgs.runCommandLocal "kresd.lua" {} ''
+  json-oneline = pkgs.writeTextFile {
+    name = "kresd-oneline.json";
+    text = builtins.toJSON cfg.settings;
+  };
+  # - use jq to get a pretty JSON
+  # - then validate it, so that most errors get found during OS build (not activation)
+  json = pkgs.runCommandLocal "kresd.json" { } ''
+    '${pkgs.jq}/bin/jq' < '${json-oneline}' > "$out"
+    '${manager}/bin/kresctl' validate --no-strict "$out"
+  '';
+  #*/
+
+  configFile =
+    if cfg.settings == settings_default then
+      pkgs.writeText "kresd.lua" (
+        ""
+        + lib.concatMapStrings (mkListen "dns") cfg.listenPlain
+        + lib.concatMapStrings (mkListen "tls") cfg.listenTLS
+        + lib.concatMapStrings (mkListen "doh2") cfg.listenDoH
+        + cfg.extraConfig
+      )
+    else
+      let
+        checks = cfg.extraConfig == ""; # FIXME: cfg.instances + cfg.listen*
+      in
+      assert checks;
+      pkgs.runCommandLocal "kresd.lua" { } ''
         ${manager}/bin/kresctl convert --no-strict '${json}' "$out"
       '';
-in {
-  meta.maintainers = [ lib.maintainers.vcunat /* upstream developer */ ];
+in
+{
+  meta.maintainers = [
+    lib.maintainers.vcunat # upstream developer
+  ];
 
   imports = [
     (lib.mkChangedOptionModule [ "services" "kresd" "interfaces" ] [ "services" "kresd" "listenPlain" ]
-      (config:
-        let value = lib.getAttrFromPath [ "services" "kresd" "interfaces" ] config;
-        in map
-          (iface: if lib.elem ":" (lib.stringToCharacters iface) then "[${iface}]:53" else "${iface}:53") # Syntax depends on being IPv6 or IPv4.
+      (
+        config:
+        let
+          value = lib.getAttrFromPath [ "services" "kresd" "interfaces" ] config;
+        in
+        map (iface: if lib.elem ":" (lib.stringToCharacters iface) then "[${iface}]:53" else "${iface}:53") # Syntax depends on being IPv6 or IPv4.
           value
       )
     )
@@ -82,9 +104,11 @@ in {
     package = lib.mkPackageOption pkgs "knot-resolver" {
       example = "knot-resolver.override { extraFeatures = true; }";
     };
-    settings = lib.mkOption { # see RFC 42
-      type = lib.types.submodule { # TODO: avoid regeneration of docs on config changes
-        freeformType = (pkgs.formats.yaml {}).type;
+    settings = lib.mkOption {
+      # see RFC 42
+      type = lib.types.submodule {
+        # TODO: avoid regeneration of docs on config changes
+        freeformType = (pkgs.formats.yaml { }).type;
       };
       default = settings_default;
       description = ''
@@ -106,7 +130,10 @@ in {
     };
     listenPlain = lib.mkOption {
       type = with lib.types; listOf str;
-      default = [ "[::1]:53" "127.0.0.1:53" ];
+      default = [
+        "[::1]:53"
+        "127.0.0.1:53"
+      ];
       example = [ "53" ];
       description = ''
         What addresses and ports the server should listen on.
@@ -115,8 +142,12 @@ in {
     };
     listenTLS = lib.mkOption {
       type = with lib.types; listOf str;
-      default = [];
-      example = [ "198.51.100.1:853" "[2001:db8::1]:853" "853" ];
+      default = [ ];
+      example = [
+        "198.51.100.1:853"
+        "[2001:db8::1]:853"
+        "853"
+      ];
       description = ''
         Addresses and ports on which kresd should provide DNS over TLS (see RFC 7858).
         For detailed syntax see ListenStream in {manpage}`systemd.socket(5)`.
@@ -124,8 +155,12 @@ in {
     };
     listenDoH = lib.mkOption {
       type = with lib.types; listOf str;
-      default = [];
-      example = [ "198.51.100.1:443" "[2001:db8::1]:443" "443" ];
+      default = [ ];
+      example = [
+        "198.51.100.1:443"
+        "[2001:db8::1]:443"
+        "443"
+      ];
       description = ''
         Addresses and ports on which kresd should provide DNS over HTTPS/2 (see RFC 8484).
         For detailed syntax see ListenStream in {manpage}`systemd.socket(5)`.
@@ -150,11 +185,11 @@ in {
 
     networking.resolvconf.useLocalResolver = lib.mkDefault true;
 
-    users.users.knot-resolver =
-      { isSystemUser = true;
-        group = "knot-resolver";
-        description = "Knot-resolver daemon user";
-      };
+    users.users.knot-resolver = {
+      isSystemUser = true;
+      group = "knot-resolver";
+      description = "Knot-resolver daemon user";
+    };
     users.groups.knot-resolver.gid = null;
 
     #FIXME: ?conditionalize, reuse upstream unit & clean up, etc.
@@ -174,7 +209,7 @@ in {
       User = "knot-resolver";
       Group = "knot-resolver";
       CapabilityBoundingSet = "CAP_NET_BIND_SERVICE CAP_SETPCAP";
-      AmbientCapabilities   = "CAP_NET_BIND_SERVICE CAP_SETPCAP";
+      AmbientCapabilities = "CAP_NET_BIND_SERVICE CAP_SETPCAP";
 
       # Ensure /run/knot-resolver exists
       RuntimeDirectory = "knot-resolver";
@@ -189,16 +224,15 @@ in {
     # We don't mind running stop phase from wrong version.  It seems less racy.
     systemd.services.knot-resolver.stopIfChanged = false;
 
-
     # TODO: also install shell completions, maybe man pages, etc.
     environment.systemPackages = [
-      (pkgs.runCommandLocal "knot-resolver-cmds"
-        { nativeBuildInputs = [ pkgs.makeWrapper ]; }
+      (pkgs.runCommandLocal "knot-resolver-cmds" { nativeBuildInputs = [ pkgs.makeWrapper ]; }
         # Wrapping, as config might've changed the location of the management socket.
         ''
           makeWrapper '${manager}/bin/kresctl' "$out/bin/kresctl" \
             --add-flags --config=${json}
-        '')
+        ''
+      )
     ];
   };
 }
