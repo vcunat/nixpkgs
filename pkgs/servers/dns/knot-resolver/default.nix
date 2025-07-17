@@ -45,11 +45,9 @@ let # un-indented, over the whole file
       owner = "knot";
       repo = "knot-resolver";
       fetchSubmodules = true; # yes, unfortunately hard to work around
-      rev = "v6.0.14";
-      hash = "sha256-Ip02dIBj/bPb2qbRxaLnYTlmHeX/BnYteZYPYyB/yjE=";
+      rev = "v6.0.15";
+      hash = "sha256-419uTttRR7FPRRWDb55p9nrTy9Bl9LhTCAZcy9lLAcs=";
     };
-
-    #dontStrip = true; # FIXME: TMP
 
     outputs = [
       "out"
