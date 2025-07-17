@@ -312,6 +312,7 @@ mapAliases {
   atlassian-jira = throw "Atlassian software has been removed, as support for the Atlassian Server products ended in February 2024 and there was insufficient interest in maintaining the Atlassian Data Center replacements"; # Added 2024-11-02
   audaciousQt5 = throw "'audaciousQt5' has been removed, since audacious is built with Qt 6 now"; # Added 2024-07-06
   auditBlasHook = throw "'auditBlasHook' has been removed since it never worked"; # Added 2024-04-02
+  autoReconfHook = throw "You meant 'autoreconfHook', with a lowercase 'r'."; # preserve
   aumix = throw "'aumix' has been removed due to lack of maintenance upstream. Consider using 'pamixer' for CLI or 'pavucontrol' for GUI"; # Added 2024-09-14
   authy = throw "'authy' has been removed since it reached end of life"; # Added 2024-04-19
   autoadb = throw "'autoadb' has been removed due to lack of maintenance upstream"; # Added 2025-01-25
@@ -400,6 +401,7 @@ mapAliases {
   cassandra_3_0 = throw "'cassandra_3_0' has been removed has it reached end-of-life"; # Added 2025-03-23
   cassandra_3_11 = throw "'cassandra_3_11' has been removed has it reached end-of-life"; # Added 2025-03-23
   cawbird = throw "cawbird has been abandoned upstream and is broken anyways due to Twitter closing its API";
+  catalyst-browser = throw "'catalyst-browser' has been removed due to a lack of maintenance and not satisfying our security criteria for browsers."; # Added 2025-06-25
   cde = throw "'cde' has been removed as it is unmaintained and broken"; # Added 2025-05-17
   centerim = throw "centerim has been removed due to upstream disappearing"; # Added 2025-04-18
   certmgr-selfsigned = certmgr; # Added 2023-11-30
@@ -444,6 +446,7 @@ mapAliases {
   cosmic-tasks = tasks; # Added 2024-07-04
   cpp-ipfs-api = cpp-ipfs-http-client; # Project has been renamed. Added 2022-05-15
   crispyDoom = crispy-doom; # Added 2023-05-01
+  cromite = throw "'cromite' has been removed from nixpkgs due to it not being maintained"; # Added 2025-06-12
   crossLibcStdenv = stdenvNoLibc; # Added 2024-09-06
   crystal_1_2 = throw "'crystal_1_2' has been removed as it is obsolete and no longer used in the tree. Consider using 'crystal' instead"; # Added 2025-02-13
   crystal_1_7 = throw "'crystal_1_7' has been removed as it is obsolete and no longer used in the tree. Consider using 'crystal' instead"; # Added 2025-02-13
@@ -646,6 +649,9 @@ mapAliases {
   finger_bsd = bsd-finger;
   fingerd_bsd = bsd-fingerd;
   fira-code-nerdfont = lib.warnOnInstantiate "fira-code-nerdfont is redundant. Use nerd-fonts.fira-code instead." nerd-fonts.fira-code; # Added 2024-11-10
+  firebird_2_5 = throw "'firebird_2_5' has been removed as it has reached end-of-life and does not build."; # Added 2025-06-10
+  firefox-beta-bin = lib.warnOnInstantiate "`firefox-beta-bin` is removed.  Please use `firefox-beta` or `firefox-bin` instead." firefox-beta;
+  firefox-devedition-bin = lib.warnOnInstantiate "`firefox-devedition-bin` is removed.  Please use `firefox-devedition` or `firefox-bin` instead." firefox-devedition;
   firefox-esr-115 = throw "The Firefox 115 ESR series has reached its end of life. Upgrade to `firefox-esr` or `firefox-esr-128` instead.";
   firefox-esr-115-unwrapped = throw "The Firefox 115 ESR series has reached its end of life. Upgrade to `firefox-esr-unwrapped` or `firefox-esr-128-unwrapped` instead.";
   firefox-wayland = firefox; # Added 2022-11-15
@@ -765,6 +771,7 @@ mapAliases {
   glfw-wayland-minecraft = glfw3-minecraft; # Added 2024-05-08
   glxinfo = mesa-demos; # Added 2024-07-04
   gmailieer = throw "'gmailieer' has been renamed to/replaced by 'lieer'"; # Converted to throw 2024-10-17
+  gmnisrv = throw "'gmnisrv' has been removed due to lack of maintenance upstream"; # Added 2025-06-07
   gmp4 = throw "'gmp4' is end-of-life, consider using 'gmp' instead"; # Added 2024-12-24
   gnatboot11 = gnat-bootstrap11;
   gnatboot12 = gnat-bootstrap12;
@@ -842,6 +849,7 @@ mapAliases {
   gtk-engine-bluecurve = "'gtk-engine-bluecurve' has been removed as it has been archived upstream."; # Added 2024-12-04
   gtk2fontsel = throw "'gtk2fontsel' has been removed due to lack of maintenance upstream. GTK now has a built-in font chooser so it's no longer needed for newer apps"; # Added 2024-10-19
   gtkcord4 = dissent; # Added 2024-03-10
+  gtkextra = throw "'gtkextra' has been removed due to lack of maintenance upstream."; # Added 2025-06-10
   gtkperf = throw "'gtkperf' has been removed due to lack of maintenance upstream"; # Added 2024-09-14
   guardian-agent = throw "'guardian-agent' has been removed, as it hasn't been maintained upstream in years and accumulated many vulnerabilities"; # Added 2024-06-09
   guile-disarchive = disarchive; # Added 2023-10-27
@@ -904,12 +912,14 @@ mapAliases {
   ### J ###
 
   jack2Full = throw "'jack2Full' has been renamed to/replaced by 'jack2'"; # Converted to throw 2024-10-17
+  jack_rack = throw "'jack_rack' has been removed due to lack of maintenance upstream."; # Added 2025-06-10
   jami-client-qt = jami-client; # Added 2022-11-06
   jami-client = jami; # Added 2023-02-10
   jami-daemon = jami.daemon; # Added 2023-02-10
   javacard-devkit = throw "javacard-devkit was dropped due to having a dependency on the Oracle JDK, as well as being several years out-of-date."; # Added 2024-11-01
   jd-cli = throw "jd-cli has been removed due to upstream being unmaintained since 2019. Other Java decompilers in Nixpkgs include bytecode-viewer (GUI), cfr (CLI), and procyon (CLI)."; # Added 2024-10-30
   jd-gui = throw "jd-gui has been removed due to a dependency on the dead JCenter Bintray. Other Java decompilers in Nixpkgs include bytecode-viewer (GUI), cfr (CLI), and procyon (CLI)."; # Added 2024-10-30
+  jikespg = throw "'jikespg' has been removed due to lack of maintenance upstream."; # Added 2025-06-10
   jsawk = throw "'jsawk' has been removed because it is unmaintained upstream"; # Added 2028-08-07
 
   # Julia
@@ -929,6 +939,8 @@ mapAliases {
   kafkacat = throw "'kafkacat' has been renamed to/replaced by 'kcat'"; # Converted to throw 2024-10-17
   kak-lsp = kakoune-lsp; # Added 2024-04-01
   kanidm_1_3 = throw "'kanidm_1_3' has been removed as it has reached end of life"; # Added 2025-03-10
+  kanidm_1_4 = throw "'kanidm_1_4' has been removed as it has reached end of life"; # Added 2025-06-18
+  kanidmWithSecretProvisioning_1_4 = throw "'kanidmWithSecretProvisioning_1_4' has been removed as it has reached end of life"; # Added 2025-06-18
   kdbplus = throw "'kdbplus' has been removed from nixpkgs"; # Added 2024-05-06
   kdeconnect = throw "'kdeconnect' has been renamed to/replaced by 'plasma5Packages.kdeconnect-kde'"; # Converted to throw 2024-10-17
   keepkey_agent = keepkey-agent; # added 2024-01-06
@@ -966,6 +978,7 @@ mapAliases {
   ledger_agent = ledger-agent; # Added 2024-01-07
   lfs = dysk; # Added 2023-07-03
   libAfterImage = throw "'libAfterImage' has been removed from nixpkgs, as it's no longer in development for a long time"; # Added 2024-06-01
+  libast = throw "'libast' has been removed due to lack of maintenance upstream."; # Added 2025-06-09
   libav = throw "libav has been removed as it was insecure and abandoned upstream for over half a decade; please use FFmpeg"; # Added 2024-08-25
   libav_0_8 = libav; # Added 2024-08-25
   libav_11 = libav; # Added 2024-08-25
@@ -983,6 +996,7 @@ mapAliases {
   libbitcoin-protocol = throw "libbitcoin-protocol has been removed as it required an obsolete version of Boost and had no maintainer in Nixpkgs"; # Added 2024-11-24
   libchop = throw "libchop has been removed due to failing to build and being unmaintained upstream"; # Added 2025-05-02
   libdwg = throw "libdwg has been removed as upstream is unmaintained, the code doesn't build without significant patches, and the package had no reverse dependencies"; # Added 2024-12-28
+  libfpx = throw "libfpx has been removed as it was unmaintained in Nixpkgs and had known vulnerabilities"; # Added 2025-05-20
   libgcrypt_1_8 = throw "'libgcrypt_1_8' is end-of-life. Consider using 'libgcrypt' instead"; # Added 2025-01-05
   libgda = lib.warnOnInstantiate "‘libgda’ has been renamed to ‘libgda5’" libgda5; # Added 2025-01-21
   libgme = game-music-emu; # Added 2022-07-20
@@ -999,6 +1013,7 @@ mapAliases {
   liboop = throw "liboop has been removed as it is unmaintained upstream."; # Added 2024-08-14
   libosmo-sccp = libosmo-sigtran; # Added 2024-12-20
   libpqxx_6 = throw "libpqxx_6 has been removed, please use libpqxx"; # Added 2024-10-02
+  libpromhttp = throw "'libpromhttp' has been removed as it is broken and unmaintained upstream."; # Added 2025-06-16
   libpulseaudio-vanilla = libpulseaudio; # Added 2022-04-20
   libqt5pas = libsForQt5.libqtpas; # Added 2024-12-25
   libquotient = libsForQt5.libquotient; # Added 2023-11-11
@@ -1134,6 +1149,7 @@ mapAliases {
   lv_img_conv = throw "'lv_img_conv' has been removed from nixpkgs as it is broken"; # Added 2024-06-18
   lxd = lib.warnOnInstantiate "lxd has been renamed to lxd-lts" lxd-lts; # Added 2024-04-01
   lxd-unwrapped = lib.warnOnInstantiate "lxd-unwrapped has been renamed to lxd-unwrapped-lts" lxd-unwrapped-lts; # Added 2024-04-01
+  lxdvdrip = throw "'lxdvdrip' has been removed due to lack of upstream maintenance."; # Added 2025-06-09
   lzma = throw "'lzma' has been renamed to/replaced by 'xz'"; # Converted to throw 2024-10-17
   lzwolf = throw "'lzwolf' has been removed because it's no longer maintained upstream. Consider using 'ecwolf'"; # Added 2025-03-02
 
@@ -1142,6 +1158,7 @@ mapAliases {
   ma1sd = throw "ma1sd was dropped as it is unmaintained"; # Added 2024-07-10
   mac = monkeysAudio; # Added 2024-11-30
   MACS2 = macs2; # Added 2023-06-12
+  mailcore2 = throw "'mailcore2' has been removed due to lack of upstream maintenance."; # Added 2025-06-09
   mailctl = throw "mailctl has been renamed to oama"; # Added 2024-08-19
   mailman-rss = throw "The mailman-rss package was dropped since it was unmaintained."; # Added 2024-06-21
   mariadb_105 = throw "'mariadb_105' has been removed because it reached its End of Life. Consider upgrading to 'mariadb_106'."; # Added 2025-04-26
@@ -1209,7 +1226,6 @@ mapAliases {
   microcodeAmd = microcode-amd; # Added 2024-09-08
   microcodeIntel = microcode-intel; # Added 2024-09-08
   micropad = throw "micropad has been removed, since it was unmaintained and blocked the Electron 27 removal."; # Added 2025-02-24
-  microsoft-edge = throw "microsoft-edge has been removed due to lack of maintenance in nixpkgs"; # Added 2025-05-19
   microsoft_gsl = microsoft-gsl; # Added 2023-05-26
   midori = throw "'midori' original project has been abandonned upstream and the package was broken for a while in nixpkgs"; # Added 2025-05-19
   midori-unwrapped = midori; # Added 2025-05-19
@@ -1597,11 +1613,13 @@ mapAliases {
   qbittorrent-qt5 = throw "'qbittorrent-qt5' has been removed as qBittorrent 5 dropped support for Qt 5. Please use 'qbittorrent'"; # Added 2024-09-30
   qcsxcad = throw "'qcsxcad' has been renamed to/replaced by 'libsForQt5.qcsxcad'"; # Converted to throw 2024-10-17
   qflipper = qFlipper; # Added 2022-02-11
+  qnial = throw "'qnial' has been removed due to failing to build and being unmaintained"; # Added 2025-06-26
   qscintilla = libsForQt5.qscintilla; # Added 2023-09-20
   qscintilla-qt6 = qt6Packages.qscintilla; # Added 2023-09-20
   qt515 = qt5; # Added 2022-11-24
   qt5ct = throw "'qt5ct' has been renamed to/replaced by 'libsForQt5.qt5ct'"; # Converted to throw 2024-10-17
   qt6ct = qt6Packages.qt6ct; # Added 2023-03-07
+  qtchan = throw "'qtchan' has been removed due to lack of maintenance upstream"; # Added 2025-07-01
   qtcurve = throw "'qtcurve' has been renamed to/replaced by 'libsForQt5.qtcurve'"; # Converted to throw 2024-10-17
   qtile-unwrapped = python3.pkgs.qtile; # Added 2023-05-12
   quantum-espresso-mpi = quantum-espresso; # Added 2023-11-23
@@ -1616,6 +1634,7 @@ mapAliases {
   quicklispPackagesGCL = throw "Lisp packages have been redesigned. See 'lisp-modules' in the nixpkgs manual."; # Added 2024-05-07
   quicklispPackagesSBCL = throw "Lisp packages have been redesigned. See 'lisp-modules' in the nixpkgs manual."; # Added 2024-05-07
   quickserve = throw "'quickserve' has been removed because its upstream is unavailable"; # Added 2025-05-10
+  quicksynergy = throw "'quicksynergy' has been removed due to lack of maintenance upstream. Consider using 'deskflow' instead."; # Added 2025-06-18
   qxw = throw "'qxw' has been removed due to lack of maintenance upstream. Consider using 'crosswords' instead"; # Added 2024-10-19
 
   ### R ###
@@ -1725,6 +1744,7 @@ mapAliases {
   skypeforlinux = throw "Skype has been shut down in May 2025"; # Added 2025-05-05
   slack-dark = throw "'slack-dark' has been renamed to/replaced by 'slack'"; # Converted to throw 2024-10-17
   slimerjs = throw "slimerjs does not work with any version of Firefox newer than 59; upstream ended the project in 2021. <https://slimerjs.org/faq.html#end-of-development>"; # added 2025-01-06
+  slrn = throw "'slrn' has been removed because it is unmaintained upstream and broken."; # Added 2025-06-11
   slurm-llnl = slurm; # renamed July 2017
   sm64ex-coop = throw "'sm64ex-coop' was removed as it was archived upstream. Consider migrating to 'sm64coopdx'"; # added 2024-11-23
   smartgithg = smartgit; # renamed March 2025
@@ -1734,6 +1754,7 @@ mapAliases {
   SP800-90B_EntropyAssessment = sp800-90b-entropyassessment; # Added on 2024-06-12
   SPAdes = spades; # Added 2024-06-12
   spark2014 = gnatprove; # Added 2024-02-25
+  space-orbit = throw "'space-orbit' has been removed because it is unmaintained; Debian upstream stopped tracking it in 2011."; # Added 2025-06-08
   spatialite_gui = throw "spatialite_gui has been renamed to spatialite-gui"; # Added 2025-01-12
   spatialite_tools = throw "spatialite_tools has been renamed to spatialite-tools"; # Added 2025-02-06
 
@@ -1772,6 +1793,7 @@ mapAliases {
   ssm-agent = amazon-ssm-agent; # Added 2023-10-17
   starpls-bin = starpls;
   starspace = throw "starspace has been removed from nixpkgs, as it was broken"; # Added 2024-07-15
+  station = throw "station has been removed from nixpkgs, as there were no committers among its maintainers to unblock security issues"; # added 2025-06-16
   steamPackages = {
     steamArch = throw "`steamPackages.steamArch` has been removed as it's no longer applicable";
     steam = lib.warnOnInstantiate "`steamPackages.steam` has been moved to top level as `steam-unwrapped`" steam-unwrapped;
@@ -1788,6 +1810,9 @@ mapAliases {
   strawberry-qt5 = throw "strawberry-qt5 has been replaced by strawberry-qt6"; # Added 2024-11-22
   strelka = throw "strelka depends on Python 2.6+, and does not support Python 3."; # Added 2025-03-17
   suidChroot = throw "'suidChroot' has been dropped as it was unmaintained, failed to build and had questionable security considerations"; # Added 2025-05-17
+  sumaclust = throw "'sumaclust' has been removed as it was archived upstream and broken with GCC 14"; # Added 2025-06-14
+  sumalibs = throw "'sumalibs' has been removed as it was archived upstream and broken with GCC 14"; # Added 2025-06-14
+  sumatra = throw "'sumatra' has been removed as it was archived upstream and broken with GCC 14"; # Added 2025-06-14
   sumneko-lua-language-server = lua-language-server; # Added 2023-02-07
   sumokoin = throw "sumokoin has been removed as it was abandoned upstream"; # Added 2024-11-23
   supertag = throw "supertag has been removed as it was abandoned upstream and fails to build"; # Added 2025-04-20
@@ -1809,6 +1834,7 @@ mapAliases {
 
   ### T ###
 
+  t1lib = throw "'t1lib' has been removed as it was broken and unmaintained upstream."; # Added 2025-06-11
   tabula = throw "tabula has been removed from nixpkgs, as it was broken"; # Added 2024-07-15
   tailor = throw "'tailor' has been removed from nixpkgs, as it was unmaintained upstream."; # Added 2024-11-02
   tangogps = throw "'tangogps' has been renamed to/replaced by 'foxtrotgps'"; # Converted to throw 2024-10-17
@@ -1826,11 +1852,12 @@ mapAliases {
   tcludp = tclPackages.tcludp; # Added 2024-10-02
   tclvfs = tclPackages.tclvfs; # Added 2024-10-02
   tclx = tclPackages.tclx; # Added 2024-10-02
+  tcp-cutter = throw "tcp-cutter has been removed because it fails to compile and the source url is dead"; # Added 2025-05-25
   tdesktop = telegram-desktop; # Added 2023-04-07
   tdom = tclPackages.tdom; # Added 2024-10-02
   teamspeak_client = teamspeak3; # Added 2024-11-07
   teamspeak5_client = teamspeak6-client; # Added 2025-01-29
-  teck-programmer = throw "teck-programmer was removed because it was broken and unmaintained"; # added 2024-08-23
+  teck-programmer = throw "teck-programmer was removed because it was broken and unmaintained"; # Added 2024-08-23
   telepathy-gabble = throw "'telepathy-gabble' has been removed as it was unmaintained, unused, broken and used outdated libraries"; # Added 2025-04-20
   telepathy-logger = throw "'telepathy-logger' has been removed as it was unmaintained, unused and broken"; # Added 2025-04-20
   teleport_13 = throw "teleport 13 has been removed as it is EOL. Please upgrade to Teleport 14 or later"; # Added 2024-05-26
@@ -1904,6 +1931,7 @@ mapAliases {
   ### U ###
 
   uade123 = uade; # Added 2022-07-30
+  uae = throw "'uae' has been removed due to lack of upstream maintenance. Consider using 'fsuae' instead."; # Added 2025-06-11
   uberwriter = throw "'uberwriter' has been renamed to/replaced by 'apostrophe'"; # Converted to throw 2024-10-17
   ubootBeagleboneBlack = throw "'ubootBeagleboneBlack' has been renamed to/replaced by 'ubootAmx335xEVM'"; # Converted to throw 2024-10-17
   ubuntu_font_family = ubuntu-classic; # Added 2024-02-19
@@ -1952,6 +1980,7 @@ mapAliases {
   varnish75Packages = throw "varnish 7.5 is EOL. Either use the LTS or upgrade."; # Added 2025-03-29
   varnish76 = throw "varnish 7.6 is EOL. Either use the LTS or upgrade."; # Added 2025-05-15
   varnish76Packages = throw "varnish 7.6 is EOL. Either use the LTS or upgrade."; # Added 2025-05-15
+  vbetool = throw "'vbetool' has been removed as it is broken and not maintained upstream."; # Added 2025-06-11
   vdirsyncerStable = vdirsyncer; # Added 2020-11-08, see https://github.com/NixOS/nixpkgs/issues/103026#issuecomment-723428168
   ventoy-bin = ventoy; # Added 2023-04-12
   ventoy-bin-full = ventoy-full; # Added 2023-04-12
@@ -2018,6 +2047,7 @@ mapAliases {
   xarchive = throw "'xarchive' has been removed due to lack of maintenance upstream. Consider using 'file-roller' instead"; # Added 2024-10-19
   xbmc-retroarch-advanced-launchers = throw "'xbmc-retroarch-advanced-launchers' has been renamed to/replaced by 'kodi-retroarch-advanced-launchers'"; # Converted to throw 2024-10-17
   xboxdrv = throw "'xboxdrv' has been dropped as it has been superseded by an in-tree kernel driver"; # Added 2024-12-25
+  xbursttools = throw "'xbursttools' has been removed as it is broken and unmaintained upstream."; # Added 2025-06-12
   xdg_utils = throw "'xdg_utils' has been renamed to/replaced by 'xdg-utils'"; # Converted to throw 2024-10-17
   xdragon = dragon-drop; # Added 2025-03-22
   xen-light = throw "'xen-light' has been renamed to/replaced by 'xen-slim'"; # Added 2024-06-30
@@ -2054,6 +2084,8 @@ mapAliases {
   yandex-browser-beta = throw "'yandex-browser-beta' has been removed, as it was broken and unmaintained"; # Added 2025-04-17
   yandex-browser-corporate = throw "'yandex-browser-corporate' has been removed, as it was broken and unmaintained"; # Added 2025-04-17
   youtrack_2022_3 = throw "'youtrack_2022_3' has been removed as it was deprecated. Please update to the 'youtrack' package."; # Added 2024-10-17
+  yabar = throw "'yabar' has been removed as the upstream project was archived"; # Added 2025-06-10
+  yabar-unstable = yabar; # Added 2025-06-10
   yrd = throw "'yrd' has been removed, as it was broken and unmaintained"; # added 2024-05-27
   yuzu-ea = throw "yuzu-ea has been removed from nixpkgs, as it has been taken down upstream"; # Added 2024-03-04
   yuzu-early-access = throw "yuzu-early-access has been removed from nixpkgs, as it has been taken down upstream"; # Added 2024-03-04

@@ -166,6 +166,7 @@ mapAliases ({
   cryptacular = throw "cryptacular was removed, because it was disabled on all python version since 3.6 and last updated in 2021"; # Added 2024-05-13
   cryptography_vectors = "cryptography_vectors is no longer exposed in python*Packages because it is used for testing cryptography only."; # Added 2022-03-23
   cufflinks = throw "cufflinks has removed, since it is abandoned and broken"; # added 2025-02-16
+  curve25519-donna = throw "curve25519-donna was removed, since it is abandoned and unmaintained since 2015"; # added 2025-06-03
   cx_Freeze = cx-freeze; # added 2023-08-02
   cx_oracle = cx-oracle; # added 2024-01-03
   d2to1 = throw "d2to1 is archived and no longer works with setuptools v68"; # added 2023-07-30
@@ -514,6 +515,7 @@ mapAliases ({
   pwndbg = throw "'pwndbg' has been removed due to dependency version incompatibilities that are infeasible to maintain in nixpkgs. Use the downstream flake that pwndbg provides instead: https://github.com/pwndbg/pwndbg"; # Added 2025-02-09
   pxml = throw "pxml was removed, because it was disabled on all python version since 3.8 and last updated in 2020."; # added 2024-05-13
   py3to2 = throw "py3to2 is unmaintained and source is no longer available"; # added 2024-10-23
+  pypcap = throw "pypcap has been removed because it is broken and unmaintained upstream."; # added 2025-06-18
   py-radix = throw "py-radix has been removed, since it abandoned"; # added 2023-07-07
   py_stringmatching = py-stringmatching; # added 2023-11-12
   py17track = throw "py17track was removed because Home Assistant switched to pyseventeentrack"; # added 2024-08-08
@@ -543,6 +545,7 @@ mapAliases ({
   pyhiveapi = pyhive-integration; # Added 2025-02-22
   pyhs100 = throw "pyhs100 has been removed in favor of python-kasa."; # added 2024-01-05
   pylibgen = throw "pylibgen is unmaintained upstreamed, and removed from nixpkgs"; # added 2020-06-20
+  pyliblo = throw "pyliblo is unmaintained upstream and was removed from nixpkgs. Please use pyliblo3 instead"; # added 2025-06-23
   PyLD = pyld; # added 2022-06-22
   pylti = throw "pylti has been removed because it is unmaintained since 2019"; # added 2024-05-21
   pymaging = throw "pymaging has been removed because it has not been maintained for 10 years and has been archived."; # added 2023-11-04
@@ -777,6 +780,7 @@ mapAliases ({
   types-cryptography = throw "types-cryptography has been removed because it is obsolete since cryptography version 3.4.4."; # added 2022-05-30
   types-enum34 = throw "types-enum34 is obselete since Python 3.4"; # added 2025-02-15
   types-paramiko = throw "types-paramiko has been removed because it was unused."; # added 2022-05-30
+  uamqp = throw "'uamqp' has been removed because it is broken and unmaintained."; # added 2025-06-11
   ufoLib2 = ufolib2; # added 2024-01-07
   ukrainealarm = throw "ukrainealarm has been removed, as it has been replaced as a home-assistant dependency by uasiren."; # added 2024-01-05
   unblob-native = throw "unblob-native has been removed because its functionality is merged into unblob 25.4.14."; # Added 2025-05-02

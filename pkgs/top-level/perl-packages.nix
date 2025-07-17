@@ -16,6 +16,7 @@
   fetchurl,
   fetchpatch,
   fetchpatch2,
+  fetchDebianPatch,
   fetchFromGitHub,
   fetchFromGitLab,
   perl,
@@ -1907,10 +1908,10 @@ with self;
 
   AuthenKrb5 = buildPerlModule {
     pname = "Authen-Krb5";
-    version = "1.905";
+    version = "1.906";
     src = fetchurl {
-      url = "mirror://cpan/authors/id/I/IO/IOANR/Authen-Krb5-1.905.tar.gz";
-      hash = "sha256-13sAuxUBpW9xGOkarAx+Qi2888QY+c6YuAF3HDqg900=";
+      url = "mirror://cpan/authors/id/O/OD/ODENBACH/Authen-Krb5-1.906.tar.gz";
+      hash = "sha256-LcCSjvsTtfMF3zRSCI5j+StnrOqH+9RwMI9GD3kSboQ=";
     };
     propagatedBuildInputs = [ pkgs.libkrb5 ];
     buildInputs = [
@@ -7909,10 +7910,10 @@ with self;
 
   CryptX = buildPerlPackage {
     pname = "CryptX";
-    version = "0.080";
+    version = "0.087";
     src = fetchurl {
-      url = "mirror://cpan/authors/id/M/MI/MIK/CryptX-0.080.tar.gz";
-      hash = "sha256-tFe3khlKbJwT8G/goLXqFYllwygvOFypPh8AorM+fok=";
+      url = "mirror://cpan/authors/id/M/MI/MIK/CryptX-0.087.tar.gz";
+      hash = "sha256-gHDsKVFg1I83bY/xssvwvxUtqfIDOTk4LwDxP3SM030=";
     };
     meta = {
       description = "Cryptographic toolkit";
@@ -13335,6 +13336,9 @@ with self;
       url = "mirror://cpan/authors/id/R/RC/RCLAMP/File-Find-Rule-0.34.tar.gz";
       hash = "sha256-fm8WzDPrHyn/Jb7lHVE/S4qElHu/oY7bLTzECi1kyv4=";
     };
+    patches = [
+      ../development/perl-modules/FileFindRule-CVE-2011-10007.patch
+    ];
     propagatedBuildInputs = [
       NumberCompare
       TextGlob
@@ -14155,10 +14159,10 @@ with self;
 
   FinanceQuote = buildPerlPackage rec {
     pname = "Finance-Quote";
-    version = "1.65";
+    version = "1.66";
     src = fetchurl {
       url = "mirror://cpan/authors/id/B/BP/BPSCHUCK/Finance-Quote-${version}.tar.gz";
-      hash = "sha256-C3pJZaLJrW+nwDawloHHtEWyB1j6qYNnsmZZz2L+Axg=";
+      hash = "sha256-GOkdcI+Ah6JvvL+zsKYe0UcdKks855jecwTzBIGkZ+k=";
     };
     buildInputs = [
       DateManip
@@ -17752,14 +17756,18 @@ with self;
     };
   };
 
-  IOTty = buildPerlPackage {
+  IOTty = buildPerlPackage rec {
     pname = "IO-Tty";
     version = "1.17";
     src = fetchurl {
-      url = "mirror://cpan/authors/id/T/TO/TODDR/IO-Tty-1.17.tar.gz";
+      url = "mirror://cpan/authors/id/T/TO/TODDR/IO-Tty-${version}.tar.gz";
       hash = "sha256-pfGoMCC8W13WwbVw9Ix1RuCo9/rBCgaHQLA5Ja2eFOg=";
     };
     patches = [ ../development/perl-modules/IO-Tty-fix-makefile.patch ];
+    # Fix dynamic loading not available when cross compiling
+    postPatch = lib.optionalString (stdenv.hostPlatform != stdenv.buildPlatform) ''
+      sed -i '/use IO::File/d' Makefile.PL
+    '';
     doCheck = !stdenv.hostPlatform.isDarwin; # openpty fails in the sandbox
     meta = {
       description = "Low-level allocate a pseudo-Tty, import constants";
@@ -32343,12 +32351,12 @@ with self;
 
   SysVirt = buildPerlModule rec {
     pname = "Sys-Virt";
-    version = "11.0.0";
+    version = "11.2.0";
     src = fetchFromGitLab {
       owner = "libvirt";
       repo = "libvirt-perl";
       tag = "v${version}";
-      hash = "sha256-k1fpVLWbFgZOUvCPLN6EpYgSfpwig5mHiWMRo8iRvZc=";
+      hash = "sha256-e/Zb9ox/ehfybpxiCAsEl97T1vjBNpRYJK/kmehPHsY=";
     };
     nativeBuildInputs = [ pkgs.pkg-config ];
     buildInputs = [
@@ -36375,13 +36383,24 @@ with self;
     };
   };
 
-  TextUnaccent = buildPerlPackage {
+  TextUnaccent = buildPerlPackage rec {
     pname = "Text-Unaccent";
     version = "1.08";
     src = fetchurl {
       url = "mirror://cpan/authors/id/L/LD/LDACHARY/Text-Unaccent-1.08.tar.gz";
       hash = "sha256-J45u/Jsk82mclh77NuvmAqNAi1QVcgF97hMdFScocys=";
     };
+    patches = [
+      # Fix build with gcc 14
+      # Convenience link to patch: https://salsa.debian.org/perl-team/modules/packages/libtext-unaccent-perl/-/blob/debian/1.08-2/debian/patches/bug848156.patch
+      (fetchDebianPatch {
+        inherit version;
+        pname = "libtext-unaccent-perl";
+        debianRevision = "2";
+        patch = "bug848156.patch";
+        hash = "sha256-RonSt/nPFYgAxbNU0jyfe1YpipxAJrLcIxwaUPxddoE=";
+      })
+    ];
     # https://rt.cpan.org/Public/Bug/Display.html?id=124815
     env.NIX_CFLAGS_COMPILE = "-DHAS_VPRINTF";
     meta = {
@@ -37752,20 +37771,51 @@ with self;
     };
   };
 
-  WWWCurl = buildPerlPackage {
+  WWWCurl = buildPerlPackage rec {
     pname = "WWW-Curl";
     version = "4.17";
     src = fetchurl {
       url = "mirror://cpan/authors/id/S/SZ/SZBALINT/WWW-Curl-4.17.tar.gz";
       hash = "sha256-Uv+rEQ4yNI13XyQclz61b5awju28EQ130lfNsKJKt7o=";
     };
-    patches = [
-      (fetchpatch {
-        url = "https://aur.archlinux.org/cgit/aur.git/plain/makefile.patch?h=perl-www-curl&id=7e004bb8c5dc49c903a5d5fa5ff28c30a58e2595";
-        hash = "sha256-8JZbe4IMfRZyLa118AAH/wsXrazOFy79OoH3Nuy57A4=";
-        name = "perl-www-curl-makefile.patch";
-      })
-    ];
+    # Convenience link: https://salsa.debian.org/perl-team/modules/packages/libwww-curl-perl/-/tree/master/debian/patches
+    patches =
+      let
+        pname = "libwww-curl-perl";
+        debianRevision = "12";
+      in
+      [
+        # needed for curl 7.50.2 compat
+        (fetchDebianPatch {
+          inherit debianRevision pname version;
+          patch = "Skip-preprocessor-symbol-only-CURL_STRICTER.patch";
+          hash = "sha256-9NcGBjVTbXWr4axl9cKsaAKt+spxDf97M76KDX7vl0I=";
+        })
+        # needed for curl 7.70.0 compat
+        (fetchDebianPatch {
+          inherit debianRevision pname version;
+          patch = "WWW-Curl-4.17-RT130591.patch";
+          hash = "sha256-RoAjUSt8WwcxEgjDgitr8u+0BKcHUzIJts3ohKKmzg4=";
+        })
+        # Ignore undefined DEPRECAT macros from curl 7.87.0
+        (fetchDebianPatch {
+          inherit debianRevision pname version;
+          patch = "workaround_DEPRECAT.patch";
+          hash = "sha256-oZBk2RUr2wVtrFhFN20TI2eWSCtcJbG+fPKhc1Br7JY=";
+        })
+        # Fix typo in "therefore" in man page
+        (fetchDebianPatch {
+          inherit debianRevision pname version;
+          patch = "typo_therefore.patch";
+          hash = "sha256-UQTyv9YgIZC3S5Ih3qazPmQR4RLY7IEAmuMJUAyjewA=";
+        })
+        # needed for curl 8.13.0 compat
+        (fetchDebianPatch {
+          inherit debianRevision pname version;
+          patch = "curl_8.13.0.patch";
+          hash = "sha256-VTp0CtVakGti23DvRJwnuP3//eS4BzV5/n+A2zg/a+k=";
+        })
+      ];
     env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.cc.isClang "-Wno-return-type";
     buildInputs = [ pkgs.curl ];
     doCheck = false; # performs network access

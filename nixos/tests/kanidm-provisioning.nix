@@ -74,6 +74,10 @@ import ./make-test-python.nix (
               };
 
               groups.testgroup1 = { };
+              groups.imperative = {
+                overwriteMembers = false;
+                members = [ "testuser1" ];
+              };
 
               persons.testuser1 = {
                 displayName = "Test User";
@@ -134,6 +138,11 @@ import ./make-test-python.nix (
               };
 
               groups.testgroup1 = { };
+              groups.imperative = {
+                overwriteMembers = false;
+                # Will be retained:
+                # members = [ "testuser1" ];
+              };
 
               persons.testuser1 = {
                 displayName = "Test User (changed)";
@@ -235,6 +244,29 @@ import ./make-test-python.nix (
             };
           };
 
+        specialisation.extraJsonFile.configuration =
+          { ... }:
+          {
+            services.kanidm.provision = lib.mkForce {
+              enable = true;
+              idmAdminPasswordFile = pkgs.writeText "idm-admin-pw" provisionIdmAdminPassword;
+
+              extraJsonFile = pkgs.writeText "extra-json.json" (
+                builtins.toJSON {
+                  persons.testuser2.displayName = "Test User 2";
+                  groups.testgroup1.members = [ "testuser2" ];
+                }
+              );
+
+              groups.testgroup1 = { };
+
+              persons.testuser1 = {
+                displayName = "Test User 1";
+                groups = [ "testgroup1" ];
+              };
+            };
+          };
+
         security.pki.certificateFiles = [ certs.ca.cert ];
 
         networking.hosts."::1" = [ serverDomain ];
@@ -329,6 +361,10 @@ import ./make-test-python.nix (
             out = provision.succeed("kanidm group get testgroup1")
             assert_contains(out, "name: testgroup1")
 
+            out = provision.succeed("kanidm group get imperative")
+            assert_contains(out, "name: imperative")
+            assert_contains(out, "member: testuser1")
+
             out = provision.succeed("kanidm group get supergroup1")
             assert_contains(out, "name: supergroup1")
             assert_contains(out, "member: testgroup1")
@@ -339,6 +375,7 @@ import ./make-test-python.nix (
             assert_contains(out, "legalname: Jane Doe")
             assert_contains(out, "mail: jane.doe@example.com")
             assert_contains(out, "memberof: testgroup1")
+            assert_contains(out, "memberof: imperative")
             assert_contains(out, "memberof: service1-access")
 
             out = provision.succeed("kanidm person get testuser2")
@@ -383,6 +420,10 @@ import ./make-test-python.nix (
             out = provision.succeed("kanidm group get testgroup1")
             assert_contains(out, "name: testgroup1")
 
+            out = provision.succeed("kanidm group get imperative")
+            assert_contains(out, "name: imperative")
+            assert_contains(out, "member: testuser1")
+
             out = provision.succeed("kanidm group get supergroup1")
             assert_contains(out, "name: supergroup1")
             assert_lacks(out, "member: testgroup1")
@@ -394,6 +435,7 @@ import ./make-test-python.nix (
             assert_contains(out, "mail: jane.doe@example.com")
             assert_contains(out, "mail: second.doe@example.com")
             assert_lacks(out, "memberof: testgroup1")
+            assert_contains(out, "memberof: imperative")
             assert_contains(out, "memberof: service1-access")
 
             out = provision.succeed("kanidm person get testuser2")
@@ -515,6 +557,21 @@ import ./make-test-python.nix (
 
             out = provision.succeed("kanidm system oauth2 get service2")
             assert_lacks(out, "name: service2")
+
+            provision.succeed("kanidm logout -D idm_admin")
+
+        with subtest("Test Provisioning - extraJsonFile"):
+            provision.succeed('${specialisations}/extraJsonFile/bin/switch-to-configuration test')
+            provision_login("${provisionIdmAdminPassword}")
+            out = provision.succeed("kanidm group get testgroup1")
+            assert_contains(out, "name: testgroup1")
+            out = provision.succeed("kanidm person get testuser1")
+            assert_contains(out, "name: testuser1")
+            out = provision.succeed("kanidm person get testuser2")
+            assert_contains(out, "name: testuser2")
+            out = provision.succeed("kanidm group get testgroup1")
+            assert_contains(out, "member: testuser1")
+            assert_contains(out, "member: testuser2")
 
             provision.succeed("kanidm logout -D idm_admin")
       '';

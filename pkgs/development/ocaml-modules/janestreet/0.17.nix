@@ -935,6 +935,8 @@ with self;
     meta.description = "A library of intrinsics for OCaml";
     buildInputs = [
       dune-configurator
+    ];
+    propagatedBuildInputs = [
       ocaml_intrinsics_kernel
     ];
   };
@@ -1222,7 +1224,8 @@ with self;
 
   ppx_expect = janePackage {
     pname = "ppx_expect";
-    hash = "sha256-m4Nr48ZET632I6vw5RjpNA0elW3lpN3aPmfA3RzsEn8=";
+    version = "0.17.2";
+    hash = "sha256-na9n/+shkiHIIUQ2ZitybQ6NNsSS9gWFNAFxij+JNVo=";
     meta.description = "Cram like framework for OCaml";
     propagatedBuildInputs = [
       ppx_here

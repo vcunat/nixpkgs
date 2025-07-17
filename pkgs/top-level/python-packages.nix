@@ -2302,6 +2302,8 @@ self: super: with self; {
 
   cdcs = callPackage ../development/python-modules/cdcs { };
 
+  cddlparser = callPackage ../development/python-modules/cddlparser { };
+
   celery = callPackage ../development/python-modules/celery { };
 
   celery-batches = callPackage ../development/python-modules/celery-batches { };
@@ -3055,8 +3057,6 @@ self: super: with self; {
   curlify = callPackage ../development/python-modules/curlify { };
 
   curtsies = callPackage ../development/python-modules/curtsies { };
-
-  curve25519-donna = callPackage ../development/python-modules/curve25519-donna { };
 
   curvefitgui = callPackage ../development/python-modules/curvefitgui { };
 
@@ -6845,6 +6845,8 @@ self: super: with self; {
 
   invoke = callPackage ../development/python-modules/invoke { };
 
+  inwx-domrobot = callPackage ../development/python-modules/inwx-domrobot { };
+
   iocapture = callPackage ../development/python-modules/iocapture { };
 
   iocextract = callPackage ../development/python-modules/iocextract { };
@@ -7400,6 +7402,8 @@ self: super: with self; {
   kaleido = callPackage ../development/python-modules/kaleido { };
 
   kalshi-python = callPackage ../development/python-modules/kalshi-python { };
+
+  kanalizer = callPackage ../development/python-modules/kanalizer { };
 
   kanidm = callPackage ../development/python-modules/kanidm { };
 
@@ -10262,6 +10266,8 @@ self: super: with self; {
 
   ohme = callPackage ../development/python-modules/ohme { };
 
+  oic = callPackage ../development/python-modules/oic { };
+
   okonomiyaki = callPackage ../development/python-modules/okonomiyaki { };
 
   okta = callPackage ../development/python-modules/okta { };
@@ -12694,7 +12700,7 @@ self: super: with self; {
 
   pylibjpeg-openjpeg = callPackage ../development/python-modules/pylibjpeg-openjpeg { };
 
-  pyliblo = callPackage ../development/python-modules/pyliblo { };
+  pyliblo3 = callPackage ../development/python-modules/pyliblo3 { };
 
   pylibmc = callPackage ../development/python-modules/pylibmc { };
 
@@ -13044,10 +13050,6 @@ self: super: with self; {
   pypblib = callPackage ../development/python-modules/pypblib { };
 
   pypca = callPackage ../development/python-modules/pypca { };
-
-  pypcap = callPackage ../development/python-modules/pypcap {
-    inherit (pkgs) libpcap; # Avoid confusion with python package of the same name
-  };
 
   pypck = callPackage ../development/python-modules/pypck { };
 
@@ -15409,6 +15411,8 @@ self: super: with self; {
 
   rubymarshal = callPackage ../development/python-modules/rubymarshal { };
 
+  rucio = callPackage ../development/python-modules/rucio { };
+
   ruff = callPackage ../development/python-modules/ruff { inherit (pkgs) ruff; };
 
   ruff-api = callPackage ../development/python-modules/ruff-api { };
@@ -16757,6 +16761,8 @@ self: super: with self; {
   stix2-validator = callPackage ../development/python-modules/stix2-validator { };
 
   stm32loader = callPackage ../development/python-modules/stm32loader { };
+
+  stomp-py = callPackage ../development/python-modules/stomp-py { };
 
   stone = callPackage ../development/python-modules/stone { };
 
@@ -18377,8 +18383,6 @@ self: super: with self; {
 
   ua-parser-rs = callPackage ../development/python-modules/ua-parser-rs { };
 
-  uamqp = callPackage ../development/python-modules/uamqp { };
-
   uarray = callPackage ../development/python-modules/uarray { };
 
   uart-devices = callPackage ../development/python-modules/uart-devices { };
@@ -18613,7 +18617,7 @@ self: super: with self; {
 
   uuid6 = callPackage ../development/python-modules/uuid6 { };
 
-  uv = callPackage ../development/python-modules/uv { };
+  uv = callPackage ../development/python-modules/uv { inherit (pkgs) uv; };
 
   uv-build = callPackage ../development/python-modules/uv-build { };
 
@@ -19394,7 +19398,7 @@ self: super: with self; {
 
   yubico-client = callPackage ../development/python-modules/yubico-client { };
 
-  z3-solver = (toPythonModule (pkgs.z3.override { python3 = python; })).python;
+  z3-solver = (toPythonModule (pkgs.z3.override { python3Packages = self; })).python;
 
   z3c-checkversions = callPackage ../development/python-modules/z3c-checkversions { };
 

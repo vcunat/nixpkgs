@@ -50,12 +50,39 @@
           '';
         };
 
-        suppressNvidiaDriverAssertion = lib.mkOption {
-          default = false;
-          type = lib.types.bool;
+        device-name-strategy = lib.mkOption {
+          default = "index";
+          type = lib.types.enum [
+            "index"
+            "uuid"
+            "type-index"
+          ];
           description = ''
-            Suppress the assertion for installing Nvidia driver.
-            Useful in WSL where drivers are mounted from Windows, not provided by NixOS.
+            Specify the strategy for generating device names,
+            passed to `nvidia-ctk cdi generate`. This will affect how
+            you reference the device using `nvidia.com/gpu=` in
+            the container runtime.
+          '';
+        };
+
+        discovery-mode = lib.mkOption {
+          default = "auto";
+          type = lib.types.enum [
+            "auto"
+            "csv"
+            "nvml"
+            "wsl"
+          ];
+          description = ''
+            The mode to use when discovering the available entities.
+          '';
+        };
+
+        csv-files = lib.mkOption {
+          default = [ ];
+          type = lib.types.listOf lib.types.path;
+          description = ''
+            The path to the list of CSV files to use when generating the CDI specification in CSV mode.
           '';
         };
 
@@ -74,21 +101,6 @@
           '';
         };
 
-        device-name-strategy = lib.mkOption {
-          default = "index";
-          type = lib.types.enum [
-            "index"
-            "uuid"
-            "type-index"
-          ];
-          description = ''
-            Specify the strategy for generating device names,
-            passed to `nvidia-ctk cdi generate`. This will affect how
-            you reference the device using `nvidia.com/gpu=` in
-            the container runtime.
-          '';
-        };
-
         mount-nvidia-docker-1-directories = lib.mkOption {
           default = true;
           type = lib.types.bool;
@@ -98,7 +110,24 @@
           '';
         };
 
+        suppressNvidiaDriverAssertion = lib.mkOption {
+          default = false;
+          type = lib.types.bool;
+          description = ''
+            Suppress the assertion for installing Nvidia driver.
+            Useful in WSL where drivers are mounted from Windows, not provided by NixOS.
+          '';
+        };
+
         package = lib.mkPackageOption pkgs "nvidia-container-toolkit" { };
+
+        extraArgs = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [ ];
+          description = ''
+            Extra arguments to be passed to nvidia-ctk.
+          '';
+        };
       };
 
     };
@@ -111,6 +140,12 @@
           || lib.elem "nvidia" config.services.xserver.videoDrivers
           || config.hardware.nvidia-container-toolkit.suppressNvidiaDriverAssertion;
         message = ''`nvidia-container-toolkit` requires nvidia drivers: set `hardware.nvidia.datacenter.enable`, add "nvidia" to `services.xserver.videoDrivers`, or set `hardware.nvidia-container-toolkit.suppressNvidiaDriverAssertion` if the driver is provided by another NixOS module (e.g. from NixOS-WSL)'';
+      }
+      {
+        assertion =
+          ((builtins.length config.hardware.nvidia-container-toolkit.csv-files) > 0)
+          -> config.hardware.nvidia-container-toolkit.discovery-mode == "csv";
+        message = ''When CSV files are provided, `config.hardware.nvidia-container-toolkit.discovery-mode` has to be set to `csv`.'';
       }
     ];
 
@@ -209,10 +244,15 @@
         ExecStart =
           let
             script = pkgs.callPackage ./cdi-generate.nix {
-              inherit (config.hardware.nvidia-container-toolkit) mounts;
+              inherit (config.hardware.nvidia-container-toolkit)
+                csv-files
+                device-name-strategy
+                discovery-mode
+                mounts
+                extraArgs
+                ;
               nvidia-container-toolkit = config.hardware.nvidia-container-toolkit.package;
               nvidia-driver = config.hardware.nvidia.package;
-              deviceNameStrategy = config.hardware.nvidia-container-toolkit.device-name-strategy;
             };
           in
           lib.getExe script;

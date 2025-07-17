@@ -21,7 +21,10 @@ To enable PostgreSQL, add the following to your {file}`configuration.nix`:
   services.postgresql.package = pkgs.postgresql_15;
 }
 ```
-Note that you are required to specify the desired version of PostgreSQL (e.g. `pkgs.postgresql_15`). Since upgrading your PostgreSQL version requires a database dump and reload (see below), NixOS cannot provide a default value for [](#opt-services.postgresql.package) such as the most recent release of PostgreSQL.
+
+The default PostgreSQL version is approximately the latest major version available on the NixOS release matching your [`system.stateVersion`](#opt-system.stateVersion).
+This is because PostgreSQL upgrades require a manual migration process (see below).
+Hence, upgrades must happen by setting [`services.postgresql.package`](#opt-services.postgresql.package) explicitly.
 
 <!--
 After running {command}`nixos-rebuild`, you can verify
@@ -297,6 +300,28 @@ Thus:
 - In November, before branch-off for the .11 release and after the update to the latest minor, the EOL-ed major will be removed from nixos-unstable.
 
 This leaves a small gap of a couple of weeks after the latest minor release and the end of our support window for the .05 release, in which there could be an emergency release to other major versions of PostgreSQL - but not the oldest major we have in that branch. In that case: If we can't trivially patch the issue, we will mark the package/version as insecure **immediately**.
+
+## `pg_config` {#module-services-postgres-pg_config}
+
+`pg_config` is not part of the `postgresql`-package itself.
+It is available under `postgresql_<major>.pg_config` and `libpq.pg_config`.
+Use the `pg_config` from the postgresql package you're using in your build.
+
+Also, `pg_config` is a shell-script that replicates the behavior of the upstream `pg_config` and ensures at build-time that the output doesn't change.
+
+This approach is done for the following reasons:
+
+* By using a shell script, cross compilation of extensions is made easier.
+
+* The separation allowed a massive reduction of the runtime closure's size.
+  Any attempts to move `pg_config` into `$dev` resulted in brittle and more complex solutions
+  (see commits [`0c47767`](https://github.com/NixOS/nixpkgs/commit/0c477676412564bd2d5dadc37cf245fe4259f4d9), [`435f51c`](https://github.com/NixOS/nixpkgs/commit/435f51c37faf74375134dfbd7c5a4560da2a9ea7)).
+
+* `pg_config` is only needed to build extensions or in some exceptions for building client libraries linking to `libpq.so`.
+  If such a build works without `pg_config`, this is strictly preferable over adding `pg_config` to the build environment.
+
+  With the current approach it's now explicit that this is needed.
+
 
 ## Options {#module-services-postgres-options}
 

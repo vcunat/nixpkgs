@@ -3,7 +3,8 @@
   lib,
   nodejs_22,
   pnpm_10,
-  electron_35,
+  electron_36,
+  gn_2233,
   python3,
   makeWrapper,
   callPackage,
@@ -19,12 +20,13 @@
 let
   nodejs = nodejs_22;
   pnpm = pnpm_10.override { inherit nodejs; };
-  electron = electron_35;
+  electron = electron_36;
+  gn = gn_2233;
 
   libsignal-node = callPackage ./libsignal-node.nix { inherit nodejs; };
   signal-sqlcipher = callPackage ./signal-sqlcipher.nix { inherit pnpm nodejs; };
 
-  webrtc = callPackage ./webrtc.nix { };
+  webrtc = callPackage ./webrtc.nix { inherit gn; };
   ringrtc = callPackage ./ringrtc.nix { inherit webrtc; };
 
   # Noto Color Emoji PNG files for emoji replacement; see below.
@@ -48,13 +50,13 @@ let
     '';
   });
 
-  version = "7.54.0";
+  version = "7.61.0";
 
   src = fetchFromGitHub {
     owner = "signalapp";
     repo = "Signal-Desktop";
     tag = "v${version}";
-    hash = "sha256-dv1Yi7gSd7kY3MSrsPjcaf2hAEq6Y+XoWtlBfvd86ac=";
+    hash = "sha256-foMzSKm2BROZ8ATCdYx/0sl+4tQfhgoPA4AWSHEKL0Y=";
   };
 
   sticker-creator = stdenv.mkDerivation (finalAttrs: {
@@ -64,7 +66,7 @@ let
 
     pnpmDeps = pnpm.fetchDeps {
       inherit (finalAttrs) pname src version;
-      hash = "sha256-TuPyRVNFIlR0A4YHMpQsQ6m+lm2fsp79FzQ1P5qqjIc=";
+      hash = "sha256-cT7Ixl/V/mesPHvJUsG63Y/wXwKjbjkjdjP3S7uEOa0=";
     };
 
     strictDeps = true;
@@ -116,15 +118,15 @@ stdenv.mkDerivation (finalAttrs: {
       ;
     hash =
       if withAppleEmojis then
-        "sha256-Kdg0+kLEDFobWEEhJgKuaou/pYwn1dTugye7OcMYfEQ="
+        "sha256-ry7s9fbKx4e1LR8DlI2LIJY9GQrxmU7JQt+3apJGw/M="
       else
-        "sha256-cit/Hn7L6qmfIJCDF2wlx/4aKygRYy+zvBQGX6Mg+og=";
+        "sha256-AkrfugpNvk4KgesRLQbso8p5b96Dg174R9/xuP4JtJg=";
   };
 
   env = {
     ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
     SIGNAL_ENV = "production";
-    SOURCE_DATE_EPOCH = 1747170390;
+    SOURCE_DATE_EPOCH = 1752109090;
   };
 
   preBuild = ''

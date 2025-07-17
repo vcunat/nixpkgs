@@ -180,6 +180,7 @@
   ./programs/cdemu.nix
   ./programs/cfs-zen-tweaks.nix
   ./programs/chromium.nix
+  ./programs/chrysalis.nix
   ./programs/clash-verge.nix
   ./programs/cnping.nix
   ./programs/command-not-found/command-not-found.nix
@@ -261,6 +262,7 @@
   ./programs/nano.nix
   ./programs/nautilus-open-any-terminal.nix
   ./programs/nbd.nix
+  ./programs/nekoray.nix
   ./programs/neovim.nix
   ./programs/nethoscope.nix
   ./programs/nexttrace.nix
@@ -352,7 +354,6 @@
   ./programs/xonsh.nix
   ./programs/xss-lock.nix
   ./programs/xwayland.nix
-  ./programs/yabar.nix
   ./programs/yazi.nix
   ./programs/ydotool.nix
   ./programs/yubikey-touch-detector.nix
@@ -735,6 +736,7 @@
   ./services/mail/opendkim.nix
   ./services/mail/opensmtpd.nix
   ./services/mail/pfix-srsd.nix
+  ./services/mail/postfix-tlspol.nix
   ./services/mail/postfix.nix
   ./services/mail/postfixadmin.nix
   ./services/mail/postgrey.nix
@@ -749,12 +751,14 @@
   ./services/mail/spamassassin.nix
   ./services/mail/stalwart-mail.nix
   ./services/mail/sympa.nix
+  ./services/mail/tlsrpt.nix
   ./services/mail/zeyple.nix
   ./services/matrix/appservice-discord.nix
   ./services/matrix/appservice-irc.nix
   ./services/matrix/conduit.nix
   ./services/matrix/continuwuity.nix
   ./services/matrix/dendrite.nix
+  ./services/matrix/draupnir.nix
   ./services/matrix/hebbot.nix
   ./services/matrix/hookshot.nix
   ./services/matrix/lk-jwt-service.nix

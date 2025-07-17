@@ -177,6 +177,23 @@ with pkgs;
 
   __flattenIncludeHackHook = callPackage ../build-support/setup-hooks/flatten-include-hack { };
 
+  arrayUtilities =
+    let
+      arrayUtilitiesPackages = makeScopeWithSplicing' {
+        otherSplices = generateSplicesForMkScope "arrayUtilities";
+        f =
+          finalArrayUtilities:
+          {
+            callPackages = lib.callPackagesWith (pkgs // finalArrayUtilities);
+          }
+          // lib.packagesFromDirectoryRecursive {
+            inherit (finalArrayUtilities) callPackage;
+            directory = ../build-support/setup-hooks/arrayUtilities;
+          };
+      };
+    in
+    recurseIntoAttrs arrayUtilitiesPackages;
+
   addBinToPathHook = callPackage (
     { makeSetupHook }:
     makeSetupHook {
@@ -1058,8 +1075,6 @@ with pkgs;
 
   auditwheel = with python3Packages; toPythonApplication auditwheel;
 
-  bikeshed = python3Packages.callPackage ../applications/misc/bikeshed { };
-
   davinci-resolve-studio = callPackage ../by-name/da/davinci-resolve/package.nix {
     studioVariant = true;
   };
@@ -1213,10 +1228,6 @@ with pkgs;
 
   yafetch = callPackage ../tools/misc/yafetch {
     stdenv = clangStdenv;
-  };
-
-  breitbandmessung = callPackage ../applications/networking/breitbandmessung {
-    electron = electron_34;
   };
 
   ### APPLICATIONS/VERSION-MANAGEMENT
@@ -1880,10 +1891,6 @@ with pkgs;
   apprise = with python3Packages; toPythonApplication apprise;
 
   asmrepl = callPackage ../development/interpreters/asmrepl { };
-
-  atlas = callPackage ../by-name/at/atlas/package.nix {
-    buildGoModule = buildGo123Module;
-  };
 
   avahi = callPackage ../development/libraries/avahi { };
 
@@ -2629,6 +2636,8 @@ with pkgs;
 
     cangjie = callPackage ../tools/inputmethods/ibus-engines/ibus-cangjie { };
 
+    chewing = callPackage ../tools/inputmethods/ibus-engines/ibus-chewing { };
+
     hangul = callPackage ../tools/inputmethods/ibus-engines/ibus-hangul { };
 
     kkc = callPackage ../tools/inputmethods/ibus-engines/ibus-kkc { };
@@ -2722,6 +2731,9 @@ with pkgs;
   create-cycle-app = nodePackages.create-cycle-app;
 
   cron = isc-cron;
+
+  # Top-level fix-point used in `cudaPackages`' internals
+  _cuda = import ../development/cuda-modules/_cuda;
 
   cudaPackages_11_0 = callPackage ./cuda-packages.nix { cudaMajorMinorVersion = "11.0"; };
   cudaPackages_11_1 = callPackage ./cuda-packages.nix { cudaMajorMinorVersion = "11.1"; };
@@ -3027,16 +3039,18 @@ with pkgs;
 
   gandi-cli = python3Packages.callPackage ../tools/networking/gandi-cli { };
 
-  gaphor = python3Packages.callPackage ../tools/misc/gaphor { };
-
   inherit (callPackages ../tools/filesystems/garage { })
     garage
     garage_0_8
     garage_0_9
     garage_0_8_7
     garage_0_9_4
-    garage_1_1_0
+    garage_1_2_0
     garage_1_x
+    garage_1
+
+    garage_2_0_0
+    garage_2
     ;
 
   gauge-unwrapped = callPackage ../development/tools/gauge { };
@@ -3645,7 +3659,7 @@ with pkgs;
 
   node2nix = nodePackages.node2nix;
 
-  kcollectd = libsForQt5.callPackage ../tools/misc/kcollectd { };
+  kcollectd = kdePackages.callPackage ../tools/misc/kcollectd { };
 
   ktailctl = kdePackages.callPackage ../applications/networking/ktailctl { };
 
@@ -4378,6 +4392,12 @@ with pkgs;
     pythonPackages = python3Packages;
   };
 
+  rucio = callPackage ../by-name/ru/rucio/package.nix {
+    # Pinned to python 3.12 while python313Packages.future does not evaluate and
+    # until https://github.com/CZ-NIC/pyoidc/issues/649 is resolved
+    python3Packages = python312Packages;
+  };
+
   rubocop = rubyPackages.rubocop;
 
   ruby-lsp = rubyPackages.ruby-lsp;
@@ -4804,13 +4824,6 @@ with pkgs;
 
   wyrd = callPackage ../tools/misc/wyrd {
     ocamlPackages = ocaml-ng.ocamlPackages_4_14;
-  };
-
-  xbursttools = callPackage ../tools/misc/xburst-tools {
-    # It needs a cross compiler for mipsel to build the firmware it will
-    # load into the Ben Nanonote
-    gccCross = pkgsCross.ben-nanonote.buildPackages.gccWithoutTargetLibc;
-    autoconf = buildPackages.autoconf269;
   };
 
   clipbuzz = callPackage ../tools/misc/clipbuzz {
@@ -6936,6 +6949,7 @@ with pkgs;
     electron_34-bin
     electron_35-bin
     electron_36-bin
+    electron_37-bin
     ;
 
   inherit (callPackages ../development/tools/electron/chromedriver { })
@@ -6943,14 +6957,11 @@ with pkgs;
     electron-chromedriver_34
     electron-chromedriver_35
     electron-chromedriver_36
+    electron-chromedriver_37
     ;
 
   electron_33 = electron_33-bin;
-  electron_34 =
-    if lib.meta.availableOn stdenv.hostPlatform electron-source.electron_34 then
-      electron-source.electron_34
-    else
-      electron_34-bin;
+  electron_34 = electron_34-bin;
   electron_35 =
     if lib.meta.availableOn stdenv.hostPlatform electron-source.electron_35 then
       electron-source.electron_35
@@ -6961,6 +6972,11 @@ with pkgs;
       electron-source.electron_36
     else
       electron_36-bin;
+  electron_37 =
+    if lib.meta.availableOn stdenv.hostPlatform electron-source.electron_37 then
+      electron-source.electron_37
+    else
+      electron_37-bin;
   electron = electron_35;
   electron-bin = electron_35-bin;
   electron-chromedriver = electron-chromedriver_35;
@@ -7382,6 +7398,8 @@ with pkgs;
   flex = callPackage ../development/tools/parsing/flex { };
 
   m4 = gnum4;
+
+  gn_2233 = callPackage ../by-name/gn/gn/2233.nix { };
 
   gnumake = callPackage ../development/tools/build-managers/gnumake { };
   gradle-packages = import ../development/tools/build-managers/gradle {
@@ -7943,6 +7961,7 @@ with pkgs;
     cp: with cp; [
       # FIXME unbreak certbot-dns-cloudflare
       certbot-dns-google
+      certbot-dns-inwx
       certbot-dns-ovh
       certbot-dns-rfc2136
       certbot-dns-route53
@@ -8906,7 +8925,6 @@ with pkgs;
       stdenv = gccStdenv; # Required for darwin
     })
     libprom
-    libpromhttp
     ;
 
   libpulsar = callPackage ../development/libraries/libpulsar {
@@ -10387,7 +10405,6 @@ with pkgs;
   inherit (callPackages ../servers/firebird { })
     firebird_4
     firebird_3
-    firebird_2_5
     firebird
     ;
 
@@ -10451,15 +10468,10 @@ with pkgs;
 
   jetty = jetty_12;
 
-  kanidm_1_4 = callPackage ../by-name/ka/kanidm/1_4.nix { kanidm = kanidm_1_4; };
   kanidm_1_5 = callPackage ../by-name/ka/kanidm/1_5.nix { kanidm = kanidm_1_5; };
   kanidm_1_6 = callPackage ../by-name/ka/kanidm/1_6.nix { kanidm = kanidm_1_6; };
 
   kanidmWithSecretProvisioning = kanidmWithSecretProvisioning_1_6;
-
-  kanidmWithSecretProvisioning_1_4 = callPackage ../by-name/ka/kanidm/1_4.nix {
-    enableSecretProvisioning = true;
-  };
 
   kanidmWithSecretProvisioning_1_5 = callPackage ../by-name/ka/kanidm/1_5.nix {
     enableSecretProvisioning = true;
@@ -10703,10 +10715,6 @@ with pkgs;
 
   mssql_jdbc = callPackage ../servers/sql/mssql/jdbc { };
   jtds_jdbc = callPackage ../servers/sql/mssql/jdbc/jtds.nix { };
-
-  miniflux = callPackage ../by-name/mi/miniflux/package.nix {
-    buildGoModule = buildGo123Module;
-  };
 
   inherit (callPackage ../servers/mir { })
     mir
@@ -11575,6 +11583,7 @@ with pkgs;
     ubootSopine
     ubootTuringRK1
     ubootUtilite
+    ubootVisionFive2
     ubootWandboard
     ;
 
@@ -12483,6 +12492,18 @@ with pkgs;
           buildMozillaMach
           ;
       };
+  firefox-esr-140-unwrapped =
+    import ../applications/networking/browsers/firefox/packages/firefox-esr-140.nix
+      {
+        inherit
+          stdenv
+          lib
+          callPackage
+          fetchurl
+          nixosTests
+          buildMozillaMach
+          ;
+      };
   firefox-esr-unwrapped = firefox-esr-128-unwrapped;
 
   firefox = wrapFirefox firefox-unwrapped { };
@@ -12496,37 +12517,20 @@ with pkgs;
     wmClass = "firefox-esr";
     icon = "firefox-esr";
   };
+  firefox-esr-140 = wrapFirefox firefox-esr-140-unwrapped {
+    nameSuffix = "-esr";
+    wmClass = "firefox-esr";
+    icon = "firefox-esr";
+  };
   firefox-esr = firefox-esr-128;
 
   firefox-bin-unwrapped = callPackage ../applications/networking/browsers/firefox-bin {
     inherit (firefox-unwrapped.passthru) applicationName;
-    channel = "release";
     generated = import ../applications/networking/browsers/firefox-bin/release_sources.nix;
   };
 
   firefox-bin = wrapFirefox firefox-bin-unwrapped {
     pname = "firefox-bin";
-  };
-
-  firefox-beta-bin-unwrapped = firefox-bin-unwrapped.override {
-    inherit (firefox-beta-unwrapped.passthru) applicationName;
-    channel = "beta";
-    generated = import ../applications/networking/browsers/firefox-bin/beta_sources.nix;
-  };
-
-  firefox-beta-bin = res.wrapFirefox firefox-beta-bin-unwrapped {
-    pname = "firefox-beta-bin";
-  };
-
-  firefox-devedition-bin-unwrapped = callPackage ../applications/networking/browsers/firefox-bin {
-    inherit (firefox-devedition-unwrapped.passthru) applicationName;
-    channel = "developer-edition";
-    generated = import ../applications/networking/browsers/firefox-bin/developer-edition_sources.nix;
-  };
-
-  firefox-devedition-bin = res.wrapFirefox firefox-devedition-bin-unwrapped {
-    pname = "firefox-devedition-bin";
-    wmClass = "firefox-aurora";
   };
 
   librewolf-unwrapped = import ../applications/networking/browsers/librewolf {
@@ -12809,6 +12813,7 @@ with pkgs;
   inherit (callPackages ../development/libraries/wlroots { })
     wlroots_0_17
     wlroots_0_18
+    wlroots_0_19
     ;
 
   sway-contrib = recurseIntoAttrs (callPackages ../applications/misc/sway-contrib { });
@@ -13823,8 +13828,6 @@ with pkgs;
 
   qtbitcointrader = libsForQt5.callPackage ../applications/misc/qtbitcointrader { };
 
-  qtchan = libsForQt5.callPackage ../applications/networking/browsers/qtchan { };
-
   qtemu = libsForQt5.callPackage ../applications/virtualization/qtemu { };
 
   qtpass = libsForQt5.callPackage ../applications/misc/qtpass { };
@@ -13945,10 +13948,6 @@ with pkgs;
   rofi-pass = callPackage ../tools/security/pass/rofi-pass.nix { };
   rofi-pass-wayland = callPackage ../tools/security/pass/rofi-pass.nix {
     backend = "wayland";
-  };
-
-  rstudio = callPackage ../applications/editors/rstudio {
-    jdk = jdk8;
   };
 
   rstudio-server = rstudio.override { server = true; };
@@ -14403,7 +14402,6 @@ with pkgs;
 
   virtualbox = libsForQt5.callPackage ../applications/virtualization/virtualbox {
     stdenv = stdenv_32bit;
-    inherit (gnome2) libIDL;
 
     # VirtualBox uses wsimport, which was removed after JDK 8.
     jdk = jdk8;
@@ -14479,6 +14477,12 @@ with pkgs;
   vscodium-fhs = vscodium.fhs;
   vscodium-fhsWithPackages = vscodium.fhsWithPackages;
 
+  code-cursor = callPackage ../by-name/co/code-cursor/package.nix {
+    vscode-generic = ../applications/editors/vscode/generic.nix;
+  };
+  code-cursor-fhs = code-cursor.fhs;
+  code-cursor-fhsWithPackages = code-cursor.fhsWithPackages;
+
   windsurf = callPackage ../by-name/wi/windsurf/package.nix {
     vscode-generic = ../applications/editors/vscode/generic.nix;
   };
@@ -14535,7 +14539,7 @@ with pkgs;
 
   webcord = callPackage ../by-name/we/webcord/package.nix { electron = electron_36; };
 
-  webcord-vencord = callPackage ../by-name/we/webcord-vencord/package.nix { electron = electron_34; };
+  webcord-vencord = callPackage ../by-name/we/webcord-vencord/package.nix { electron = electron_36; };
 
   webmacs = libsForQt5.callPackage ../applications/networking/browsers/webmacs {
     stdenv = if stdenv.cc.isClang then gccStdenv else stdenv;
@@ -14571,7 +14575,7 @@ with pkgs;
   wgnord = callPackage ../applications/networking/wgnord/default.nix { };
 
   whalebird = callPackage ../applications/misc/whalebird {
-    electron = electron_34;
+    electron = electron_36;
   };
 
   inherit (windowmaker) dockapps;
@@ -14672,10 +14676,6 @@ with pkgs;
   libxpdf = callPackage ../applications/misc/xpdf/libxpdf.nix { };
 
   xygrib = libsForQt5.callPackage ../applications/misc/xygrib { };
-
-  yabar = callPackage ../applications/window-managers/yabar { };
-
-  yabar-unstable = callPackage ../applications/window-managers/yabar/unstable.nix { };
 
   ydiff = with python3.pkgs; toPythonApplication ydiff;
 
@@ -15651,12 +15651,6 @@ with pkgs;
 
   samtools = callPackage ../applications/science/biology/samtools { };
 
-  inherit (callPackages ../applications/science/biology/sumatools { })
-    sumalibs
-    sumaclust
-    sumatra
-    ;
-
   trimmomatic = callPackage ../applications/science/biology/trimmomatic {
     jdk = pkgs.jdk21_headless;
     # Reduce closure size
@@ -16343,10 +16337,6 @@ with pkgs;
   lilypond-with-fonts = callPackage ../misc/lilypond/with-fonts.nix { };
 
   openlilylib-fonts = callPackage ../misc/lilypond/fonts.nix { };
-
-  mailcore2 = callPackage ../development/libraries/mailcore2 {
-    icu = icu71;
-  };
 
   meilisearch_1_11 = callPackage ../by-name/me/meilisearch/package.nix { version = "1.11.3"; };
 

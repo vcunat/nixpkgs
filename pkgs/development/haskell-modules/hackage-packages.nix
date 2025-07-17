@@ -52650,9 +52650,7 @@ self: {
       ];
       description = "Convert adblock config files to privoxy format";
       license = lib.licenses.gpl3Only;
-      hydraPlatforms = lib.platforms.none;
       mainProgram = "adblock2privoxy";
-      broken = true;
     }
   ) { };
 
@@ -430986,9 +430984,7 @@ self: {
       ];
       description = "Conduit implementing the official LZ4 frame streaming format";
       license = lib.licenses.mit;
-      hydraPlatforms = lib.platforms.none;
       mainProgram = "haskell-lz4c";
-      broken = true;
     }
   ) { };
 
