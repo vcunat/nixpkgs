@@ -25,7 +25,6 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-aHmLcWiDy5GMbcKi285tfBggNmGkpVAoZMm4dt8LKak=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-VLBou/XNYTd8vJNT+ntShLCRy9pzjCwJlbDbfRX2ag8=";
 
   nativeBuildInputs = [
@@ -35,19 +34,18 @@ rustPlatform.buildRustPackage rec {
     python3
   ];
 
-  buildInputs =
-    [
-      gpgme
-      libgpg-error
-    ]
-    ++ lib.optionals x11Support [
-      libxcb
-      libxkbcommon
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isDarwin [
-      libiconv
-      libresolv
-    ];
+  buildInputs = [
+    gpgme
+    libgpg-error
+  ]
+  ++ lib.optionals x11Support [
+    libxcb
+    libxkbcommon
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    libiconv
+    libresolv
+  ];
 
   meta = with lib; {
     description = "Terminal user interface for GnuPG";

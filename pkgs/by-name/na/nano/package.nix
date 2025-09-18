@@ -31,11 +31,11 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "nano";
-  version = "8.4";
+  version = "8.6";
 
   src = fetchurl {
     url = "mirror://gnu/nano/${pname}-${version}.tar.xz";
-    hash = "sha256-WtKSIrvVViTYfqZ3kosxBqdDEU1sb5tB82yXviqOYo0=";
+    hash = "sha256-96v78O7V9XOrUb13pFjzLYL5hZxV6WifgZ2W/hQ3phk=";
   };
 
   nativeBuildInputs = [ texinfo ] ++ lib.optional enableNls gettext;
@@ -46,15 +46,14 @@ stdenv.mkDerivation rec {
     "info"
   ];
 
-  configureFlags =
-    [
-      "--sysconfdir=/etc"
-      (lib.enableFeature enableNls "nls")
-      (lib.enableFeature enableTiny "tiny")
-    ]
-    ++ lib.optionals (!stdenv.buildPlatform.canExecute stdenv.hostPlatform) [
-      "gl_cv_func_strcasecmp_works=yes"
-    ];
+  configureFlags = [
+    "--sysconfdir=/etc"
+    (lib.enableFeature enableNls "nls")
+    (lib.enableFeature enableTiny "tiny")
+  ]
+  ++ lib.optionals (!stdenv.buildPlatform.canExecute stdenv.hostPlatform) [
+    "gl_cv_func_strcasecmp_works=yes"
+  ];
 
   postInstall =
     if enableTiny then
@@ -63,6 +62,10 @@ stdenv.mkDerivation rec {
       ''
         cp ${nixSyntaxHighlight}/nix.nanorc $out/share/nano/
       '';
+
+  # https://hydra.nixos.org/build/300187289/nixlog/1
+  # openat-die.c:57:10: error: format string is not a string literal (potentially insecure) [-Werror,-Wformat-security]
+  hardeningDisable = [ "format" ];
 
   enableParallelBuilding = true;
   strictDeps = true;

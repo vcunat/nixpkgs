@@ -18,8 +18,8 @@ let
 in
 buildNodejs {
   inherit enableNpm;
-  version = "20.19.3";
-  sha256 = "99be7b9d268d48b93be568a23240398ceacb0782dc7055b9972305c000b0e292";
+  version = "20.19.5";
+  sha256 = "230c899f4e2489c4b8d2232edd6cc02f384fb2397c2a246a22e415837ee5da51";
   patches = [
     ./configure-emulator.patch
     ./configure-armv6-vfpv2.patch
@@ -27,5 +27,6 @@ buildNodejs {
     ./bypass-darwin-xcrun-node16.patch
     ./node-npm-build-npm-package-logic.patch
     ./use-correct-env-in-tests.patch
-  ] ++ gypPatches;
+  ]
+  ++ gypPatches;
 }

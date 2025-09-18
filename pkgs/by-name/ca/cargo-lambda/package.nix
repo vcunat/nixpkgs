@@ -23,7 +23,6 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-iYfm7/XbLThtEo+zSW8sn7T6XEhzyiVKy6/cisshc+Y=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-mCD3Szbl5BXknTWJhm2xlcIV0aKczsEi8yRDA4erTYc=";
 
   nativeCheckInputs = [ cacert ];
@@ -33,11 +32,12 @@ rustPlatform.buildRustPackage rec {
     pkg-config
   ];
 
-  buildInputs =
-    [ openssl ]
-    ++ lib.optionals stdenv.hostPlatform.isDarwin [
-      curl
-    ];
+  buildInputs = [
+    openssl
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    curl
+  ];
 
   # Remove files that don't make builds reproducible:
   # - Remove build.rs file that adds the build date to the version.

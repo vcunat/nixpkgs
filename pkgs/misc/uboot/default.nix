@@ -73,7 +73,8 @@ let
 
         patches = [
           ./0001-configs-rpi-allow-for-bigger-kernels.patch
-        ] ++ extraPatches;
+        ]
+        ++ extraPatches;
 
         postPatch = ''
           ${lib.concatMapStrings (script: ''
@@ -98,7 +99,8 @@ let
           swig
           which # for scripts/dtc-version.sh
           perl # for oid build (secureboot)
-        ] ++ lib.optionals (!crossTools) toolsDeps;
+        ]
+        ++ lib.optionals (!crossTools) toolsDeps;
         depsBuildBuild = [ buildPackages.stdenv.cc ];
         buildInputs = lib.optionals crossTools toolsDeps;
 
@@ -109,7 +111,8 @@ let
         makeFlags = [
           "DTC=${lib.getExe buildPackages.dtc}"
           "CROSS_COMPILE=${stdenv.cc.targetPrefix}"
-        ] ++ extraMakeFlags;
+        ]
+        ++ extraMakeFlags;
 
         passAsFile = [ "extraConfig" ];
 
@@ -301,10 +304,12 @@ in
         meta.license = lib.licenses.unfreeRedistributableFirmware;
       };
     in
-    assert stdenv.buildPlatform.system == "x86_64-linux"; # aml_encrypt_gxl is a x86_64 binary
     buildUBoot {
       defconfig = "libretech-cc_defconfig";
-      extraMeta.platforms = [ "aarch64-linux" ];
+      extraMeta = {
+        broken = stdenv.buildPlatform.system != "x86_64-linux"; # aml_encrypt_gxl is a x86_64 binary
+        platforms = [ "aarch64-linux" ];
+      };
       filesToInstall = [ "u-boot.bin" ];
       postBuild = ''
         # Copy binary files & tools from LibreELEC/amlogic-boot-fip, and u-boot build to working dir
@@ -632,6 +637,18 @@ in
       "u-boot.itb"
       "u-boot-rockchip.bin"
       "u-boot-rockchip-spi.bin"
+    ];
+  };
+
+  ubootRadxaZero3W = buildUBoot {
+    defconfig = "radxa-zero-3-rk3566_defconfig";
+    extraMeta.platforms = [ "aarch64-linux" ];
+    BL31 = "${armTrustedFirmwareRK3568}/bl31.elf";
+    ROCKCHIP_TPL = rkbin.TPL_RK3566;
+    filesToInstall = [
+      "idbloader.img"
+      "u-boot.itb"
+      "u-boot-rockchip.bin"
     ];
   };
 

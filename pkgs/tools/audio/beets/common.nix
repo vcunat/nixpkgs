@@ -82,7 +82,8 @@ python3Packages.buildPythonApplication {
   pyproject = true;
 
   patches = [
-  ] ++ extraPatches;
+  ]
+  ++ extraPatches;
 
   build-system = [
     python3Packages.poetry-core
@@ -109,16 +110,16 @@ python3Packages.buildPythonApplication {
     gobject-introspection
     sphinxHook
     python3Packages.pydata-sphinx-theme
-  ] ++ extraNativeBuildInputs;
+  ]
+  ++ extraNativeBuildInputs;
 
-  buildInputs =
-    [
-    ]
-    ++ (with gst_all_1; [
-      gst-plugins-base
-      gst-plugins-good
-      gst-plugins-ugly
-    ]);
+  buildInputs = [
+  ]
+  ++ (with gst_all_1; [
+    gst-plugins-base
+    gst-plugins-good
+    gst-plugins-ugly
+  ]);
 
   outputs = [
     "out"
@@ -172,10 +173,8 @@ python3Packages.buildPythonApplication {
       "test/plugins/test_player.py"
     ];
   disabledTests = disabledTests ++ [
-    # beets.ui.UserError: unknown command 'autobpm'
-    "test/plugins/test_autobpm.py::TestAutoBPMPlugin::test_import"
-    # AssertionError: assert 0 == 117
-    "test/plugins/test_autobpm.py::TestAutoBPMPlugin::test_command"
+    # https://github.com/beetbox/beets/issues/5880
+    "test_reject_different_art"
   ];
 
   # Perform extra "sanity checks", before running pytest tests.

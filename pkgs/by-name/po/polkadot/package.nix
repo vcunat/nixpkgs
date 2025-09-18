@@ -44,7 +44,6 @@ rustPlatform.buildRustPackage rec {
     rm .git_commit
   '';
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-U3roe7rQL1BaHr3rKV1Dl7Lhjic3pZlxo2DpD9C2ong=";
 
   buildType = "production";
@@ -60,7 +59,8 @@ rustPlatform.buildRustPackage rec {
   # NOTE: jemalloc is used by default on Linux with unprefixed enabled
   buildInputs = [
     openssl
-  ] ++ lib.optionals stdenv.hostPlatform.isLinux [ rust-jemalloc-sys-unprefixed ];
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ rust-jemalloc-sys-unprefixed ];
 
   checkInputs = [
     cacert

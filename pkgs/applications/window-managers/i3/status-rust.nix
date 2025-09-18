@@ -29,32 +29,30 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-xJm4MsEU0OVX401WvKllg3zUwgCvjLxlAQzXE/oD1J0=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-EFFmH9aG7DvSA5rsAuszc1B8kcLdruSk3Hhp4V9t9Gk=";
 
   nativeBuildInputs = [
     pkg-config
     makeWrapper
-  ] ++ (lib.optionals withPipewire [ rustPlatform.bindgenHook ]);
+  ]
+  ++ (lib.optionals withPipewire [ rustPlatform.bindgenHook ]);
 
-  buildInputs =
-    [
-      dbus
-      libpulseaudio
-      openssl
-      lm_sensors
-    ]
-    ++ (lib.optionals withPipewire [ pipewire ])
-    ++ (lib.optionals withNotmuch [ notmuch ]);
+  buildInputs = [
+    dbus
+    libpulseaudio
+    openssl
+    lm_sensors
+  ]
+  ++ (lib.optionals withPipewire [ pipewire ])
+  ++ (lib.optionals withNotmuch [ notmuch ]);
 
-  buildFeatures =
-    [
-      "maildir"
-      "pulseaudio"
-    ]
-    ++ (lib.optionals withICUCalendar [ "icu_calendar" ])
-    ++ (lib.optionals withPipewire [ "pipewire" ])
-    ++ (lib.optionals withNotmuch [ "notmuch" ]);
+  buildFeatures = [
+    "maildir"
+    "pulseaudio"
+  ]
+  ++ (lib.optionals withICUCalendar [ "icu_calendar" ])
+  ++ (lib.optionals withPipewire [ "pipewire" ])
+  ++ (lib.optionals withNotmuch [ "notmuch" ]);
 
   prePatch = ''
     substituteInPlace src/util.rs \

@@ -37,15 +37,13 @@ rustPlatform.buildRustPackage {
 
   cargoBuildFlags = lib.concatMapStrings (c: "-p ${c} ") crates;
   cargoHash = "sha256-AbpWnYfBMrR6oOfy2LkQvIPYsClCWE89bJav+iHTtLM=";
-  useFetchCargoVendor = true;
 
-  env =
-    {
-      ATTIC_DISTRIBUTOR = "nixpkgs";
-    }
-    // lib.optionalAttrs needNixInclude {
-      NIX_INCLUDE_PATH = "${lib.getDev nixVersions.nix_2_24}/include";
-    };
+  env = {
+    ATTIC_DISTRIBUTOR = "nixpkgs";
+  }
+  // lib.optionalAttrs needNixInclude {
+    NIX_INCLUDE_PATH = "${lib.getDev nixVersions.nix_2_24}/include";
+  };
 
   # Attic interacts with Nix directly and its tests require trusted-user access
   # to nix-daemon to import NARs, which is not possible in the build sandbox.

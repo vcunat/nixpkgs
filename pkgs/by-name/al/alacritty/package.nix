@@ -25,22 +25,21 @@
   nix-update-script,
 }:
 let
-  rpathLibs =
-    [
-      expat
-      fontconfig
-      freetype
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isLinux [
-      libGL
-      xorg.libX11
-      xorg.libXcursor
-      xorg.libXi
-      xorg.libXxf86vm
-      xorg.libxcb
-      libxkbcommon
-      wayland
-    ];
+  rpathLibs = [
+    expat
+    fontconfig
+    freetype
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
+    libGL
+    xorg.libX11
+    xorg.libXcursor
+    xorg.libXi
+    xorg.libXxf86vm
+    xorg.libxcb
+    libxkbcommon
+    wayland
+  ];
 in
 rustPlatform.buildRustPackage rec {
   pname = "alacritty";
@@ -53,7 +52,6 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-/yERMNfCFLPb1S17Y9OacVH8UobDIIZDhM2qPzf5Vds=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-uXwefUV1NAKqwwPIWj4Slkx0c5b+RfLR3caTb42fc4M=";
 
   nativeBuildInputs = [

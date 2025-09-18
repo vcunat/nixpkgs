@@ -4,6 +4,7 @@
   fetchFromGitHub,
   writeText,
   nixosTests,
+  fetchpatch,
   dokuwiki,
 }:
 
@@ -17,6 +18,17 @@ stdenv.mkDerivation rec {
     rev = "release-${version}";
     sha256 = "sha256-jrxsVBStvRxHCAOGVUkqtzE75wRBiVR+KxSCNuI2vnk=";
   };
+
+  patches = [
+    (fetchpatch {
+      # Backported from dokuwiki 2025-05-14b release
+      # Since the exact same (vulnerable) code is also present in 2024-02-06b, but there is no
+      # updated 2024-02-06* available.
+      name = "backport-xss-fix-in-search.patch";
+      url = "https://github.com/dokuwiki-translate/dokuwiki/commit/03fdedf74fd0e882fc06c06cd90a2bb608fe374b.patch";
+      hash = "sha256-h6qscrZ0VNguelWyrAxQVze9H2Y5oXH2tCEpEdRqr2I=";
+    })
+  ];
 
   preload = writeText "preload.php" ''
     <?php
@@ -80,19 +92,17 @@ stdenv.mkDerivation rec {
       basePackage.overrideAttrs (prev: {
         pname = if builtins.isFunction pname then pname prev else pname;
 
-        postInstall =
-          prev.postInstall or ""
-          + ''
-            ${lib.concatMapStringsSep "\n" (
-              tpl: "cp -r ${toString tpl} $out/share/dokuwiki/lib/tpl/${tpl.name}"
-            ) templates}
-            ${lib.concatMapStringsSep "\n" (
-              plugin: "cp -r ${toString plugin} $out/share/dokuwiki/lib/plugins/${plugin.name}"
-            ) plugins}
-            ${isNotEmpty localConfig "ln -sf ${localConfig} $out/share/dokuwiki/conf/local.php"}
-            ${isNotEmpty pluginsConfig "ln -sf ${pluginsConfig} $out/share/dokuwiki/conf/plugins.local.php"}
-            ${isNotEmpty aclConfig "ln -sf ${aclConfig} $out/share/dokuwiki/acl.auth.php"}
-          '';
+        postInstall = prev.postInstall or "" + ''
+          ${lib.concatMapStringsSep "\n" (
+            tpl: "cp -r ${toString tpl} $out/share/dokuwiki/lib/tpl/${tpl.name}"
+          ) templates}
+          ${lib.concatMapStringsSep "\n" (
+            plugin: "cp -r ${toString plugin} $out/share/dokuwiki/lib/plugins/${plugin.name}"
+          ) plugins}
+          ${isNotEmpty localConfig "ln -sf ${localConfig} $out/share/dokuwiki/conf/local.php"}
+          ${isNotEmpty pluginsConfig "ln -sf ${pluginsConfig} $out/share/dokuwiki/conf/plugins.local.php"}
+          ${isNotEmpty aclConfig "ln -sf ${aclConfig} $out/share/dokuwiki/acl.auth.php"}
+        '';
       });
     tests = {
       inherit (nixosTests) dokuwiki;

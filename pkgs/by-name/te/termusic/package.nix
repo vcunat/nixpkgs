@@ -25,7 +25,6 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-Yd23Jk2BFuLtxgF8vgat0wTGq6ahHHBd/HjGI9BY9z4=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-1WomL0O5QS2NHu4k6TuA2jLtDKyxlY0iVCgH9pb6CHI=";
 
   useNextest = true;
@@ -36,18 +35,17 @@ rustPlatform.buildRustPackage rec {
     rustPlatform.bindgenHook
   ];
 
-  buildInputs =
-    [
-      dbus
-      glib
-      gst_all_1.gstreamer
-      mpv-unwrapped
-      openssl
-      sqlite
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isLinux [
-      alsa-lib
-    ];
+  buildInputs = [
+    dbus
+    glib
+    gst_all_1.gstreamer
+    mpv-unwrapped
+    openssl
+    sqlite
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
+    alsa-lib
+  ];
 
   meta = {
     description = "Terminal Music Player TUI written in Rust";

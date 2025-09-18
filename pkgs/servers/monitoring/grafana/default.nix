@@ -26,21 +26,25 @@ let
   # stable is on an older patch-release of Go and then the build would fail
   # after a backport.
   patchGoVersion = ''
-    find . -name go.mod -not -path "./.bingo/*" -print0 | while IFS= read -r -d ''' line; do
+    find . -name go.mod -not -path "./.bingo/*" -and -not -path "./devenv/*" -and -not -path "./hack/*" -and -not -path "./scripts/*" -and -not -path "./.citools/*" -print0 | while IFS= read -r -d ''' line; do
       substituteInPlace "$line" \
-        --replace-fail "go 1.24.4" "go 1.24.0"
+        --replace-fail "go 1.24.6" "go 1.24.0"
+    done
+    find . -name go.mod -path "./.citools/*" -print0 | while IFS= read -r -d ''' line; do
+      substituteInPlace "$line" \
+        --replace-fail "go 1.24.5" "go 1.24.0"
     done
     find . -name go.work -print0 | while IFS= read -r -d ''' line; do
       substituteInPlace "$line" \
-        --replace-fail "go 1.24.4" "go 1.24.0"
+        --replace-fail "go 1.24.6" "go 1.24.0"
     done
     substituteInPlace Makefile \
-      --replace-fail "GO_VERSION = 1.24.4" "GO_VERSION = 1.24.0"
+      --replace-fail "GO_VERSION = 1.24.6" "GO_VERSION = 1.24.0"
   '';
 in
 buildGoModule rec {
   pname = "grafana";
-  version = "12.0.2";
+  version = "12.0.4";
 
   subPackages = [
     "pkg/cmd/grafana"
@@ -52,7 +56,7 @@ buildGoModule rec {
     owner = "grafana";
     repo = "grafana";
     rev = "v${version}";
-    hash = "sha256-Nzx7QAAON/cWLqadL2IpdRunFNNoXE8PPYrquqPvWfk=";
+    hash = "sha256-htuBN+LyP3RgVG53LN0cgGn7Dmesgv/U1A9jYj4cdGc=";
   };
 
   # borrowed from: https://github.com/NixOS/nixpkgs/blob/d70d9425f49f9aba3c49e2c389fe6d42bac8c5b0/pkgs/development/tools/analysis/snyk/default.nix#L20-L22
@@ -66,14 +70,14 @@ buildGoModule rec {
   missingHashes = ./missing-hashes.json;
   offlineCache = yarn-berry_4.fetchYarnBerryDeps {
     inherit src missingHashes;
-    hash = "sha256-vQdiQyxebtVrO76Pl4oC3DM37owhtQgZqYWaiIyKysQ=";
+    hash = "sha256-OqdW5DRUDgWwbuHMNLTkM4gtjTK9vvm4g7L6tcEQFMs=";
   };
 
   disallowedRequisites = [ offlineCache ];
 
   postPatch = patchGoVersion;
 
-  vendorHash = "sha256-cJxvZPJmf5YY+IWE7rdoGUkXxDeE6b0troGsdpsQzeU=";
+  vendorHash = "sha256-wF1/buOyD5+lZJF4s1OKpDiWXUFXD6j0pJ9RBFLff7Q=";
 
   proxyVendor = true;
 
@@ -87,7 +91,8 @@ buildGoModule rec {
     faketty
     yarn-berry_4
     yarn-berry_4.yarnBerryConfigHook
-  ] ++ lib.optionals stdenv.hostPlatform.isDarwin [ xcbuild.xcbuild ];
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [ xcbuild.xcbuild ];
 
   # We have to remove this setupHook, otherwise it also runs in the `goModules`
   # derivation and fails because `offlineCache` is missing there.

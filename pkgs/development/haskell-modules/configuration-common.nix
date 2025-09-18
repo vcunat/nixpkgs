@@ -63,11 +63,9 @@ self: super:
       (drv: {
         # Revert increased lower bound on unix since we have backported
         # the required patch to all GHC bundled versions of unix.
-        postPatch =
-          drv.postPatch or ""
-          + ''
-            substituteInPlace Cabal.cabal --replace-fail "unix  >= 2.8.6.0" "unix >= 2.6.0.0"
-          '';
+        postPatch = drv.postPatch or "" + ''
+          substituteInPlace Cabal.cabal --replace-fail "unix  >= 2.8.6.0" "unix >= 2.6.0.0"
+        '';
       })
       (
         doDistribute (
@@ -107,35 +105,34 @@ self: super:
             old:
             {
               # Prevent DOS line endings from Hackage from breaking a patch
-              prePatch =
-                old.prePatch or ""
-                + ''
-                  ${pkgs.buildPackages.dos2unix}/bin/dos2unix *.cabal
-                '';
+              prePatch = old.prePatch or "" + ''
+                ${pkgs.buildPackages.dos2unix}/bin/dos2unix *.cabal
+              '';
               # Ignore unix bound intended to prevent an unix bug on 32bit systems.
               # We apply a patch for this issue to the GHC core packages directly.
               # See unix-fix-ctimeval-size-32-bit.patch in ../compilers/ghc/common-*.nix
               patches =
                 old.patches or [ ]
-                ++ lib.optionals
-                  (
-                    scope.unix == null
-                    && lib.elem self.ghc.version [
-                      "9.6.1"
-                      "9.6.2"
-                      "9.6.3"
-                      "9.6.4"
-                      "9.6.5"
-                      "9.6.6"
-                      "9.8.1"
-                      "9.8.2"
-                      "9.8.3"
-                      "9.10.1"
-                    ]
-                  )
-                  [
-                    ./patches/cabal-install-3.14.1.1-lift-unix-bound.patch
-                  ];
+                ++
+                  lib.optionals
+                    (
+                      scope.unix == null
+                      && lib.elem self.ghc.version [
+                        "9.6.1"
+                        "9.6.2"
+                        "9.6.3"
+                        "9.6.4"
+                        "9.6.5"
+                        "9.6.6"
+                        "9.8.1"
+                        "9.8.2"
+                        "9.8.3"
+                        "9.10.1"
+                      ]
+                    )
+                    [
+                      ./patches/cabal-install-3.14.1.1-lift-unix-bound.patch
+                    ];
             }
             // lib.optionalAttrs (pkgs.stdenv.hostPlatform.isDarwin && pkgs.stdenv.hostPlatform.isAarch64) {
               postInstall = ''
@@ -507,6 +504,28 @@ self: super:
           # TODO(@sternenseemann): submit upstreamable patch resolving this
           # (this should be possible by also taking PREFIX into account).
           ./patches/git-annex-no-usr-prefix.patch
+
+          # Pick fix for git 2.50 related test suite failures from 10.20250630
+          # https://git-annex.branchable.com/bugs/test_suite_fail_with_git_2.50/
+          (pkgs.fetchpatch {
+            name = "git-annex-workaround-for-git-2.50.patch";
+            url = "https://git.joeyh.name/index.cgi/git-annex.git/patch/?id=fb155b1e3e59cc1f9cf8a4fe7d47cba49d1c81af";
+            sha256 = "sha256-w6eXW0JqshXTd0/tNPZ0fOW2SVmA90G5eFhsd9y05BI=";
+            excludes = [
+              "doc/**"
+              "CHANGELOG"
+            ];
+          })
+          # https://git-annex.branchable.com/bugs/flaky_test_failure_add_dup/
+          (pkgs.fetchpatch {
+            name = "git-annex-workaround-for-git-2.50_bis.patch";
+            url = "https://git.joeyh.name/index.cgi/git-annex.git/patch/?id=cf449837ea9ab7687d8a157f21cad31ddf5bbfb6";
+            sha256 = "sha256-HmNJ85dLht5Hy85AUkjACnET9YLPP2MshYHsApUax+I=";
+            excludes = [
+              "doc/**"
+              "CHANGELOG"
+            ];
+          })
         ];
 
         postPatch = ''
@@ -630,11 +649,9 @@ self: super:
   ABList = dontCheck super.ABList;
 
   inline-c-cpp = overrideCabal (drv: {
-    postPatch =
-      (drv.postPatch or "")
-      + ''
-        substituteInPlace inline-c-cpp.cabal --replace "-optc-std=c++11" ""
-      '';
+    postPatch = (drv.postPatch or "") + ''
+      substituteInPlace inline-c-cpp.cabal --replace "-optc-std=c++11" ""
+    '';
   }) super.inline-c-cpp;
 
   inline-java = addBuildDepend pkgs.jdk super.inline-java;
@@ -1133,11 +1150,9 @@ self: super:
   # https://github.com/Philonous/hs-stun/pull/1
   # Remove if a version > 0.1.0.1 ever gets released.
   stunclient = overrideCabal (drv: {
-    postPatch =
-      (drv.postPatch or "")
-      + ''
-        substituteInPlace source/Network/Stun/MappedAddress.hs --replace "import Network.Endian" ""
-      '';
+    postPatch = (drv.postPatch or "") + ''
+      substituteInPlace source/Network/Stun/MappedAddress.hs --replace "import Network.Endian" ""
+    '';
   }) super.stunclient;
 
   d-bus =
@@ -1217,13 +1232,11 @@ self: super:
   # in LTS-13.x.
   cryptol = overrideCabal (drv: {
     buildTools = drv.buildTools or [ ] ++ [ pkgs.buildPackages.makeWrapper ];
-    postInstall =
-      drv.postInstall or ""
-      + ''
-        for b in $out/bin/cryptol $out/bin/cryptol-html; do
-          wrapProgram $b --prefix 'PATH' ':' "${lib.getBin pkgs.z3}/bin"
-        done
-      '';
+    postInstall = drv.postInstall or "" + ''
+      for b in $out/bin/cryptol $out/bin/cryptol-html; do
+        wrapProgram $b --prefix 'PATH' ':' "${lib.getBin pkgs.z3}/bin"
+      done
+    '';
   }) super.cryptol;
 
   # Z3 removed aliases for boolean types in 4.12
@@ -1267,11 +1280,10 @@ self: super:
     # Flaky tests: https://github.com/jfischoff/tmp-postgres/issues/274
     doCheck = false;
 
-    preCheck =
-      ''
-        export HOME="$TMPDIR"
-      ''
-      + (drv.preCheck or "");
+    preCheck = ''
+      export HOME="$TMPDIR"
+    ''
+    + (drv.preCheck or "");
     libraryToolDepends = drv.libraryToolDepends or [ ] ++ [ pkgs.buildPackages.postgresql ];
     testToolDepends = drv.testToolDepends or [ ] ++ [ pkgs.procps ];
   }) super.tmp-postgres;
@@ -1320,11 +1332,9 @@ self: super:
   # Workaround for https://github.com/sol/hpack/issues/528
   # The hpack test suite can't deal with the CRLF line endings hackage revisions insert
   hpack = overrideCabal (drv: {
-    postPatch =
-      drv.postPatch or ""
-      + ''
-        "${lib.getBin pkgs.buildPackages.dos2unix}/bin/dos2unix" *.cabal
-      '';
+    postPatch = drv.postPatch or "" + ''
+      "${lib.getBin pkgs.buildPackages.dos2unix}/bin/dos2unix" *.cabal
+    '';
   }) super.hpack;
 
   # hslua has tests that break when using musl.
@@ -1401,12 +1411,10 @@ self: super:
   # https://github.com/NixOS/nixpkgs/issues/6860
   PortMidi = overrideCabal (drv: {
     patches = (drv.patches or [ ]) ++ [ ./patches/portmidi-alsa-plugins.patch ];
-    postPatch =
-      (drv.postPatch or "")
-      + ''
-        substituteInPlace portmidi/pm_linux/pmlinuxalsa.c \
-          --replace @alsa_plugin_dir@ "${pkgs.alsa-plugins}/lib/alsa-lib"
-      '';
+    postPatch = (drv.postPatch or "") + ''
+      substituteInPlace portmidi/pm_linux/pmlinuxalsa.c \
+        --replace @alsa_plugin_dir@ "${pkgs.alsa-plugins}/lib/alsa-lib"
+    '';
   }) super.PortMidi;
 
   scat = overrideCabal (drv: {
@@ -1430,20 +1438,16 @@ self: super:
   esqueleto =
     overrideCabal
       (drv: {
-        postPatch =
-          drv.postPatch or ""
-          + ''
-            # patch out TCP usage: https://nixos.org/manual/nixpkgs/stable/#sec-postgresqlTestHook-tcp
-            sed -i test/PostgreSQL/Test.hs \
-              -e s^host=localhost^^
-          '';
+        postPatch = drv.postPatch or "" + ''
+          # patch out TCP usage: https://nixos.org/manual/nixpkgs/stable/#sec-postgresqlTestHook-tcp
+          sed -i test/PostgreSQL/Test.hs \
+            -e s^host=localhost^^
+        '';
         # Match the test suite defaults (or hardcoded values?)
-        preCheck =
-          drv.preCheck or ""
-          + ''
-            PGUSER=esqutest
-            PGDATABASE=esqutest
-          '';
+        preCheck = drv.preCheck or "" + ''
+          PGUSER=esqutest
+          PGDATABASE=esqutest
+        '';
         testFlags = drv.testFlags or [ ] ++ [
           # We don't have a MySQL test hook yet
           "--skip=/Esqueleto/MySQL"
@@ -1488,22 +1492,18 @@ self: super:
 
   # it wants to build a statically linked binary by default
   hledger-flow = overrideCabal (drv: {
-    postPatch =
-      (drv.postPatch or "")
-      + ''
-        substituteInPlace hledger-flow.cabal --replace "-static" ""
-      '';
+    postPatch = (drv.postPatch or "") + ''
+      substituteInPlace hledger-flow.cabal --replace "-static" ""
+    '';
   }) super.hledger-flow;
 
   # Chart-tests needs and compiles some modules from Chart itself
   Chart-tests = overrideCabal (old: {
     # 2025-02-13: Too strict bounds on lens < 5.3 and vector < 0.13
     jailbreak = true;
-    preCheck =
-      old.preCheck or ""
-      + ''
-        tar --one-top-level=../chart --strip-components=1 -xf ${self.Chart.src}
-      '';
+    preCheck = old.preCheck or "" + ''
+      tar --one-top-level=../chart --strip-components=1 -xf ${self.Chart.src}
+    '';
   }) (addExtraLibrary self.QuickCheck super.Chart-tests);
 
   # This breaks because of version bounds, but compiles and runs fine.
@@ -1522,20 +1522,16 @@ self: super:
     # TODO: move this override to configuration-nix.nix
     overrideCabal
       (drv: {
-        postPatch =
-          drv.postPath or ""
-          + ''
-            # patch out TCP usage: https://nixos.org/manual/nixpkgs/stable/#sec-postgresqlTestHook-tcp
-            # NOTE: upstream host variable takes only two values...
-            sed -i test/PgInit.hs \
-              -e s^'host=" <> host <> "'^^
-          '';
-        preCheck =
-          drv.preCheck or ""
-          + ''
-            PGDATABASE=test
-            PGUSER=test
-          '';
+        postPatch = drv.postPath or "" + ''
+          # patch out TCP usage: https://nixos.org/manual/nixpkgs/stable/#sec-postgresqlTestHook-tcp
+          # NOTE: upstream host variable takes only two values...
+          sed -i test/PgInit.hs \
+            -e s^'host=" <> host <> "'^^
+        '';
+        preCheck = drv.preCheck or "" + ''
+          PGDATABASE=test
+          PGUSER=test
+        '';
         testToolDepends = drv.testToolDepends or [ ] ++ [
           pkgs.postgresql
           pkgs.postgresqlTestHook
@@ -1616,12 +1612,10 @@ self: super:
   jsaddle-webkit2gtk =
     overrideCabal
       (drv: {
-        postPatch =
-          drv.postPatch or ""
-          + ''
-            substituteInPlace jsaddle-webkit2gtk.cabal --replace-fail gi-gtk gi-gtk3
-            substituteInPlace jsaddle-webkit2gtk.cabal --replace-fail gi-javascriptcore gi-javascriptcore4
-          '';
+        postPatch = drv.postPatch or "" + ''
+          substituteInPlace jsaddle-webkit2gtk.cabal --replace-fail gi-gtk gi-gtk3
+          substituteInPlace jsaddle-webkit2gtk.cabal --replace-fail gi-javascriptcore gi-javascriptcore4
+        '';
       })
       (
         super.jsaddle-webkit2gtk.override {
@@ -1754,11 +1748,9 @@ self: super:
       (self.generateOptparseApplicativeCompletions [ "update-nix-fetchgit" ])
       (overrideCabal (drv: {
         buildTools = drv.buildTools or [ ] ++ [ pkgs.buildPackages.makeWrapper ];
-        postInstall =
-          drv.postInstall or ""
-          + ''
-            wrapProgram "$out/bin/update-nix-fetchgit" --prefix 'PATH' ':' "${lib.makeBinPath deps}"
-          '';
+        postInstall = drv.postInstall or "" + ''
+          wrapProgram "$out/bin/update-nix-fetchgit" --prefix 'PATH' ':' "${lib.makeBinPath deps}"
+        '';
       }))
       (addTestToolDepends deps)
       # Patch for hnix compat.
@@ -1913,17 +1905,15 @@ self: super:
 
     buildTools = (old.buildTools or [ ]) ++ [ pkgs.buildPackages.installShellFiles ];
     # let testsuite discover the resulting binary
-    preCheck =
-      ''
-        export SPACECOOKIE_TEST_BIN=./dist/build/spacecookie/spacecookie
-      ''
-      + (old.preCheck or "");
+    preCheck = ''
+      export SPACECOOKIE_TEST_BIN=./dist/build/spacecookie/spacecookie
+    ''
+    + (old.preCheck or "");
     # install man pages shipped in the sdist
-    postInstall =
-      ''
-        installManPage docs/man/*
-      ''
-      + (old.postInstall or "");
+    postInstall = ''
+      installManPage docs/man/*
+    ''
+    + (old.postInstall or "");
   }) super.spacecookie;
 
   # Patch and jailbreak can be removed at next release, chatter > 0.9.1.0
@@ -2115,11 +2105,9 @@ self: super:
       # from upstream because the gi-vte repo doesn't actually contain a
       # gi-vte.cabal file. The gi-vte.cabal file is generated from metadata in
       # the repo.
-      postPatch =
-        (oldAttrs.postPatch or "")
-        + ''
-          sed -i 's/\(gi-gtk == .*\),/\1, gi-gdkpixbuf == 2.0.*,/' ./gi-vte.cabal
-        '';
+      postPatch = (oldAttrs.postPatch or "") + ''
+        sed -i 's/\(gi-gtk == .*\),/\1, gi-gdkpixbuf == 2.0.*,/' ./gi-vte.cabal
+      '';
       buildDepends = (oldAttrs.buildDepends or [ ]) ++ [ self.gi-gdkpixbuf ];
     }
   ) super.gi-vte;
@@ -2240,7 +2228,8 @@ self: super:
         "/Data.List.UniqueUnsorted.repeatedBy,repeated,unique/unique: simple test/"
         "--skip"
         "/Data.List.UniqueUnsorted.repeatedBy,repeated,unique/repeatedBy: simple test/"
-      ] ++ drv.testFlags or [ ];
+      ]
+      ++ drv.testFlags or [ ];
     }) super.Unique;
 
   # https://github.com/AndrewRademacher/aeson-casing/issues/8
@@ -2250,7 +2239,8 @@ self: super:
       testFlags = [
         "-p"
         "! /encode train/"
-      ] ++ drv.testFlags or [ ];
+      ]
+      ++ drv.testFlags or [ ];
     }) super.aeson-casing;
 
   # https://github.com/emc2/HUnit-Plus/issues/26
@@ -2260,14 +2250,16 @@ self: super:
     testFlags = [
       "--skip"
       "/Geo/Hexable/Encodes a linestring/"
-    ] ++ drv.testFlags or [ ];
+    ]
+    ++ drv.testFlags or [ ];
   }) super.haskell-postgis;
   # https://github.com/ChrisPenner/json-to-haskell/issues/5
   json-to-haskell = overrideCabal (drv: {
     testFlags = [
       "--match"
       "/should sanitize weird field and record names/"
-    ] ++ drv.testFlags or [ ];
+    ]
+    ++ drv.testFlags or [ ];
   }) super.json-to-haskell;
   # https://github.com/fieldstrength/aeson-deriving/issues/5
   aeson-deriving = dontCheck super.aeson-deriving;
@@ -2286,14 +2278,16 @@ self: super:
     testFlags = [
       "--skip"
       "/Dropbox/Dropbox aeson aeson/encodes list folder correctly/"
-    ] ++ drv.testFlags or [ ];
+    ]
+    ++ drv.testFlags or [ ];
   }) super.dropbox;
   # https://github.com/alonsodomin/haskell-schema/issues/11
   hschema-aeson = overrideCabal (drv: {
     testFlags = [
       "--skip"
       "/toJsonSerializer/should generate valid JSON/"
-    ] ++ drv.testFlags or [ ];
+    ]
+    ++ drv.testFlags or [ ];
   }) super.hschema-aeson;
   # https://github.com/minio/minio-hs/issues/165
   # https://github.com/minio/minio-hs/pull/191 Use crypton-connection instead of unmaintained connection
@@ -2301,7 +2295,8 @@ self: super:
     testFlags = [
       "-p"
       "!/Test mkSelectRequest/"
-    ] ++ drv.testFlags or [ ];
+    ]
+    ++ drv.testFlags or [ ];
     patches = drv.patches or [ ] ++ [
       (pkgs.fetchpatch {
         name = "use-crypton-connection.patch";
@@ -2530,11 +2525,9 @@ self: super:
         ];
       })
     ];
-    postPatch =
-      drv.postPatch or ""
-      + ''
-        ln -fs ${pkgs.simdjson.src} simdjson
-      '';
+    postPatch = drv.postPatch or "" + ''
+      ln -fs ${pkgs.simdjson.src} simdjson
+    '';
   }) super.hermes-json;
 
   # Disabling doctests.
@@ -2806,12 +2799,12 @@ self: super:
         doJailbreak
         # 2022-12-02: Hackage release lags behind actual releases: https://github.com/PostgREST/postgrest/issues/2275
         (overrideSrc rec {
-          version = "13.0.0";
+          version = "13.0.6";
           src = pkgs.fetchFromGitHub {
             owner = "PostgREST";
             repo = "postgrest";
             rev = "v${version}";
-            hash = "sha256-j+WlY7D3hkPHIjiyCFenC5trF31L05gEPptCwOVil6U=";
+            hash = "sha256-BM7fLW7LYrl+++NVztr407QyAhj2k5zO70iDqSe22dc=";
           };
         })
       ];
@@ -2838,6 +2831,15 @@ self: super:
 
   # The hackage source is somehow missing a file present in the repo (tests/ListStat.hs).
   sym = dontCheck super.sym;
+
+  # 2024-01-24: https://github.com/haskellari/tree-diff/issues/79
+  # exprParser fails to parse pretty printed structure correctly when the randomizer uses newlines (?)
+  tree-diff = overrideCabal (drv: {
+    testFlags = drv.testFlags or [ ] ++ [
+      "-p"
+      "!/parsec-ansi-wl-pprint/"
+    ];
+  }) super.tree-diff;
 
   # base <4.19
   # https://github.com/well-typed/large-records/issues/168
@@ -2929,18 +2931,17 @@ self: super:
   zinza = dontCheck super.zinza;
 
   pdftotext = overrideCabal (drv: {
-    postPatch =
-      ''
-        # Fixes https://todo.sr.ht/~geyaeb/haskell-pdftotext/6
-        substituteInPlace pdftotext.cabal --replace-quiet c-sources cxx-sources
+    postPatch = ''
+      # Fixes https://todo.sr.ht/~geyaeb/haskell-pdftotext/6
+      substituteInPlace pdftotext.cabal --replace-quiet c-sources cxx-sources
 
-        # Fix cabal ignoring cxx because the cabal format version is too old
-        substituteInPlace pdftotext.cabal --replace-quiet ">=1.10" 2.2
+      # Fix cabal ignoring cxx because the cabal format version is too old
+      substituteInPlace pdftotext.cabal --replace-quiet ">=1.10" 2.2
 
-        # Fix wrong license name that breaks recent cabal version
-        substituteInPlace pdftotext.cabal --replace-quiet BSD3 BSD-3-Clause
-      ''
-      + (drv.postPatch or "");
+      # Fix wrong license name that breaks recent cabal version
+      substituteInPlace pdftotext.cabal --replace-quiet BSD3 BSD-3-Clause
+    ''
+    + (drv.postPatch or "");
   }) (doJailbreak (addExtraLibrary pkgs.pkg-config (addExtraLibrary pkgs.poppler super.pdftotext)));
 
   proto3-wire = appendPatch (fetchpatch {
@@ -2962,12 +2963,10 @@ self: super:
     drv:
     assert drv.version == "0.1.0.5";
     {
-      postPatch =
-        drv.postPatch or ""
-        + ''
-          substituteInPlace src/Feedback/Loop/OptParse.hs \
-            --replace-fail '(uncurry loopConfigLine)' '(pure . uncurry loopConfigLine)'
-        '';
+      postPatch = drv.postPatch or "" + ''
+        substituteInPlace src/Feedback/Loop/OptParse.hs \
+          --replace-fail '(uncurry loopConfigLine)' '(pure . uncurry loopConfigLine)'
+      '';
     }
   ) super.feedback;
 

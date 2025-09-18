@@ -56,7 +56,7 @@ assert lib.assertMsg (
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "sdl3";
-  version = "3.2.14";
+  version = "3.2.20";
 
   outputs = [
     "lib"
@@ -68,7 +68,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "libsdl-org";
     repo = "SDL";
     tag = "release-${finalAttrs.version}";
-    hash = "sha256-+CcbvF1nxxsVwuO5g50sBVGth0sr5WTFojSfT6B6bok=";
+    hash = "sha256-ESYjTN2prkAeHcTYurZaWeM3RgEKtwCZrt9gSMcOAe0=";
   };
 
   postPatch =
@@ -88,7 +88,8 @@ stdenv.mkDerivation (finalAttrs: {
     cmake
     ninja
     validatePkgConfig
-  ] ++ lib.optional waylandSupport wayland-scanner;
+  ]
+  ++ lib.optional waylandSupport wayland-scanner;
 
   buildInputs =
     finalAttrs.dlopenBuildInputs
@@ -203,14 +204,13 @@ stdenv.mkDerivation (finalAttrs: {
       };
     });
 
-    tests =
-      {
-        pkg-config = testers.hasPkgConfigModules { package = finalAttrs.finalPackage; };
-        inherit (finalAttrs.passthru) debug-text-example;
-      }
-      // lib.optionalAttrs stdenv.hostPlatform.isLinux {
-        nixosTest = nixosTests.sdl3;
-      };
+    tests = {
+      pkg-config = testers.hasPkgConfigModules { package = finalAttrs.finalPackage; };
+      inherit (finalAttrs.passthru) debug-text-example;
+    }
+    // lib.optionalAttrs stdenv.hostPlatform.isLinux {
+      nixosTest = nixosTests.sdl3;
+    };
 
     updateScript = nix-update-script {
       extraArgs = [

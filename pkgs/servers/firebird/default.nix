@@ -2,8 +2,9 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  fetchDebianPatch,
   libedit,
-  autoreconfHook271,
+  autoreconfHook,
   zlib,
   unzip,
   libtommath,
@@ -32,7 +33,7 @@ let
       ];
     };
 
-    nativeBuildInputs = [ autoreconfHook271 ];
+    nativeBuildInputs = [ autoreconfHook ];
 
     buildInputs = [
       libedit
@@ -43,7 +44,8 @@ let
 
     configureFlags = [
       "--with-system-editline"
-    ] ++ (lib.optional superServer "--enable-superserver");
+    ]
+    ++ (lib.optional superServer "--enable-superserver");
 
     installPhase = ''
       runHook preInstall
@@ -58,14 +60,24 @@ rec {
   firebird_3 = stdenv.mkDerivation (
     base
     // rec {
-      version = "3.0.12";
+      version = "3.0.13";
 
       src = fetchFromGitHub {
         owner = "FirebirdSQL";
         repo = "firebird";
         rev = "v${version}";
-        hash = "sha256-po8tMrOahfwayVXa7Eadr9+ZEmZizHlCmxi094cOJSY=";
+        hash = "sha256-ti3cFfByM2wxOLkAebwtFe25B5W7jOwi3f7MPYo/yUA=";
       };
+
+      patches = [
+        (fetchDebianPatch {
+          pname = "firebird3.0";
+          version = "3.0.13.ds7";
+          debianRevision = "2";
+          patch = "no-binary-gbaks.patch";
+          hash = "sha256-LXUMM38PBYeLPdgaxLPau4HWB4ItJBBnx7oGwalL6Pg=";
+        })
+      ];
 
       buildInputs = base.buildInputs ++ [
         zlib
@@ -81,13 +93,13 @@ rec {
   firebird_4 = stdenv.mkDerivation (
     base
     // rec {
-      version = "4.0.5";
+      version = "4.0.6";
 
       src = fetchFromGitHub {
         owner = "FirebirdSQL";
         repo = "firebird";
         rev = "v${version}";
-        hash = "sha256-OxkPpmnYTl65ns+hKHJd5IAPUiMj0g3HUpyRpwDNut8=";
+        hash = "sha256-65wfG6huDzvG/tEVllA58OfZqoL4U/ilw5YIDqQywTs=";
       };
 
       nativeBuildInputs = base.nativeBuildInputs ++ [ unzip ];

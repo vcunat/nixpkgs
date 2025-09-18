@@ -53,6 +53,9 @@ stdenv.mkDerivation rec {
 
     # https://sqlite.org/src/info/2025-02-16T10:57z
     ./CVE-2025-3277_CVE-2025-29087.patch
+
+    # https://www.sqlite.org/src/info/5508b56fd24016c13981ec280ecdd833007c9d8dd595edb295b984c2b487b5c8
+    ./CVE-2025-6965.patch
   ];
 
   outputs = [
@@ -68,12 +71,13 @@ stdenv.mkDerivation rec {
     updateAutotoolsGnuConfigScriptsHook
     unzip
   ];
-  buildInputs =
-    [ zlib ]
-    ++ lib.optionals interactive [
-      readline
-      ncurses
-    ];
+  buildInputs = [
+    zlib
+  ]
+  ++ lib.optionals interactive [
+    readline
+    ncurses
+  ];
 
   # required for aarch64 but applied for all arches for simplicity
   preConfigure = ''

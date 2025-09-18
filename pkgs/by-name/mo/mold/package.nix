@@ -40,15 +40,14 @@ stdenv.mkDerivation (finalAttrs: {
     ninja
   ];
 
-  buildInputs =
-    [
-      tbb_2022_0
-      zlib
-      zstd
-    ]
-    ++ lib.optionals (!stdenv.hostPlatform.isDarwin) [
-      mimalloc
-    ];
+  buildInputs = [
+    tbb_2022_0
+    zlib
+    zstd
+  ]
+  ++ lib.optionals (!stdenv.hostPlatform.isDarwin) [
+    mimalloc
+  ];
 
   cmakeFlags = [
     "-DMOLD_USE_SYSTEM_MIMALLOC:BOOL=ON"
@@ -130,9 +129,6 @@ stdenv.mkDerivation (finalAttrs: {
     platforms = lib.platforms.unix;
     broken = stdenv.hostPlatform.isDarwin;
     mainProgram = "mold";
-    maintainers = with lib.maintainers; [
-      azahi
-      paveloom
-    ];
+    maintainers = with lib.maintainers; [ azahi ];
   };
 })

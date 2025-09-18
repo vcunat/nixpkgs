@@ -34,6 +34,13 @@ buildPythonPackage rec {
     hash = "sha256-s0CYQ6r3rA1PEiZ9LLFL3RC2PdfCgZHTqQ9nZUi1m+Q=";
   };
 
+  # https://github.com/aws-cloudformation/cfn-lint/pull/4208
+  # [W2531: ...] (Runtime 'nodejs18.x' was deprecated on '2025-07-31'...
+  postPatch = ''
+    substituteInPlace test/fixtures/templates/good/generic.yaml \
+      --replace-fail 'Runtime: nodejs18.x' 'Runtime: nodejs22.x'
+  '';
+
   build-system = [ setuptools ];
 
   dependencies = [
@@ -69,7 +76,8 @@ buildPythonPackage rec {
     defusedxml
     mock
     pytestCheckHook
-  ] ++ lib.flatten (builtins.attrValues optional-dependencies);
+  ]
+  ++ lib.flatten (builtins.attrValues optional-dependencies);
 
   preCheck = ''
     export PATH=$out/bin:$PATH

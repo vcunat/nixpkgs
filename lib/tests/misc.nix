@@ -145,6 +145,11 @@ let
       inherit expected;
     };
 
+  dummyDerivation = derivation {
+    name = "name";
+    builder = "builder";
+    system = "system";
+  };
 in
 
 runTests {
@@ -380,14 +385,39 @@ runTests {
     expected = 255;
   };
 
-  testFromHexStringSecondExample = {
-    expr = fromHexString (builtins.hashString "sha256" "test");
+  # Highest supported integer value in Nix.
+  testFromHexStringMaximum = {
+    expr = fromHexString "7fffffffffffffff";
     expected = 9223372036854775807;
   };
 
   testFromHexStringWithPrefix = {
     expr = fromHexString "0Xf";
     expected = 15;
+  };
+
+  # FIXME: This might be bad and should potentially be deprecated.
+  testFromHexStringQuestionableMixedCase = {
+    expr = fromHexString "eEeEe";
+    expected = 978670;
+  };
+
+  # FIXME: This is probably bad and should potentially be deprecated.
+  testFromHexStringQuestionableUnderscore = {
+    expr = fromHexString "F_f";
+    expected = 255;
+  };
+
+  # FIXME: This is definitely bad and should be deprecated.
+  testFromHexStringBadComment = {
+    expr = fromHexString "0 # oops";
+    expected = 0;
+  };
+
+  # FIXME: Oh my god.
+  testFromHexStringAwfulInjection = {
+    expr = fromHexString "1\nwhoops = {}";
+    expected = 1;
   };
 
   testToBaseDigits = {
@@ -757,18 +787,8 @@ runTests {
   };
 
   testSplitStringsDerivation = {
-    expr = take 3 (
-      strings.splitString "/" (derivation {
-        name = "name";
-        builder = "builder";
-        system = "system";
-      })
-    );
-    expected = [
-      ""
-      "nix"
-      "store"
-    ];
+    expr = lib.dropEnd 1 (strings.splitString "/" dummyDerivation);
+    expected = strings.splitString "/" builtins.storeDir;
   };
 
   testSplitVersionSingle = {
@@ -816,7 +836,7 @@ runTests {
       in
       {
         storePath = isStorePath goodPath;
-        storePathDerivation = isStorePath (import ../.. { system = "x86_64-linux"; }).hello;
+        storePathDerivation = isStorePath dummyDerivation;
         storePathAppendix = isStorePath "${goodPath}/bin/python";
         nonAbsolute = isStorePath (concatStrings (tail (stringToCharacters goodPath)));
         asPath = isStorePath (/. + goodPath);
@@ -901,7 +921,7 @@ runTests {
   };
 
   testHasInfixDerivation = {
-    expr = hasInfix "hello" (import ../.. { system = "x86_64-linux"; }).hello;
+    expr = hasInfix "name" dummyDerivation;
     expected = true;
   };
 

@@ -103,11 +103,12 @@ let
   };
 
   # TODO(ghthor): some of this can be removed
-  darwinBuildInputs =
-    [ llamaccpPackage ]
-    ++ optionals stdenv.hostPlatform.isDarwin ([
-      apple-sdk_15
-    ]);
+  darwinBuildInputs = [
+    llamaccpPackage
+  ]
+  ++ optionals stdenv.hostPlatform.isDarwin ([
+    apple-sdk_15
+  ]);
 
   cudaBuildInputs = [ llamaccpPackage ];
   rocmBuildInputs = [ llamaccpPackage ];
@@ -125,7 +126,6 @@ rustPlatform.buildRustPackage {
     fetchSubmodules = true;
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-einG593Brv59j1F5sebUATFnfER/PmXwQJpF3VLPKjg=";
 
   # Don't need to build llama-cpp-server (included in default build)
@@ -144,22 +144,22 @@ rustPlatform.buildRustPackage {
   versionCheckProgramArg = "--version";
   doInstallCheck = true;
 
-  nativeBuildInputs =
-    [
-      git
-      pkg-config
-      protobuf
-      cmake
-    ]
-    ++ optionals enableCuda [
-      autoAddDriverRunpath
-    ];
+  nativeBuildInputs = [
+    git
+    pkg-config
+    protobuf
+    cmake
+  ]
+  ++ optionals enableCuda [
+    autoAddDriverRunpath
+  ];
 
-  buildInputs =
-    [ openssl ]
-    ++ optionals stdenv.hostPlatform.isDarwin darwinBuildInputs
-    ++ optionals enableCuda cudaBuildInputs
-    ++ optionals enableRocm rocmBuildInputs;
+  buildInputs = [
+    openssl
+  ]
+  ++ optionals stdenv.hostPlatform.isDarwin darwinBuildInputs
+  ++ optionals enableCuda cudaBuildInputs
+  ++ optionals enableRocm rocmBuildInputs;
 
   postInstall = ''
     # NOTE: Project contains a subproject for building llama-server

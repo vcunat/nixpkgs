@@ -27,13 +27,13 @@ let
 in
 buildGoModule rec {
   pname = "nvidia-container-toolkit";
-  version = "1.17.6";
+  version = "1.17.8";
 
   src = fetchFromGitHub {
     owner = "NVIDIA";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-MQQTQ6AaoA4VIAT7YPo3z6UbZuKHjOvu9sW2975TveM=";
+    hash = "sha256-B17cPxdrQ8qMNgFh4XcDwwKryukMrn0GV2LNPHM7kBo=";
 
   };
 
@@ -103,28 +103,28 @@ buildGoModule rec {
       "${builtins.concatStringsSep "|" skippedTests}"
     ];
 
-  postInstall =
-    ''
-      mkdir -p $tools/bin
-      mv $out/bin/{nvidia-cdi-hook,nvidia-container-runtime,nvidia-container-runtime.cdi,nvidia-container-runtime-hook,nvidia-container-runtime.legacy} $tools/bin
+  postInstall = ''
+    mkdir -p $tools/bin
+    mv $out/bin/{nvidia-cdi-hook,nvidia-container-runtime,nvidia-container-runtime.cdi,nvidia-container-runtime-hook,nvidia-container-runtime.legacy} $tools/bin
 
-      for bin in nvidia-container-runtime-hook nvidia-container-runtime; do
-        wrapProgram $tools/bin/$bin \
-          --prefix PATH : ${libnvidia-container}/bin:$out/bin
-      done
-    ''
-    + lib.optionalString (configTemplate != null || configTemplatePath != null) ''
-      mkdir -p $out/etc/nvidia-container-runtime
+    for bin in nvidia-container-runtime-hook nvidia-container-runtime; do
+      wrapProgram $tools/bin/$bin \
+        --prefix PATH : ${libnvidia-container}/bin:$out/bin
+    done
+  ''
+  + lib.optionalString (configTemplate != null || configTemplatePath != null) ''
+    mkdir -p $out/etc/nvidia-container-runtime
 
-      cp ${configToml} $out/etc/nvidia-container-runtime/config.toml
+    cp ${configToml} $out/etc/nvidia-container-runtime/config.toml
 
-      substituteInPlace $out/etc/nvidia-container-runtime/config.toml \
-        --subst-var-by glibcbin ${lib.getBin glibc}
-    '';
+    substituteInPlace $out/etc/nvidia-container-runtime/config.toml \
+      --subst-var-by glibcbin ${lib.getBin glibc}
+  '';
 
   meta = with lib; {
     homepage = "https://gitlab.com/nvidia/container-toolkit/container-toolkit";
     description = "NVIDIA Container Toolkit";
+    mainProgram = "nvidia-ctk";
     license = licenses.asl20;
     platforms = platforms.linux;
     maintainers = with maintainers; [

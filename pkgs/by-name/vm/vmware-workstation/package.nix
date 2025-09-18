@@ -35,8 +35,8 @@
 
 let
   # base - versions
-  version = "17.6.3";
-  build = "24583834";
+  version = "17.6.4";
+  build = "24832109";
 
   # macOS - versions
   unlockerVersion = "3.0.5";
@@ -99,24 +99,23 @@ stdenv.mkDerivation rec {
     xorg.libXtst
   ];
 
-  nativeBuildInputs =
-    [
-      python3
-      vmware-unpack-env
-      autoPatchelfHook
-      makeWrapper
-    ]
-    ++ lib.optionals enableInstaller [
-      bzip2
-      sqlite
-      readline70_compat63
-    ]
-    ++ lib.optionals enableMacOSGuests [ unzip ];
+  nativeBuildInputs = [
+    python3
+    vmware-unpack-env
+    autoPatchelfHook
+    makeWrapper
+  ]
+  ++ lib.optionals enableInstaller [
+    bzip2
+    sqlite
+    readline70_compat63
+  ]
+  ++ lib.optionals enableMacOSGuests [ unzip ];
 
   src = requireFile {
     name = "VMware-Workstation-Full-${version}-${build}.x86_64.bundle";
     url = "https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Workstation%20Pro&freeDownloads=true";
-    hash = "sha256-eVdZF3KN7UxtC4n0q2qBvpp3PADuto0dEqwNsSVHjuA=";
+    hash = "sha256-ZPv7rqzEiGVGgRQ2Kiu6rekRDMnoe8O9k4OWun8Zqb0=";
   };
 
   unpackPhase = ''

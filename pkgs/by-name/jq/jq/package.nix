@@ -49,6 +49,13 @@ stdenv.mkDerivation rec {
     # Improve-performance-of-repeating-strings is only a partial fix
     # https://github.com/jqlang/jq/commit/c6e041699d8cd31b97375a2596217aff2cfca85b
     ./0005-Fix-heap-buffer-overflow-when-formatting-an-empty-st.patch
+
+    # CVE-2025-49014 only relevant to 1.8.0, added for posterity
+    # https://github.com/jqlang/jq/commit/499c91bca9d4d027833bc62787d1bb075c03680e
+
+    # GHSA-f946-j5j2-4w5m (no CVE identifier)
+    # https://github.com/jqlang/jq/commit/5e159b34b179417e3e0404108190a2ac7d65611c
+    ./0006-Fix-GHSA-f946-j5j2-4w5m-stack-overflow-by-limit-regex-parse-depth.patch
   ];
 
   # https://github.com/jqlang/jq/issues/2871
@@ -78,18 +85,17 @@ stdenv.mkDerivation rec {
     bison
   ];
 
-  configureFlags =
-    [
-      "--bindir=\${bin}/bin"
-      "--sbindir=\${bin}/bin"
-      "--datadir=\${doc}/share"
-      "--mandir=\${man}/share/man"
-    ]
-    ++ lib.optional (!onigurumaSupport) "--with-oniguruma=no"
-    # jq is linked to libjq:
-    ++ lib.optional (!stdenv.hostPlatform.isDarwin) "LDFLAGS=-Wl,-rpath,\\\${libdir}"
-    # https://github.com/jqlang/jq/issues/3252
-    ++ lib.optional stdenv.hostPlatform.isOpenBSD "CFLAGS=-D_BSD_SOURCE=1";
+  configureFlags = [
+    "--bindir=\${bin}/bin"
+    "--sbindir=\${bin}/bin"
+    "--datadir=\${doc}/share"
+    "--mandir=\${man}/share/man"
+  ]
+  ++ lib.optional (!onigurumaSupport) "--with-oniguruma=no"
+  # jq is linked to libjq:
+  ++ lib.optional (!stdenv.hostPlatform.isDarwin) "LDFLAGS=-Wl,-rpath,\\\${libdir}"
+  # https://github.com/jqlang/jq/issues/3252
+  ++ lib.optional stdenv.hostPlatform.isOpenBSD "CFLAGS=-D_BSD_SOURCE=1";
 
   # jq binary includes the whole `configureFlags` in:
   # https://github.com/jqlang/jq/commit/583e4a27188a2db097dd043dd203b9c106bba100

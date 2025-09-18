@@ -19,7 +19,6 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-o8/ENAWzVqs7rokST6xnyu9Q/pKqq/UnKWOFRuIuGes=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-+TJ/QG+6ZILcSZEIXj6B4qYF0P5pQpo1kw2qEfE0FDw=";
 
   nativeBuildInputs = [ installShellFiles ] ++ lib.optionals stdenv.hostPlatform.isLinux [ python3 ];
@@ -32,19 +31,19 @@ rustPlatform.buildRustPackage rec {
 
   checkFlags = [
     "--skip=kbs2::config::tests::test_find_config_dir"
-  ] ++ lib.optionals stdenv.hostPlatform.isDarwin [ "--skip=test_ragelib_rewrap_keyfile" ];
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [ "--skip=test_ragelib_rewrap_keyfile" ];
 
-  postInstall =
-    ''
-      mkdir -p $out/share/kbs2
-      cp -r contrib/ $out/share/kbs2
-    ''
-    + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
-      installShellCompletion --cmd kbs2 \
-        --bash <($out/bin/kbs2 --completions bash) \
-        --fish <($out/bin/kbs2 --completions fish) \
-        --zsh <($out/bin/kbs2 --completions zsh)
-    '';
+  postInstall = ''
+    mkdir -p $out/share/kbs2
+    cp -r contrib/ $out/share/kbs2
+  ''
+  + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
+    installShellCompletion --cmd kbs2 \
+      --bash <($out/bin/kbs2 --completions bash) \
+      --fish <($out/bin/kbs2 --completions fish) \
+      --zsh <($out/bin/kbs2 --completions zsh)
+  '';
 
   meta = with lib; {
     description = "Secret manager backed by age";

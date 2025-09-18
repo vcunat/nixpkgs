@@ -31,7 +31,6 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-L1j1lXPxy9nWMeED9uzQHV5y7XTE6+DB57rDnXa4kMo=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-Gv70H3SLgiO7SWKYfCKzBhgAHxhjx3Gv7ZPLrGeQ+HY=";
 
   cargoPatches = [
@@ -67,7 +66,8 @@ rustPlatform.buildRustPackage rec {
 
   nativeBuildInputs = [
     installShellFiles
-  ] ++ lib.optionals stdenv.hostPlatform.isLinux [ pkg-config ];
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ pkg-config ];
   buildInputs = lib.optionals (!stdenv.hostPlatform.isDarwin) [ openssl ];
 
   preBuild = lib.optionalString (x11Support && usesX11) (

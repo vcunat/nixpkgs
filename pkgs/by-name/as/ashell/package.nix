@@ -23,7 +23,6 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-J97MRYYkNx8Ze4vcxZTDVOSQLCANyIBcDtqZEsEZ80w=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-XDcCCKq/NOzaKTDwVu0GCeGV70IlJ2TvD0w8ib+lEhg=";
 
   nativeBuildInputs = [
@@ -43,7 +42,8 @@ rustPlatform.buildRustPackage rec {
     libxkbcommon
     pipewire
     udev
-  ] ++ runtimeDependencies;
+  ]
+  ++ runtimeDependencies;
 
   meta = {
     description = "Ready to go Wayland status bar for Hyprland";

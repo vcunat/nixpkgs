@@ -27,8 +27,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     hash = "sha256-jyhjKppwK+emwLEXtOJKU0f4mPdLzDrQabnHhpyUzmw=";
   };
 
-  useFetchCargoVendor = true;
-
   cargoHash = "sha256-1bb7YWXExS62s83rprHa0byUBJUCdw6JDYkQ3VZcje8=";
 
   nativeBuildInputs = [
@@ -39,7 +37,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   buildInputs = [
     libgit2
     libssh2
-  ] ++ lib.optionals (!stdenv.hostPlatform.isDarwin) [ openssl ];
+  ]
+  ++ lib.optionals (!stdenv.hostPlatform.isDarwin) [ openssl ];
 
   nativeCheckInputs = [
     git

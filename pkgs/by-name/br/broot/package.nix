@@ -25,7 +25,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     hash = "sha256-YoTR/rj/edg2KQhPRoihA38V4XM5EM5oJtLIH6zR/38=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-IFDKHsBTJFEmQ6FUG7yJmAEAVrzMvY9qbWQTnvUg274=";
 
   nativeBuildInputs = [
@@ -34,13 +33,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     pkg-config
   ];
 
-  buildInputs =
-    [
-      libgit2
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isDarwin [
-      zlib
-    ];
+  buildInputs = [
+    libgit2
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    zlib
+  ];
 
   buildFeatures = lib.optionals withTrash [ "trash" ] ++ lib.optionals withClipboard [ "clipboard" ];
 

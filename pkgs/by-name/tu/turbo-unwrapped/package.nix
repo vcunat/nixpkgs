@@ -27,19 +27,17 @@ rustPlatform.buildRustPackage (finalAttrs: {
     hash = "sha256-QcyRuLd+nMoCyrtX1j+8vFtsgVKC2KsQBAUjsvfG+rM=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-zEkpWu/L5plFCnvliAtfu19ljB4pnrEesVQZOycOKRk=";
 
-  nativeBuildInputs =
-    [
-      capnproto
-      extra-cmake-modules
-      installShellFiles
-      pkg-config
-      protobuf
-    ]
-    # https://github.com/vercel/turbo/blob/ea740706e0592b3906ab34c7cfa1768daafc2a84/CONTRIBUTING.md#linux-dependencies
-    ++ lib.optional stdenv.hostPlatform.isLinux llvmPackages.bintools;
+  nativeBuildInputs = [
+    capnproto
+    extra-cmake-modules
+    installShellFiles
+    pkg-config
+    protobuf
+  ]
+  # https://github.com/vercel/turbo/blob/ea740706e0592b3906ab34c7cfa1768daafc2a84/CONTRIBUTING.md#linux-dependencies
+  ++ lib.optional stdenv.hostPlatform.isLinux llvmPackages.bintools;
 
   buildInputs = [
     fontconfig

@@ -28,13 +28,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "bcachefs-tools";
-  version = "1.25.1";
+  version = "1.31.0";
 
   src = fetchFromGitHub {
     owner = "koverstreet";
     repo = "bcachefs-tools";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-P6h0n90akgGoFL292UpYTspq1QjcnBDjwvSGyO91xQg=";
+    hash = "sha256-wYlfU4PTcVSPSHbIIDbl8pBOJsBAAl44XBapwFZ528U=";
   };
 
   nativeBuildInputs = [
@@ -59,11 +59,12 @@ stdenv.mkDerivation (finalAttrs: {
     zlib
     attr
     udev
-  ] ++ lib.optional fuseSupport fuse3;
+  ]
+  ++ lib.optional fuseSupport fuse3;
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     src = finalAttrs.src;
-    hash = "sha256-juXRmI3tz2BXQsRaRRGyBaGqeLk2QHfJb2sKPmWur8s=";
+    hash = "sha256-ZCzw3cDpQ8fb2jLYdIWrmlNTPStikIs09jx6jzzC2vM=";
   };
 
   makeFlags = [
@@ -74,7 +75,8 @@ stdenv.mkDerivation (finalAttrs: {
     # Tries to install to the 'systemd-minimal' and 'udev' nix installation paths
     "PKGCONFIG_SERVICEDIR=$(out)/lib/systemd/system"
     "PKGCONFIG_UDEVDIR=$(out)/lib/udev"
-  ] ++ lib.optional fuseSupport "BCACHEFS_FUSE=1";
+  ]
+  ++ lib.optional fuseSupport "BCACHEFS_FUSE=1";
 
   env = {
     CARGO_BUILD_TARGET = stdenv.hostPlatform.rust.rustcTargetSpec;
@@ -94,17 +96,16 @@ stdenv.mkDerivation (finalAttrs: {
   '';
   checkFlags = [ "BCACHEFS_TEST_USE_VALGRIND=no" ];
 
-  postInstall =
-    ''
-      substituteInPlace $out/libexec/bcachefsck_all \
-        --replace-fail "/usr/bin/python3" "${python3.interpreter}"
-    ''
-    + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
-      installShellCompletion --cmd bcachefs \
-        --bash <($out/sbin/bcachefs completions bash) \
-        --zsh  <($out/sbin/bcachefs completions zsh) \
-        --fish <($out/sbin/bcachefs completions fish)
-    '';
+  postInstall = ''
+    substituteInPlace $out/libexec/bcachefsck_all \
+      --replace-fail "/usr/bin/python3" "${python3.interpreter}"
+  ''
+  + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
+    installShellCompletion --cmd bcachefs \
+      --bash <($out/sbin/bcachefs completions bash) \
+      --zsh  <($out/sbin/bcachefs completions zsh) \
+      --fish <($out/sbin/bcachefs completions fish)
+  '';
 
   passthru = {
     tests = {
@@ -128,6 +129,7 @@ stdenv.mkDerivation (finalAttrs: {
     license = lib.licenses.gpl2Only;
     maintainers = with lib.maintainers; [
       davidak
+      johnrtitor
       Madouura
     ];
     platforms = lib.platforms.linux;

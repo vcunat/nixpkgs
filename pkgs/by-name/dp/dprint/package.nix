@@ -23,7 +23,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     hash = "sha256-Lt6CzSzppu5ULhzYN5FTCWtWK3AA4/8jRzXgQkU4Tco=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-1opQaR3vbm/DpDY5oQ1VgA4nf0nCBknxfgOSPZQbtV4=";
 
   nativeBuildInputs = lib.optionals (stdenv.buildPlatform.canExecute stdenv.hostPlatform) [
@@ -54,17 +53,16 @@ rustPlatform.buildRustPackage (finalAttrs: {
     "--skip=utils::url::test::unsafe_ignore_cert"
   ];
 
-  postInstall =
-    ''
-      rm "$out/bin/test-process-plugin"
-    ''
-    + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
-      export DPRINT_CACHE_DIR="$(mktemp -d)"
-      installShellCompletion --cmd dprint \
-        --bash <($out/bin/dprint completions bash) \
-        --zsh <($out/bin/dprint completions zsh) \
-        --fish <($out/bin/dprint completions fish)
-    '';
+  postInstall = ''
+    rm "$out/bin/test-process-plugin"
+  ''
+  + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
+    export DPRINT_CACHE_DIR="$(mktemp -d)"
+    installShellCompletion --cmd dprint \
+      --bash <($out/bin/dprint completions bash) \
+      --zsh <($out/bin/dprint completions zsh) \
+      --fish <($out/bin/dprint completions fish)
+  '';
 
   passthru = {
     tests.version = testers.testVersion {

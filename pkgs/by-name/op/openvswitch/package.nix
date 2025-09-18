@@ -30,13 +30,13 @@
 
 stdenv.mkDerivation rec {
   pname = if withDPDK then "openvswitch-dpdk" else "openvswitch";
-  version = "3.5.1";
+  version = "3.5.2";
 
   src = fetchFromGitHub {
     owner = "openvswitch";
     repo = "ovs";
     tag = "v${version}";
-    hash = "sha256-iiFpX4w6vdsRxjhRcxXTTtSAb8WPwg1afqwgBpzjhoA=";
+    hash = "sha256-x3n/Hv0hRx6d16qvIP40jFAOj6kli6u+5W95qGXvxuA=";
   };
 
   outputs = [
@@ -63,21 +63,20 @@ stdenv.mkDerivation rec {
 
   sphinxRoot = "./Documentation";
 
-  buildInputs =
-    [
-      libcap_ng
-      openssl
-      perl
-      procps
-      python3
-      util-linux
-      which
-    ]
-    ++ (lib.optionals withDPDK [
-      dpdk
-      numactl
-      libpcap
-    ]);
+  buildInputs = [
+    libcap_ng
+    openssl
+    perl
+    procps
+    python3
+    util-linux
+    which
+  ]
+  ++ (lib.optionals withDPDK [
+    dpdk
+    numactl
+    libpcap
+  ]);
 
   preConfigure = "./boot.sh";
 
@@ -85,7 +84,8 @@ stdenv.mkDerivation rec {
     "--localstatedir=/var"
     "--sharedstatedir=/var"
     "--sbindir=$(out)/bin"
-  ] ++ (lib.optionals withDPDK [ "--with-dpdk=shared" ]);
+  ]
+  ++ (lib.optionals withDPDK [ "--with-dpdk=shared" ]);
 
   # Leave /var out of this!
   installFlags = [
@@ -116,14 +116,15 @@ stdenv.mkDerivation rec {
     patchShebangs tests/
   '';
 
-  nativeCheckInputs =
-    [ iproute2 ]
-    ++ (with python3.pkgs; [
-      netaddr
-      pyparsing
-      pytest
-      setuptools
-    ]);
+  nativeCheckInputs = [
+    iproute2
+  ]
+  ++ (with python3.pkgs; [
+    netaddr
+    pyparsing
+    pytest
+    setuptools
+  ]);
 
   passthru = {
     tests = {
@@ -131,7 +132,12 @@ stdenv.mkDerivation rec {
       incus = nixosTests.incus-lts.openvswitch;
     };
 
-    updateScript = nix-update-script { };
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--version-regex"
+        "^v(3\\.5\\.[0-9]+)$"
+      ];
+    };
   };
 
   meta = with lib; {

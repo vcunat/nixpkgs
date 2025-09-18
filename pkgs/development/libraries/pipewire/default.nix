@@ -82,7 +82,7 @@ in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "pipewire";
-  version = "1.4.5";
+  version = "1.4.7";
 
   outputs = [
     "out"
@@ -98,7 +98,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "pipewire";
     repo = "pipewire";
     rev = finalAttrs.version;
-    sha256 = "sha256-5fBpthIGsvMYrQyRb6n1uiNtJ3pl2ejAFr1e/UUga8w=";
+    sha256 = "sha256-U9J7f6nDO4tp6OCBtBcZ9HP9KDKLfuuRWDEbgLL9Avs=";
   };
 
   patches = [
@@ -121,68 +121,67 @@ stdenv.mkDerivation (finalAttrs: {
     glib
   ];
 
-  buildInputs =
-    [
-      dbus
-      ffmpeg
-      fftwFloat
-      glib
-      gst_all_1.gst-plugins-base
-      gst_all_1.gstreamer
-      libebur128
-      libjack2
-      libmysofa
-      libopus
-      libpulseaudio
-      libusb1
-      libsndfile
-      lilv
-      ncurses
-      readline
-    ]
-    ++ (
-      if enableSystemd then
-        [ systemd ]
-      else if stdenv.hostPlatform.isLinux then
-        [
-          elogind
-          udev
-        ]
-      else
-        [ ]
-    )
-    ++ lib.optionals stdenv.hostPlatform.isFreeBSD [
-      libinotify-kqueue
-      epoll-shim
-      freebsd.libstdthreads
-    ]
-    ++ lib.take 1 webrtc-audio-processings
-    ++ lib.optional stdenv.hostPlatform.isLinux alsa-lib
-    ++ lib.optional ldacbtSupport ldacbt
-    ++ lib.optional libcameraSupport libcamera
-    ++ lib.optional zeroconfSupport avahi
-    ++ lib.optional raopSupport openssl
-    ++ lib.optional rocSupport roc-toolkit
-    ++ lib.optionals vulkanSupport [
-      libdrm
-      vulkan-headers
-      vulkan-loader
-    ]
-    ++ lib.optionals x11Support [
-      libcanberra
-      xorg.libX11
-      xorg.libXfixes
-    ]
-    ++ lib.optionals bluezSupport [
-      bluez
-      libfreeaptx
-      liblc3
-      sbc
-      fdk_aac
-    ]
-    ++ lib.optional ffadoSupport ffado
-    ++ lib.optional stdenv.hostPlatform.isLinux libselinux
-    ++ lib.optional modemmanagerSupport modemmanager;
+  buildInputs = [
+    dbus
+    ffmpeg
+    fftwFloat
+    glib
+    gst_all_1.gst-plugins-base
+    gst_all_1.gstreamer
+    libebur128
+    libjack2
+    libmysofa
+    libopus
+    libpulseaudio
+    libusb1
+    libsndfile
+    lilv
+    ncurses
+    readline
+  ]
+  ++ (
+    if enableSystemd then
+      [ systemd ]
+    else if stdenv.hostPlatform.isLinux then
+      [
+        elogind
+        udev
+      ]
+    else
+      [ ]
+  )
+  ++ lib.optionals stdenv.hostPlatform.isFreeBSD [
+    libinotify-kqueue
+    epoll-shim
+    freebsd.libstdthreads
+  ]
+  ++ lib.take 1 webrtc-audio-processings
+  ++ lib.optional stdenv.hostPlatform.isLinux alsa-lib
+  ++ lib.optional ldacbtSupport ldacbt
+  ++ lib.optional libcameraSupport libcamera
+  ++ lib.optional zeroconfSupport avahi
+  ++ lib.optional raopSupport openssl
+  ++ lib.optional rocSupport roc-toolkit
+  ++ lib.optionals vulkanSupport [
+    libdrm
+    vulkan-headers
+    vulkan-loader
+  ]
+  ++ lib.optionals x11Support [
+    libcanberra
+    xorg.libX11
+    xorg.libXfixes
+  ]
+  ++ lib.optionals bluezSupport [
+    bluez
+    libfreeaptx
+    liblc3
+    sbc
+    fdk_aac
+  ]
+  ++ lib.optional ffadoSupport ffado
+  ++ lib.optional stdenv.hostPlatform.isLinux libselinux
+  ++ lib.optional modemmanagerSupport modemmanager;
 
   # Valgrind binary is required for running one optional test.
   nativeCheckInputs = lib.optional (lib.meta.availableOn stdenv.hostPlatform valgrind) valgrind;

@@ -190,8 +190,8 @@ lib.makeExtensible (
       };
 
       nix_2_28 = commonMeson {
-        version = "2.28.4";
-        hash = "sha256-V1tPrBkPteqF8VWUgpotNFYJ2Xm6WmB3aMPexuEHl9I=";
+        version = "2.28.5";
+        hash = "sha256-oIfAHxO+BCtHXJXLHBnsKkGl1Pw+Uuq1PwNxl+lZ+Oc=";
         self_attribute_name = "nix_2_28";
       };
 
@@ -208,6 +208,20 @@ lib.makeExtensible (
       };
 
       nix_2_29 = addTests "nix_2_29" self.nixComponents_2_29.nix-everything;
+
+      nixComponents_2_30 = nixDependencies.callPackage ./modular/packages.nix rec {
+        version = "2.30.2";
+        inherit (self.nix_2_24.meta) maintainers teams;
+        otherSplices = generateSplicesForNixComponents "nixComponents_2_30";
+        src = fetchFromGitHub {
+          owner = "NixOS";
+          repo = "nix";
+          tag = version;
+          hash = "sha256-U46fAs+j2PfWWqP1zNi1odhnV4030SQ0RoEC8Eah1OQ=";
+        };
+      };
+
+      nix_2_30 = addTests "nix_2_30" self.nixComponents_2_30.nix-everything;
 
       nixComponents_git = nixDependencies.callPackage ./modular/packages.nix rec {
         version = "2.31.0pre20250711_${lib.substring 0 8 src.rev}";

@@ -151,6 +151,8 @@ let
 
         callipyge = callPackage ../development/ocaml-modules/callipyge { };
 
+        camlgpc = callPackage ../development/ocaml-modules/camlgpc { };
+
         camlidl = callPackage ../development/tools/ocaml/camlidl { };
 
         camlimages = callPackage ../development/ocaml-modules/camlimages { };
@@ -243,6 +245,8 @@ let
         cohttp-top = callPackage ../development/ocaml-modules/cohttp/top.nix { };
 
         coin = callPackage ../development/ocaml-modules/coin { };
+
+        colombe = callPackage ../development/ocaml-modules/colombe { };
 
         color = callPackage ../development/ocaml-modules/color { };
 
@@ -849,7 +853,7 @@ let
           else
             null;
 
-        janeStreet =
+        janeStreet = lib.recurseIntoAttrs (
           if lib.versionOlder "5.1" ocaml.version then
             import ../development/ocaml-modules/janestreet/0.17.nix {
               inherit self;
@@ -906,7 +910,8 @@ let
             }
           else
             import ../development/ocaml-modules/janestreet {
-            };
+            }
+        );
 
         janeStreet_0_15 =
           (lib.makeScope self.newScope (
@@ -1123,6 +1128,8 @@ let
 
         letsencrypt-mirage = callPackage ../development/ocaml-modules/letsencrypt/mirage.nix { };
 
+        letters = callPackage ../development/ocaml-modules/letters { };
+
         libc = callPackage ../development/ocaml-modules/libc { };
 
         lilv = callPackage ../development/ocaml-modules/lilv {
@@ -1217,6 +1224,9 @@ let
         mec = callPackage ../development/ocaml-modules/mec { };
 
         melange = callPackage ../development/tools/ocaml/melange { };
+
+        melange-json = callPackage ../development/ocaml-modules/melange-json { };
+        melange-json-native = callPackage ../development/ocaml-modules/melange-json/native.nix { };
 
         memprof-limits = callPackage ../development/ocaml-modules/memprof-limits { };
 
@@ -1945,6 +1955,8 @@ let
         semaphore-compat = callPackage ../development/ocaml-modules/semaphore-compat { };
 
         semver = callPackage ../development/ocaml-modules/semver { };
+
+        sendmail = callPackage ../development/ocaml-modules/colombe/sendmail.nix { };
 
         seq = callPackage ../development/ocaml-modules/seq { };
 

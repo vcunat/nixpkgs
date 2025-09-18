@@ -8,6 +8,7 @@
 let
   inherit (lib)
     hasPrefix
+    literalExpression
     mkEnableOption
     mkIf
     mkMerge
@@ -23,6 +24,8 @@ let
 in
 
 {
+  meta.maintainers = pkgs.postfix-tlspol.meta.maintainers;
+
   options.services.postfix-tlspol = {
     enable = mkEnableOption "postfix-tlspol";
 
@@ -91,10 +94,13 @@ in
 
           dns = {
             address = mkOption {
-              type = types.str;
-              default = "127.0.0.1:53";
+              type = with types; nullOr str;
+              default = null;
+              example = "127.0.0.1:53";
               description = ''
-                IP and port to your DNS resolver
+                IP and port to your DNS resolver.
+
+                Uses resolvers from /etc/resolv.conf if unset.
 
                 ::: {.note}
                 The configured DNS resolver must validate DNSSEC signatures.
@@ -209,14 +215,13 @@ in
           ProtectSystem = "strict";
           ReadOnlyPaths = [ "/etc/postfix-tlspol/config.yaml" ];
           RemoveIPC = true;
-          RestrictAddressFamilies =
-            [
-              "AF_INET"
-              "AF_INET6"
-            ]
-            ++ lib.optionals (lib.hasPrefix "unix:" cfg.settings.server.address) [
-              "AF_UNIX"
-            ];
+          RestrictAddressFamilies = [
+            "AF_INET"
+            "AF_INET6"
+          ]
+          ++ lib.optionals (lib.hasPrefix "unix:" cfg.settings.server.address) [
+            "AF_UNIX"
+          ];
           RestrictNamespaces = true;
           RestrictRealtime = true;
           RestrictSUIDSGID = true;

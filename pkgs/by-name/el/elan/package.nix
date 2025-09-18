@@ -25,7 +25,6 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-z20QiYbpEx591CtGerdX63not9S7TB5BJFoCoGTYen0=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-T8R1BostefR0vbmKo1UDmP6FjXWfsfFUtF/oRqAN7mc=";
 
   nativeBuildInputs = [
@@ -38,7 +37,8 @@ rustPlatform.buildRustPackage rec {
     curl
     zlib
     openssl
-  ] ++ lib.optional stdenv.hostPlatform.isDarwin libiconv;
+  ]
+  ++ lib.optional stdenv.hostPlatform.isDarwin libiconv;
 
   buildFeatures = [ "no-self-update" ];
 

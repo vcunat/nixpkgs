@@ -10,8 +10,6 @@
 let
   # These are attributes in compiler that support integer-simple.
   integerSimpleIncludes = [
-    "ghc88"
-    "ghc884"
     "ghc810"
     "ghc8107"
   ];
@@ -78,7 +76,7 @@ in
   # `name: pkgs: pkgs.haskell.packages.${name}.ghc == pkgs.buildPackages.haskell.compiler.${name}.ghc`.
   # This isn't problematic since pkgsBuildBuild.buildPackages is also build->build,
   # just something to keep in mind.
-  compiler =
+  compiler = pkgs.lib.recurseIntoAttrs (
     let
       bb = pkgsBuildBuild.haskell;
     in
@@ -492,7 +490,8 @@ in
             name: compiler.${name}.override { enableNativeBignum = true; }
           )
         );
-    };
+    }
+  );
 
   # Default overrides that are applied to all package sets.
   packageOverrides = self: super: { };
@@ -674,7 +673,7 @@ in
       native-bignum =
         let
           nativeBignumGhcNames = pkgs.lib.filter (name: !(builtins.elem name nativeBignumExcludes)) (
-            pkgs.lib.attrNames compiler
+            pkgs.lib.attrNames packages
           );
         in
         pkgs.lib.genAttrs nativeBignumGhcNames (

@@ -25,13 +25,13 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "niri";
-  version = "25.05.1";
+  version = "25.08";
 
   src = fetchFromGitHub {
     owner = "YaLTeR";
     repo = "niri";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-z4viQZLgC2bIJ3VrzQnR+q2F3gAOEQpU1H5xHtX/2fs=";
+    hash = "sha256-RLD89dfjN0RVO86C/Mot0T7aduCygPGaYbog566F0Qo=";
   };
 
   outputs = [
@@ -45,8 +45,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       --replace-fail '/usr/bin' "$out/bin"
   '';
 
-  useFetchCargoVendor = true;
-  cargoHash = "sha256-8ltuI94yIhff7JxIfe1mog4bDJ/7VFgLooMWOnSTREs=";
+  cargoHash = "sha256-lR0emU2sOnlncN00z6DwDIE2ljI+D2xoKqG3rS45xG0=";
 
   strictDeps = true;
 
@@ -55,21 +54,20 @@ rustPlatform.buildRustPackage (finalAttrs: {
     rustPlatform.bindgenHook
   ];
 
-  buildInputs =
-    [
-      libdisplay-info
-      libglvnd # For libEGL
-      libinput
-      libxkbcommon
-      libgbm
-      pango
-      seatd
-      wayland # For libwayland-client
-    ]
-    ++ lib.optional (withDbus || withScreencastSupport || withSystemd) dbus
-    ++ lib.optional withScreencastSupport pipewire
-    ++ lib.optional withSystemd systemd # Includes libudev
-    ++ lib.optional (!withSystemd) eudev; # Use an alternative libudev implementation when building w/o systemd
+  buildInputs = [
+    libdisplay-info
+    libglvnd # For libEGL
+    libinput
+    libxkbcommon
+    libgbm
+    pango
+    seatd
+    wayland # For libwayland-client
+  ]
+  ++ lib.optional (withDbus || withScreencastSupport || withSystemd) dbus
+  ++ lib.optional withScreencastSupport pipewire
+  ++ lib.optional withSystemd systemd # Includes libudev
+  ++ lib.optional (!withSystemd) eudev; # Use an alternative libudev implementation when building w/o systemd
 
   buildFeatures =
     lib.optional withDbus "dbus"
@@ -78,25 +76,24 @@ rustPlatform.buildRustPackage (finalAttrs: {
     ++ lib.optional withSystemd "systemd";
   buildNoDefaultFeatures = true;
 
-  postInstall =
-    ''
-      install -Dm0644 README.md resources/default-config.kdl -t $doc/share/doc/niri
-      mv wiki $doc/share/doc/niri/wiki
+  postInstall = ''
+    install -Dm0644 README.md resources/default-config.kdl -t $doc/share/doc/niri
+    mv docs/wiki $doc/share/doc/niri/wiki
 
-      install -Dm0644 resources/niri.desktop -t $out/share/wayland-sessions
-    ''
-    + lib.optionalString withDbus ''
-      install -Dm0644 resources/niri-portals.conf -t $out/share/xdg-desktop-portal
-    ''
-    + lib.optionalString (withSystemd || withDinit) ''
-      install -Dm0755 resources/niri-session -t $out/bin
-    ''
-    + lib.optionalString withSystemd ''
-      install -Dm0644 resources/niri{-shutdown.target,.service} -t $out/lib/systemd/user
-    ''
-    + lib.optionalString withDinit ''
-      install -Dm0644 resources/dinit/niri{-shutdown,} -t $out/lib/dinit.d/user
-    '';
+    install -Dm0644 resources/niri.desktop -t $out/share/wayland-sessions
+  ''
+  + lib.optionalString withDbus ''
+    install -Dm0644 resources/niri-portals.conf -t $out/share/xdg-desktop-portal
+  ''
+  + lib.optionalString (withSystemd || withDinit) ''
+    install -Dm0755 resources/niri-session -t $out/bin
+  ''
+  + lib.optionalString withSystemd ''
+    install -Dm0644 resources/niri{-shutdown.target,.service} -t $out/lib/systemd/user
+  ''
+  + lib.optionalString withDinit ''
+    install -Dm0644 resources/dinit/niri{-shutdown,} -t $out/lib/dinit.d/user
+  '';
 
   env = {
     # Force linking with libEGL and libwayland-client
@@ -116,6 +113,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     NIRI_BUILD_COMMIT = "Nixpkgs";
   };
 
+  checkFlags = [ "--skip=::egl" ];
   nativeInstallCheckInputs = [ versionCheckHook ];
   versionCheckProgramArg = "--version";
   doInstallCheck = true;

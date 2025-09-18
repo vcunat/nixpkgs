@@ -54,17 +54,17 @@ stdenv.mkDerivation (finalAttrs: {
 
   pnpmDeps = pnpm_9.fetchDeps {
     inherit (finalAttrs) pname version src;
+    fetcherVersion = 1;
     hash = "sha256-AjdXclrNl1AHJ4LXq9I5Rk6KGyDaWXW187o2uLwRy/o=";
   };
 
-  preBuild =
-    ''
-      echo VITE_EMBED_SERVER_ORIGIN="https://embed.zenn.studio" > packages/zenn-cli/.env
-    ''
-    # replace go-turbo since the existing one can't be executed
-    + lib.optionalString stdenv.hostPlatform.isLinux ''
-      cp ${go-turbo}/bin/go-turbo node_modules/.pnpm/turbo-linux-*/node_modules/turbo-linux*/bin/go-turbo
-    '';
+  preBuild = ''
+    echo VITE_EMBED_SERVER_ORIGIN="https://embed.zenn.studio" > packages/zenn-cli/.env
+  ''
+  # replace go-turbo since the existing one can't be executed
+  + lib.optionalString stdenv.hostPlatform.isLinux ''
+    cp ${go-turbo}/bin/go-turbo node_modules/.pnpm/turbo-linux-*/node_modules/turbo-linux*/bin/go-turbo
+  '';
 
   buildPhase = ''
     runHook preBuild

@@ -165,17 +165,23 @@ let
             --wait \
             --collect \
             --service-type=exec \
+            --setenv OC_PASS \
+            --setenv NC_PASS \
             --quiet \
             ${command}
         elif [[ "$USER" != nextcloud ]]; then
           if [[ -x /run/wrappers/bin/sudo ]]; then
             exec /run/wrappers/bin/sudo \
               --preserve-env=CREDENTIALS_DIRECTORY \
+              --preserve-env=OC_PASS \
+              --preserve-env=NC_PASS \
               --user=nextcloud \
               ${command}
           else
             exec ${lib.getExe' pkgs.util-linux "runuser"} \
               --whitelist-environment=CREDENTIALS_DIRECTORY \
+              --whitelist-environment=OC_PASS \
+              --whitelist-environment=NC_PASS \
               --user=nextcloud \
               ${command}
           fi
@@ -1246,7 +1252,8 @@ in
             serviceConfig.User = "nextcloud";
             serviceConfig.LoadCredential = [
               "adminpass:${cfg.config.adminpassFile}"
-            ] ++ runtimeSystemdCredentials;
+            ]
+            ++ runtimeSystemdCredentials;
             # On Nextcloud ≥ 26, it is not necessary to patch the database files to prevent
             # an automatic creation of the database user.
             environment.NC_setup_create_db_user = lib.mkIf (nextcloudGreaterOrEqualThan "26") "false";
@@ -1306,34 +1313,33 @@ in
           };
         };
 
-        phpfpm-nextcloud =
-          {
-            # When upgrading the Nextcloud package, Nextcloud can report errors such as
-            # "The files of the app [all apps in /var/lib/nextcloud/apps] were not replaced correctly"
-            # Restarting phpfpm on Nextcloud package update fixes these issues (but this is a workaround).
-            restartTriggers = [
-              webroot
-              overrideConfig
-            ];
-          }
-          // lib.optionalAttrs requiresRuntimeSystemdCredentials {
-            serviceConfig.LoadCredential = runtimeSystemdCredentials;
+        phpfpm-nextcloud = {
+          # When upgrading the Nextcloud package, Nextcloud can report errors such as
+          # "The files of the app [all apps in /var/lib/nextcloud/apps] were not replaced correctly"
+          # Restarting phpfpm on Nextcloud package update fixes these issues (but this is a workaround).
+          restartTriggers = [
+            webroot
+            overrideConfig
+          ];
+        }
+        // lib.optionalAttrs requiresRuntimeSystemdCredentials {
+          serviceConfig.LoadCredential = runtimeSystemdCredentials;
 
-            # FIXME: We use a hack to make the credential files readable by the nextcloud
-            #        user by copying them somewhere else and overriding CREDENTIALS_DIRECTORY
-            #        for php. This is currently necessary as the unit runs as root.
-            serviceConfig.RuntimeDirectory = lib.mkForce "phpfpm phpfpm-nextcloud";
-            preStart = ''
-              umask 0077
+          # FIXME: We use a hack to make the credential files readable by the nextcloud
+          #        user by copying them somewhere else and overriding CREDENTIALS_DIRECTORY
+          #        for php. This is currently necessary as the unit runs as root.
+          serviceConfig.RuntimeDirectory = lib.mkForce "phpfpm phpfpm-nextcloud";
+          preStart = ''
+            umask 0077
 
-              # NOTE: Runtime directories for this service are currently preserved
-              #       between restarts.
-              rm -rf /run/phpfpm-nextcloud/credentials/
-              mkdir -p /run/phpfpm-nextcloud/credentials/
-              cp "$CREDENTIALS_DIRECTORY"/* /run/phpfpm-nextcloud/credentials/
-              chown -R nextcloud:nextcloud /run/phpfpm-nextcloud/credentials/
-            '';
-          };
+            # NOTE: Runtime directories for this service are currently preserved
+            #       between restarts.
+            rm -rf /run/phpfpm-nextcloud/credentials/
+            mkdir -p /run/phpfpm-nextcloud/credentials/
+            cp "$CREDENTIALS_DIRECTORY"/* /run/phpfpm-nextcloud/credentials/
+            chown -R nextcloud:nextcloud /run/phpfpm-nextcloud/credentials/
+          '';
+        };
       };
 
       services.phpfpm = {
@@ -1525,7 +1531,6 @@ in
           index index.php index.html /index.php$request_uri;
           ${optionalString (cfg.nginx.recommendedHttpHeaders) ''
             add_header X-Content-Type-Options nosniff;
-            add_header X-XSS-Protection "1; mode=block";
             add_header X-Robots-Tag "noindex, nofollow";
             add_header X-Permitted-Cross-Domain-Policies none;
             add_header X-Frame-Options sameorigin;
