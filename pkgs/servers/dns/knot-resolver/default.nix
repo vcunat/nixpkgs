@@ -107,7 +107,7 @@ let
     ;
 
     mesonFlags = [
-        #"--buildtype=debug" # FIXME: TMP
+      #"--buildtype=debug" # FIXME: TMP
       "-Dkeyfile_default=${dns-root-data}/root.ds"
       "-Droot_hints=${dns-root-data}/root.hints"
       "-Dinstall_kresd_conf=disabled" # not really useful; examples are inside share/doc/
@@ -120,14 +120,13 @@ let
     #"-Dextra_tests=enabled" # not suitable as in-distro tests; many deps, too.
     ;
 
-    postInstall =
-      ''
-        cp -r ./python "$config_py"
-        rm "$out"/lib/libkres.a
-      ''
-      + optionalString stdenv.hostPlatform.isLinux ''
-        rm -r "$out"/lib/sysusers.d/ # ATM more likely to harm than help
-      '';
+    postInstall = ''
+      cp -r ./python "$config_py"
+      rm "$out"/lib/libkres.a
+    ''
+    + optionalString stdenv.hostPlatform.isLinux ''
+      rm -r "$out"/lib/sysusers.d/ # ATM more likely to harm than help
+    '';
 
     doInstallCheck = with stdenv; hostPlatform == buildPlatform;
     nativeInstallCheckInputs = [

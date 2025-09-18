@@ -41,7 +41,11 @@ python3Packages.buildPythonPackage {
   ];
 
   doCheck = false; # FIXME
-  checkInputs = with python3Packages; [ pytestCheckHook pytest-asyncio pyparsing ];
+  checkInputs = with python3Packages; [
+    pytestCheckHook
+    pytest-asyncio
+    pyparsing
+  ];
 
   meta = knot-resolver.meta // {
     mainProgram = "knot-resolver";
