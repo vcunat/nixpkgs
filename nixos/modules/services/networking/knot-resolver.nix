@@ -119,13 +119,11 @@ in
     environment = {
       etc."knot-resolver/config.yaml".source = configFile;
       systemPackages = [
-        (pkgs.runCommandLocal "knot-resolver-cmds" { nativeBuildInputs = [ pkgs.makeWrapper ]; }
-          # Wrapping, as config might've changed the location of the management socket.
-          ''
-            makeWrapper '${cfg.managerPackage}/bin/kresctl' "$out/bin/kresctl" \
-              --add-flags --config=/etc/knot-resolver/config.yaml
-          ''
-        )
+        # We just avoid including the other binaries, e.g. supervisorctl.
+        (pkgs.runCommandLocal "knot-resolver-cmds" { } ''
+          mkdir -p "$out/bin"
+          ln -s '${cfg.managerPackage}/bin/kresctl' "$out/bin/"
+        '')
       ];
     };
 
