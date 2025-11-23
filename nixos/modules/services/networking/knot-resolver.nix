@@ -127,34 +127,16 @@ in
       ];
     };
 
+    systemd.packages = [ cfg.package ]; # the unit gets patched a bit just below
     systemd.services."knot-resolver" = {
-      wantedBy = [ "multi-user.target" ];
       path = [ (lib.getBin cfg.package) ];
       stopIfChanged = false;
       reloadTriggers = [
         configFile
       ];
       serviceConfig = {
-        Type = "notify";
-        TimeoutStartSec = "600s";
-        Environment = "KRES_LOGGING_TARGET=syslog";
-        ExecStart = "${cfg.managerPackage}/bin/knot-resolver --config=/etc/knot-resolver/config.yaml";
-        ExecReload = "${cfg.managerPackage}/bin/kresctl --config=/etc/knot-resolver/config.yaml reload";
-
-        KillSignal = "SIGINT";
-
-        User = "knot-resolver";
-        Group = "knot-resolver";
-
-        WorkingDirectory = "/var/lib/knot-resolver";
-        CapabilityBoundingSet = [
-          "CAP_NET_BIND_SERVICE"
-          "CAP_SETPCAP"
-        ];
-        AmbientCapabilities = [
-          "CAP_NET_BIND_SERVICE"
-          "CAP_SETPCAP"
-        ];
+        ExecStart = "${cfg.managerPackage}/bin/knot-resolver";
+        ExecReload = "${cfg.managerPackage}/bin/kresctl reload";
 
         StateDirectory = "knot-resolver";
         StateDirectoryMode = "0770";

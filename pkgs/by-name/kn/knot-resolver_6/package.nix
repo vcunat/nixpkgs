@@ -53,6 +53,7 @@ let
     ];
 
     # Path fixups for the NixOS service.
+    # Exec* options are difficult to override in NixOS *if present*, so we drop them.
     postPatch = ''
       patch meson.build <<EOF
       @@ -50,2 +50,3 @@
@@ -62,6 +63,9 @@ let
       +systemd_cache_dir = '/var/cache/knot-resolver'
       +run_dir = '/run/knot-resolver'
       EOF
+
+      sed -e '/^ExecStart=/d' -e '/^ExecReload=/d' \
+        -i systemd/knot-resolver.service.in
     ''
     # some tests have issues with network sandboxing, apparently
     + optionalString finalAttrs.doInstallCheck ''
