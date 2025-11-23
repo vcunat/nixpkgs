@@ -7,20 +7,17 @@
 let
   cfg = config.services.knot-resolver;
   # pkgs.writers.yaml_1_1.generate with additional kresctl validate
-  configFile = pkgs.callPackage (
-    { runCommand, remarshal_0_17 }:
-    runCommand "knot-resolver.yaml"
+  configFile =
+    pkgs.runCommandLocal "knot-resolver.yaml"
       {
-        nativeBuildInputs = [ remarshal_0_17 ];
+        nativeBuildInputs = [ pkgs.remarshal_0_17 ];
         value = builtins.toJSON cfg.settings;
         passAsFile = [ "value" ];
-        preferLocalBuild = true;
       }
       ''
         json2yaml "$valuePath" "$out"
         ${cfg.managerPackage}/bin/kresctl validate "$out"
-      ''
-  ) { };
+      '';
 in
 {
   meta.maintainers = [
