@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  fetchFromGitLab,
+  fetchurl,
   # native deps.
   runCommand,
   pkg-config,
@@ -35,15 +35,11 @@ let
 
   unwrapped = stdenv.mkDerivation (finalAttrs: {
     pname = "knot-resolver_6";
-    version = "6.0.16";
+    version = "6.0.17";
 
-    src = fetchFromGitLab {
-      domain = "gitlab.nic.cz";
-      owner = "knot";
-      repo = "knot-resolver";
-      fetchSubmodules = true;
-      tag = "v${finalAttrs.version}";
-      hash = "sha256-hKKilmcMEsoeisshFWWQhFg69NXmeZRmjoj3qKp112s=";
+    src = fetchurl {
+      url = "https://secure.nic.cz/files/knot-resolver/knot-resolver-${finalAttrs.version}.tar.xz";
+      sha256 = "13d4496ef87aeb2fbd3b0057e2211d4585205241e509a0cd4341dbe5e8cb5c1c";
     };
 
     outputs = [
