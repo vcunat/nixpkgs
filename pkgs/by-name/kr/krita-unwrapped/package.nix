@@ -123,6 +123,18 @@ stdenv.mkDerivation (finalAttrs: {
 
       substituteInPlace plugins/impex/jp2/jp2_converter.cc \
         --replace '<openjpeg.h>' '<${openjpeg.incDir}/openjpeg.h>'
+    ''
+    # PyQt6 6.11: https://invent.kde.org/graphics/krita/-/merge_requests/2757
+    + ''
+      patch -p1 <<EOF
+      --- a/cmake/modules/SIPMacros.cmake
+      +++ b/cmake/modules/SIPMacros.cmake
+      @@ -152,3 +152,3 @@
+               if (QT_MAJOR_VERSION STREQUAL "6")
+      -            set(abi_version "13.0")
+      +            set(abi_version "13.8")
+                   set(sip_disabled_features "[\"Krita_Qt5\"]")
+      EOF
     '';
 
   cmakeBuildType = "RelWithDebInfo";
