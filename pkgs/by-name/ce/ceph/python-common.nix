@@ -30,5 +30,7 @@ ceph-python.pkgs.buildPythonPackage {
     "test_valid_addr"
   ];
 
+  dontCheckPythonMetadata = true; # No package metadata was found for ceph-common
+
   meta = ceph-meta "Ceph common module for code shared by manager modules";
 }
