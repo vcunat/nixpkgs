@@ -97,6 +97,10 @@ buildPythonPackage rec {
   # https://github.com/cython/cython/issues/5089
   setupHook = ./setup-hook.sh;
 
+  # The 'cython' derivation has version '0.29.37.1' but .dist-info/METADATA specifies version '0.29.37'.
+  # but it's what upstream put in at this tag and it's not that much wrong, so...
+  dontCheckPythonMetadata = true;
+
   meta = {
     changelog = "https://github.com/cython/cython/blob/${version}/CHANGES.rst";
     description = "Optimising static compiler for both the Python programming language and the extended Cython programming language";
